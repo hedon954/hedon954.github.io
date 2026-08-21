@@ -1,0 +1,443 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="https://hedon.top/hedonspace/banner/kafka-cluster-deploy.jpg" as="image"/><link rel="stylesheet" href="/assets/index-BlvdgL5Z.css" data-rsc-css-href="/assets/index-BlvdgL5Z.css" data-precedence="vite-rsc/importer-resources"/><link rel="modulepreload" href="/assets/layout-segment-context-D05hAiNS.js" crossorigin=""/><link rel="modulepreload" href="/assets/rolldown-runtime-S-ySWqyJ.js" crossorigin=""/><link rel="modulepreload" href="/assets/index-iWWMjvPF.js" crossorigin=""/><link rel="modulepreload" href="/assets/framework-lj9SIvjL.js" crossorigin=""/><link rel="modulepreload" href="/assets/SiteChrome-fw3-nA9J.js" crossorigin=""/><link rel="modulepreload" href="/assets/site.config-9xFcKv1R.js" crossorigin=""/><link rel="modulepreload" href="/assets/X.es-CE2QbOE6.js" crossorigin=""/><link rel="modulepreload" href="/assets/IconBase.es-BcuMBetk.js" crossorigin=""/><link rel="modulepreload" href="/assets/GithubLogo.es-CzPW7yFN.js" crossorigin=""/><link rel="modulepreload" href="/assets/link-DNRhlV_g.js" crossorigin=""/><link rel="modulepreload" href="/assets/Webmentions-Boui1ZtL.js" crossorigin=""/><link rel="modulepreload" href="/assets/LinkSimple.es-BqfusCPX.js" crossorigin=""/><link rel="modulepreload" href="/assets/Quotes.es-Cs5Y7all.js" crossorigin=""/><link rel="modulepreload" href="/assets/GiscusComments-N0fYqhTC.js" crossorigin=""/><link rel="modulepreload" href="/assets/TableOfContents-CBBw91S5.js" crossorigin=""/><title>Kafka 集群部署 · Hedon Garden</title><meta name="description" content="本文总结了在 Ubuntu18.04 虚拟机上部署 Kafka 集群的具体过程。"/><meta name="author" content="Hedon"/><link rel="author" href="https://github.com/hedon954"/><meta name="robots" content="index, follow"/><meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/><meta property="og:title" content="Kafka 集群部署"/><meta property="og:description" content="本文总结了在 Ubuntu18.04 虚拟机上部署 Kafka 集群的具体过程。"/><meta property="og:url" content="https://hedon.top/blog/kafka/kakfa-cluster-deploy"/><meta property="og:type" content="article"/><meta property="article:published_time" content="2023-11-22T00:28:59.000Z"/><meta property="og:image" content="https://hedon.top/hedonspace/banner/kafka-cluster-deploy.jpg"/><meta property="og:image:alt" content="Kafka 集群部署 的文章封面"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="Kafka 集群部署"/><meta name="twitter:description" content="本文总结了在 Ubuntu18.04 虚拟机上部署 Kafka 集群的具体过程。"/><meta name="twitter:image" content="https://hedon.top/hedonspace/banner/kafka-cluster-deploy.jpg"/><link rel="icon" href="https://hedon.top/favicon.svg"/><link rel="canonical" href="https://hedon.top/blog/kafka/kakfa-cluster-deploy"/><script>self.__VINEXT_RSC_PARAMS__={"path":["kafka","kakfa-cluster-deploy"]}</script><script>self.__VINEXT_RSC_NAV__={"pathname":"/blog/kafka/kakfa-cluster-deploy/","searchParams":[]}</script><link rel="modulepreload" href="/assets/index-iWWMjvPF.js" />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-f6b33328.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44e03052.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-0638449e.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-971fb274.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44745446.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-013b2f2f.woff2" as="font" type="font/woff2" crossorigin />
+<style data-vinext-fonts>/* cyrillic-ext */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-f6b33328.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44e03052.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* symbols2 */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-0638449e.woff2) format('woff2');
+  unicode-range: U+2000-2001, U+2004-2008, U+200A, U+23B8-23BD, U+2500-259F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-971fb274.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44745446.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-013b2f2f.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+.__font_geist_mono_1diim1n { font-family: 'Geist Mono', sans-serif; }
+
+.__variable_geist_mono_1diim1n { --font-geist-mono: 'Geist Mono', sans-serif; }
+</style>
+</head><body class="__variable_geist_mono_1diim1n"><a class="skip-link" href="#main-content">跳到正文</a><header class="site-header"><div class="header-inner"><a href="/" class="brand" aria-label="Hedon Garden 首页"><span class="brand-mark"><svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true"><path d="M216,212H164V180h8a64.07,64.07,0,0,0,64-64,24,24,0,0,0-48,0,16,16,0,0,1-16,16h-8V56a36,36,0,0,0-72,0V92H84A16,16,0,0,1,68,76a24,24,0,0,0-48,0,64.07,64.07,0,0,0,64,64h8v72H40a4,4,0,0,0,0,8H216a4,4,0,0,0,0-8ZM96,132H84A56.06,56.06,0,0,1,28,76a16,16,0,0,1,32,0,24,24,0,0,0,24,24H96a4,4,0,0,0,4-4V56a28,28,0,0,1,56,0v80a4,4,0,0,0,4,4h12a24,24,0,0,0,24-24,16,16,0,0,1,32,0,56.06,56.06,0,0,1-56,56H160a4,4,0,0,0-4,4v36H100V136A4,4,0,0,0,96,132Z"></path></svg></span><span><strong>Hedon Garden</strong><small>写作 · 构建 · 保持好奇</small></span></a><nav class="main-nav" aria-label="主导航"><a href="/">首页</a><a href="/blog">博文</a><a href="/thoughts">随想</a><a href="/columns">专栏</a><a href="/about">关于</a></nav><div class="header-actions"><button class="icon-button search-trigger" aria-label="搜索文章" aria-expanded="false" aria-controls="site-search-dialog"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 256 256"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg><span class="key-hint">⌘K</span></button><button class="icon-button" aria-label="切换到深色模式"><svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" viewBox="0 0 256 256"><path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"></path></svg></button></div></div></header><div id="main-content"><main class="reading-page post-reading-page"><article class="post-article h-entry"><a href="/blog/kafka/kakfa-cluster-deploy" class="u-url sr-only">Kafka 集群部署<!-- --> 永久链接</a><a class="p-author h-card sr-only" href="https://github.com/hedon954" rel="author">Hedon</a><figure class="article-hero article-cover"><img class="u-photo" src="https://hedon.top/hedonspace/banner/kafka-cluster-deploy.jpg" alt="Kafka 集群部署 的文章封面"/></figure><header class="article-header article-summary-row"><p class="eyebrow">Kafka</p><h1 class="p-name">Kafka 集群部署</h1><p class="article-deck p-summary">本文总结了在 Ubuntu18.04 虚拟机上部署 Kafka 集群的具体过程。</p><div class="article-meta"><time class="dt-published" dateTime="2023-11-22T00:28:59.000Z">发布于 <!-- -->2023/11/22</time><span></span><span>约 <!-- -->3,111<!-- --> 字</span></div></header><div class="article-reading-layout"><div class="article-reading-column"><div class="e-content"><div class="markdown-body"><h2 id="版本说明"><a href="#版本说明" node="[object Object]">版本说明</a></h2>
+<ul>
+<li>Ubuntu 18.04.6</li>
+<li>Zookeeper 3.5.9</li>
+<li>Kafka 2.7.0</li>
+<li>JDK8</li>
+</ul>
+<h2 id="集群配置"><a href="#集群配置" node="[object Object]">集群配置</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th style="text-align:center">操作系统</th><th style="text-align:center">ip</th><th style="text-align:center">域名</th><th style="text-align:center">Zookeeper 端口</th><th style="text-align:center">Kafka 端口</th></tr></thead><tbody><tr><td style="text-align:center">Ubuntu 18.04.6</td><td style="text-align:center">192.168.50.131</td><td style="text-align:center">kafka1.com</td><td style="text-align:center">2181</td><td style="text-align:center">9092</td></tr><tr><td style="text-align:center">Ubuntu 18.04.6</td><td style="text-align:center">192.168.50.132</td><td style="text-align:center">kafka2.com</td><td style="text-align:center">2181</td><td style="text-align:center">9092</td></tr><tr><td style="text-align:center">Ubuntu 18.04.6</td><td style="text-align:center">192.168.50.133</td><td style="text-align:center">kafka3.com</td><td style="text-align:center">2181</td><td style="text-align:center">9092</td></tr></tbody></table>
+<h2 id="安装-vim-curl"><a href="#安装-vim-curl" node="[object Object]">安装 vim, curl</a></h2>
+<pre data-language="SH"><code class="hljs language-sh"><span class="hljs-built_in">sudo</span> apt update
+<span class="hljs-built_in">sudo</span> apt install vim
+<span class="hljs-built_in">sudo</span> apt install curl
+</code></pre>
+<h2 id="配置静态-ip-和-hosts"><a href="#配置静态-ip-和-hosts" node="[object Object]">配置静态 ip 和 hosts</a></h2>
+<p>为了使用域名，更加方便的进行配置，这里将虚拟机的 DHCP 改成了静态分配 IP，所以需要手动设置一下每台机器 IP 地址，这里以 <code>192.168.50.131</code> 为例。</p>
+<ol>
+<li>
+<p>找到网络接口名称，运行以下命令：</p>
+<pre data-language="SH"><code class="hljs language-sh">ip addr
+</code></pre>
+<p>查找以 <code>ens</code> 或 <code>eth</code> 开头的接口名称。例如，<code>ens33</code> 或 <code>eth0</code>。</p>
+<pre data-language="SH"><code class="hljs language-sh">hedon@ubuntu:~$ ip addr
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    <span class="hljs-built_in">link</span>/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    <span class="hljs-built_in">link</span>/ether 00:0c:29:82:9e:69 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.50.133/24 brd 192.168.50.255 scope global dynamic noprefixroute ens33
+       valid_lft 1644sec preferred_lft 1644sec
+    inet6 fe80::c367:c7cc:3ad4:23b3/64 scope <span class="hljs-built_in">link</span>
+       valid_lft forever preferred_lft forever
+</code></pre>
+<p>可以找到 <code>ens33</code>，其中 <code>inet 192.168.50.133/24</code> 表示 IP 地址为 <code>192.168.50.133</code>，子网掩码为 <code>/24</code>（等于 <code>255.255.255.0</code>）。</p>
+<p>这个 IP 地址是 DHCP 动态分配的，说明宿主机分配给虚拟机的 IP 范围就在 <code>192.168.50.xxx</code>，所以我们会将静态 IP 配置在这个范围内。</p>
+</li>
+<li>
+<p>获取网关地址</p>
+<pre data-language="SH"><code class="hljs language-sh">ip route | grep default
+</code></pre>
+<p>输出：</p>
+<pre data-language="SH"><code class="hljs language-sh">hedon@ubuntu:~$ ip route | grep default
+default via 192.168.50.2 dev ens33 proto dhcp metric 100
+</code></pre>
+<p>说明默认网关是 <code>192.168.50.2</code>，</p>
+</li>
+<li>
+<p>编辑 <code>/etc/network/interfaces</code> 文件，配置静态 IP 地址，内容如下：</p>
+<pre data-language="TEX"><code class="hljs language-tex">auto ens33
+iface ens33 inet static
+	address 192.168.50.131
+	netmask 255.255.255.0
+	gateway 192.168.50.2
+	dns-nameservers 8.8.8.8 8.8.4.4
+</code></pre>
+</li>
+<li>
+<p>重启</p>
+<pre data-language="SH"><code class="hljs language-sh">su reboot
+</code></pre>
+</li>
+<li>
+<p>再次查看 ip 地址</p>
+<pre data-language="SH"><code class="hljs language-sh">ip addr
+</code></pre>
+<p>有以下输出便说明静态 IP 配置成功了。</p>
+<pre data-language="SH"><code class="hljs language-sh">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    <span class="hljs-built_in">link</span>/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: ens33: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    <span class="hljs-built_in">link</span>/ether 00:0c:29:82:9e:69 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.50.131/24 brd 192.168.50.255 scope global ens33
+       valid_lft forever preferred_lft forever
+    inet6 fe80::20c:29ff:fe82:9e69/64 scope <span class="hljs-built_in">link</span>
+       valid_lft forever preferred_lft forever
+</code></pre>
+</li>
+<li>
+<p>配置域名</p>
+<pre data-language="SH"><code class="hljs language-sh"><span class="hljs-built_in">sudo</span> vim /etc/hosts
+</code></pre>
+<p>追加内容如下：</p>
+<pre data-language="SH"><code class="hljs language-sh">192.168.50.131 kafka1.com
+192.168.50.132 kafka2.com
+192.168.50.133 kafka3.com
+</code></pre>
+</li>
+<li>
+<p>ping 一下</p>
+<pre data-language="SH"><code class="hljs language-sh">hedon@ubuntu:~$ ping kafka1.com
+PING kafka1.com (192.168.50.131) 56(84) bytes of data.
+64 bytes from kafka1.com (192.168.50.131): icmp_seq=1 ttl=64 <span class="hljs-keyword">time</span>=0.024 ms
+64 bytes from kafka1.com (192.168.50.131): icmp_seq=2 ttl=64 <span class="hljs-keyword">time</span>=0.021 ms
+64 bytes from kafka1.com (192.168.50.131): icmp_seq=3 ttl=64 <span class="hljs-keyword">time</span>=0.029 ms
+^C
+--- kafka1.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, <span class="hljs-keyword">time</span> 2029ms
+rtt min/avg/max/mdev = 0.021/0.024/0.029/0.006 ms
+</code></pre>
+</li>
+<li>
+<p>ping 一下百度，看看能不能访问外网</p>
+<pre data-language="SH"><code class="hljs language-sh">hedon@ubuntu:~$ ping baidu.com
+ping: baidu.com: Name or service not known
+</code></pre>
+<p>如果这里可以访问，则直接跳过进入下一步，不可以的话，需要配置一下域名解析系统。</p>
+</li>
+<li>
+<p>配置域名解析系统</p>
+<pre data-language="SH"><code class="hljs language-sh"><span class="hljs-built_in">sudo</span> vim /etc/resolv.conf
+</code></pre>
+<p>追加下面内容：</p>
+<pre data-language="TEX"><code class="hljs language-tex">nameserver 8.8.8.8
+nameserver 8.8.4.4
+</code></pre>
+<p>再尝试 ping 一下百度：</p>
+<pre data-language="SH"><code class="hljs language-sh">hedon@ubuntu:~$ ping www.baidu.com
+PING www.a.shifen.com (153.3.238.110) 56(84) bytes of data.
+64 bytes from 153.3.238.110 (153.3.238.110): icmp_seq=1 ttl=128 <span class="hljs-keyword">time</span>=15.9 ms
+64 bytes from 153.3.238.110 (153.3.238.110): icmp_seq=2 ttl=128 <span class="hljs-keyword">time</span>=15.9 ms
+64 bytes from 153.3.238.110 (153.3.238.110): icmp_seq=3 ttl=128 <span class="hljs-keyword">time</span>=16.1 ms
+64 bytes from 153.3.238.110 (153.3.238.110): icmp_seq=4 ttl=128 <span class="hljs-keyword">time</span>=15.3 ms
+^C
+--- www.a.shifen.com ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, <span class="hljs-keyword">time</span> 14104ms
+rtt min/avg/max/mdev = 15.368/15.850/16.145/0.291 ms
+</code></pre>
+</li>
+</ol>
+<details open="">
+<summary>补充说明：`/etc/network/interfaces` 文件的配置</summary>
+<p>这是一个用于配置 Linux 系统上网络接口的文件。在这个示例中，我们为名为 <code>ens33</code> 的网络接口配置了静态 IP 地址和相关的网络设置。下面是各行的解释：</p>
+<ol>
+<li>
+<p><code>auto ens33</code>: 这一行表示在系统启动时自动激活 <code>ens33</code> 网络接口。<code>auto</code> 关键字后面跟着接口名称。</p>
+</li>
+<li>
+<p><code>iface ens33 inet static</code>: 这一行定义了 <code>ens33</code> 网络接口的配置。<code>iface</code> 关键字后面跟着接口名称，<code>inet</code> 表示我们正在配置 IPv4 地址，<code>static</code> 表示我们要为接口分配一个静态 IP 地址（而不是通过 DHCP 获得）。</p>
+</li>
+<li>
+<p><code>address 192.168.50.131</code>: 这一行设置了网络接口的静态 IP 地址。在这个例子中，我们为 <code>ens33</code> 接口分配了 <code>192.168.50.131</code> IP 地址。</p>
+<blockquote>
+<p>IP 地址是 Internet 协议（IP）用于在网络中唯一标识设备的数字标签。每个连接到网络的设备都需要一个唯一的 IP 地址，以便其他设备可以找到并与之通信。IP 地址通常分为两种版本：IPv4 和 IPv6。在此示例中，我们使用了一个 IPv4 地址。</p>
+</blockquote>
+</li>
+<li>
+<p><code>netmask 255.255.255.0</code>: 这一行定义了子网掩码。在这个例子中，子网掩码是 <code>255.255.255.0</code>，表示前三个字节（24 位）是网络地址，最后一个字节（8 位）是主机地址。</p>
+<blockquote>
+<p>子网掩码用于划分 IP 地址的网络部分和主机部分。子网掩码与 IP 地址进行按位与操作，从而得到网络地址。这有助于确定哪些 IP 地址属于同一子网，以便正确地将数据包路由到目的地。子网划分有助于组织网络、提高安全性和管理性。</p>
+</blockquote>
+</li>
+<li>
+<p><code>gateway 192.168.50.2</code>: 这一行设置了默认网关。在这个例子中，我们将默认网关设置为 <code>192.168.50.2</code>。默认网关是用于将数据包发送到其他网络的路由器或设备的 IP 地址。</p>
+<blockquote>
+<p>网关是一个充当网络中数据包传输的中继点的设备，通常是一个路由器。当一个设备需要将数据包发送到不同子网的另一个设备时，它会将数据包发送到网关。网关负责将数据包路由到正确的目的地。默认网关是设备用于将数据包发送到其他网络的首选网关。</p>
+</blockquote>
+</li>
+<li>
+<p><code>dns-nameservers 8.8.8.8 8.8.4.4</code>: 这一行指定了 DNS 服务器的 IP 地址。在这个例子中，我们使用了谷歌的公共 DNS 服务器 <code>8.8.8.8</code> 和 <code>8.8.4.4</code>。DNS 服务器用于将主机名解析为 IP 地址。</p>
+<blockquote>
+<p>域名系统（DNS）是将人类可读的域名（例如 <a href="http://www.baidu.com%EF%BC%89IP" node="[object Object]" target="_blank" rel="noopener noreferrer">www.baidu.com）IP</a> 地址的系统。DNS 服务器是负责执行此解析过程的服务器。当您在浏览器中输入一个网址时，计算机会向 DNS 服务器查询该域名对应的 IP 地址，然后将请求发送到该 IP 地址以获取网页内容。</p>
+</blockquote>
+</li>
+</ol>
+<p>配置文件中的这些设置将在系统启动时生效。要立即应用更改，您可以使用以下命令重启网络服务：</p>
+<pre data-language="BASH"><code class="hljs language-bash"><span class="hljs-built_in">sudo</span> systemctl restart networking
+</code></pre>
+</details>
+<h2 id="安装-jdk"><a href="#安装-jdk" node="[object Object]">安装 jdk</a></h2>
+<pre data-language="SH"><code class="hljs language-sh"><span class="hljs-built_in">sudo</span> apt update
+<span class="hljs-built_in">sudo</span> apt install openjdk-8-jdk
+</code></pre>
+<p>验证 java8 是否已经安装成功：</p>
+<pre data-language="SH"><code class="hljs language-sh">java -version
+</code></pre>
+<p>有以下类似输出的话则表明安装成功：</p>
+<pre data-language="SH"><code class="hljs language-sh">openjdk version <span class="hljs-string">&quot;1.8.0_362&quot;</span>
+OpenJDK Runtime Environment (build 1.8.0_362-8u372-ga~us1-0ubuntu1~18.04-b09)
+OpenJDK 64-Bit Server VM (build 25.362-b09, mixed mode)
+</code></pre>
+<h2 id="安装-zookeeper"><a href="#安装-zookeeper" node="[object Object]">安装 zookeeper</a></h2>
+<p>在 Ubuntu 上，您可以通过以下步骤安装 Apache Zookeeper 3.5.9：</p>
+<ol>
+<li>下载 Apache Zookeeper 3.5.9 的二进制文件。使用以下命令下载并解压缩 Zookeeper：</li>
+</ol>
+<pre data-language="SH"><code class="hljs language-sh">wget https://archive.apache.org/dist/zookeeper/zookeeper-3.5.9/apache-zookeeper-3.5.9-bin.tar.gz
+tar -xzf apache-zookeeper-3.5.9-bin.tar.gz
+</code></pre>
+<ol start="4">
+<li>将解压缩后的文件夹移动到 <code>/opt</code> 目录中：</li>
+</ol>
+<pre data-language="SH"><code class="hljs language-sh"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">mv</span> apache-zookeeper-3.5.9-bin /opt/zookeeper-3.5.9
+</code></pre>
+<ol start="5">
+<li>在 <code>/opt/zookeeper-3.5.9</code> 目录中创建一个名为 <code>data</code> 的文件夹，用于存储 Zookeeper 的数据：</li>
+</ol>
+<pre data-language="SH"><code class="hljs language-sh"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">mkdir</span> /opt/zookeeper-3.5.9/data
+</code></pre>
+<ol start="6">
+<li>在 <code>/opt/zookeeper-3.5.9/data</code> 下创建 myid 文件并设置内容为 <code>1</code>，其他两台机器则为 <code>2</code> 和 <code>3</code>：</li>
+</ol>
+<pre data-language="SH"><code class="hljs language-sh"><span class="hljs-built_in">echo</span> 1 | <span class="hljs-built_in">sudo</span> <span class="hljs-built_in">tee</span> /opt/zookeeper-3.5.9/data/myid
+</code></pre>
+<ol start="7">
+<li>复制 Zookeeper 配置文件样本，并将其命名为 <code>zoo.cfg</code>：</li>
+</ol>
+<pre data-language="SH"><code class="hljs language-sh"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">cp</span> /opt/zookeeper-3.5.9/conf/zoo_sample.cfg /opt/zookeeper-3.5.9/conf/zoo.cfg
+</code></pre>
+<ol start="8">
+<li>使用文本编辑器（例如 vim）编辑 <code>zoo.cfg</code> 文件：</li>
+</ol>
+<pre data-language="SH"><code class="hljs language-sh"><span class="hljs-built_in">sudo</span> vim /opt/zookeeper-3.5.9/conf/zoo.cfg
+</code></pre>
+<ol start="9">
+<li>修改 <code>zoo.cfg</code> 文件：</li>
+</ol>
+<pre data-language="SH"><code class="hljs language-sh"><span class="hljs-comment"># The number of milliseconds of each tick</span>
+tickTime=2000
+<span class="hljs-comment"># The number of ticks that the initial</span>
+<span class="hljs-comment"># synchronization phase can take</span>
+initLimit=10
+<span class="hljs-comment"># The number of ticks that can pass between</span>
+<span class="hljs-comment"># sending a request and getting an acknowledgement</span>
+syncLimit=5
+<span class="hljs-comment"># the directory where the snapshot is stored.</span>
+<span class="hljs-comment"># 设置数据存储目录</span>
+dataDir=/opt/zookeeper-3.5.9/data
+<span class="hljs-comment"># the port at which the clients will connect</span>
+clientPort=2181
+<span class="hljs-comment"># 设置集群信息</span>
+server.1=kafka1.com:2888:3888
+server.2=kafka2.com:2888:3888
+server.3=kafka3.com:2888:3888
+</code></pre>
+<blockquote>
+<p>在 Zookeeper 的配置文件中，<code>server.x=hostname:port1:port2</code> 这种格式的配置项是用来设置 Zookeeper 集群（集群模式下）的。其中，<code>x</code> 是服务器的 ID，<code>hostname</code> 是服务器的主机名或 IP 地址，<code>port1</code> 和 <code>port2</code> 是用于集群间通信的端口。</p>
+<p>具体来说：</p>
+<ul>
+<li>
+<p><code>port1（2888）</code>：这是服务器之间用于相互通信的端口。Zookeeper 服务器使用这个端口进行 leader 选举以及同步 follower 和 leader 之间的状态。</p>
+</li>
+<li>
+<p><code>port2（3888）</code>：这个端口用于服务器之间的 leader 选举。在 Zookeeper 集群启动或者在 leader 服务器崩溃后，follower 服务器会通过这个端口进行新一轮的 leader 选举。</p>
+</li>
+</ul>
+<p>这两个端口可以根据你的网络配置进行修改，但必须在所有的 Zookeeper 服务器上保持一致。</p>
+</blockquote>
+<ol start="10">
+<li>三个节点都启动 Zookeeper 服务器：</li>
+</ol>
+<pre data-language="SH"><code class="hljs language-sh">/opt/zookeeper/bin/zkServer.sh start
+</code></pre>
+<p>可以连接到 Zookeeper 的端口上（默认是 <code>2181</code>），通过发送四字命令 <code>srvr</code> 来验证 Zookeeper 是否安装正确（部署集群的话需要把所有 Zookeeper 启动）：</p>
+<pre data-language="SH"><code class="hljs language-sh">hedon@ubuntu:/opt/zookeeper-3.5.9$ telnet localhost 2181
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is <span class="hljs-string">&#x27;^]&#x27;</span>.
+srvr
+Zookeeper version: 3.5.9-83df9301aa5c2a5d284a9940177808c01bc35cef, built on 01/06/2021 19:49 GMT
+Latency min/avg/max: 0/0/0
+Received: 1
+Sent: 0
+Connections: 1
+Outstanding: 0
+Zxid: 0x0
+Mode: standalone
+Node count: 5
+Connection closed by foreign host.
+</code></pre>
+<ol start="11">
+<li>要停止 Zookeeper 服务器，可以使用以下命令：</li>
+</ol>
+<pre data-language="SH"><code class="hljs language-sh">/opt/zookeeper/bin/zkServer.sh stop
+</code></pre>
+<h2 id="安装-kafka"><a href="#安装-kafka" node="[object Object]">安装 Kafka</a></h2>
+<ol>
+<li>
+<p>下载并解压 Kafka</p>
+<pre data-language="SH"><code class="hljs language-sh">wget https://archive.apache.org/dist/kafka/2.7.0/kafka_2.13-2.7.0.tgz
+tar -zxvf kafka_2.13-2.7.0.tgz
+</code></pre>
+</li>
+<li>
+<p>将解压缩后的文件夹移动到 <code>/opt</code> 目录中：</p>
+<pre data-language="SH"><code class="hljs language-sh"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">mv</span> kafka_2.13-2.7.0 /opt/kafka-2.7.0
+</code></pre>
+</li>
+<li>
+<p>创建日志目录</p>
+<pre data-language="SH"><code class="hljs language-sh"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">mkdir</span> /opt/kafka-2.7.0/kafka-logs
+</code></pre>
+</li>
+<li>
+<p>备份 Kafka 默认配置</p>
+<pre data-language="SH"><code class="hljs language-sh"><span class="hljs-built_in">sudo</span> <span class="hljs-built_in">cp</span> /opt/kafka-2.7.0/config/server.properties /opt/kafka-2.7.0/config/server.properties.bak
+</code></pre>
+</li>
+<li>
+<p>修改 Kafka 配置</p>
+<pre data-language="SH"><code class="hljs language-sh"><span class="hljs-built_in">sudo</span> vim /opt/kafka-2.7.0/config/server.properties
+</code></pre>
+<p>主要是修改下面几个配置：</p>
+<pre data-language="PROPERTIES"><code class="hljs language-properties"># 集群中每个 broker 的 id 必须唯一，这里分别为 1，2，3
+broker.id=1
+# 日志目录
+log.dirs=/opt/kafka-2.7.0/kafka-logs
+# 配置 Zookeeper
+zookeeper.connect=kafka1.com:2181,kafka2.com:2181,kafka3.com:2181
+# 定义 Kafka Broker 在哪些网络地址上监听连接，下面配置表示在所有的 IP 地址上监听 9092 端口
+listeners=PLAINTEXT://:9092
+# 定义 Kafka Broker 如何向外部公布它的地址。这是 Kafka Broker 通知 Producer 和 Consumer 如何连接到自己的方式。例如，如果你设置 advertised.listeners=PLAINTEXT://my.public.ip:9092，那么 Kafka Broker 将告诉 Producer 和 Consumer 它的公共 IP 地址是 my.public.ip，并且它在 9092 端口上监听连接。
+advertised.listeners=PLAINTEXT://kafka1.com:9092
+</code></pre>
+</li>
+<li>
+<p>三个节点都启动 Kafka</p>
+<pre data-language="SH"><code class="hljs language-sh">/opt/kafka-2.7.0/bin/kafka-server-start.sh -daemon /opt/kafka-2.7.0/config/server.properties
+</code></pre>
+</li>
+<li>
+<p>选择任意一个节点创建一个新 topic</p>
+<pre data-language="SH"><code class="hljs language-sh">/opt/kafka-2.7.0/bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic <span class="hljs-built_in">test</span> --replication-factor 1 --partitions=2
+</code></pre>
+<p>输出：</p>
+<pre data-language="SH"><code class="hljs language-sh">Created topic <span class="hljs-built_in">test</span>.
+</code></pre>
+</li>
+<li>
+<p>在其他节点获取 <code>test</code> 这个 <code>topic</code> 的信息</p>
+<pre data-language="SH"><code class="hljs language-sh">/opt/kafka-2.7.0/bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic <span class="hljs-built_in">test</span>
+</code></pre>
+<p>可以看到关于 <code>test</code> 这个 <code>topic</code> 的信息是可以获取到的，说明集群之前信息是互通的，集群搭建完毕。</p>
+<pre data-language="SH"><code class="hljs language-sh">Topic: <span class="hljs-built_in">test</span>	PartitionCount: 2	ReplicationFactor: 1	Configs: segment.bytes=1073741824
+	Topic: <span class="hljs-built_in">test</span>	Partition: 0	Leader: 1	Replicas: 1	Isr: 1
+	Topic: <span class="hljs-built_in">test</span>	Partition: 1	Leader: 2	Replicas: 2	Isr: 2
+</code></pre>
+</li>
+</ol></div></div><div class="article-tags"><span class="p-category">#<!-- -->Kafka</span><span class="p-category">#<!-- -->部署</span><span class="p-category">#<!-- -->中间件</span><span class="p-category">#<!-- -->消息队列</span></div><section class="webmentions" aria-labelledby="webmentions-heading"><div class="webmention-title"><svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="currentColor" viewBox="0 0 256 256"><path d="M165.66,90.34a8,8,0,0,1,0,11.32l-64,64a8,8,0,0,1-11.32-11.32l64-64A8,8,0,0,1,165.66,90.34ZM215.6,40.4a56,56,0,0,0-79.2,0L106.34,70.45a8,8,0,0,0,11.32,11.32l30.06-30a40,40,0,0,1,56.57,56.56l-30.07,30.06a8,8,0,0,0,11.31,11.32L215.6,119.6a56,56,0,0,0,0-79.2ZM138.34,174.22l-30.06,30.06a40,40,0,1,1-56.56-56.57l30.05-30.05a8,8,0,0,0-11.32-11.32L40.4,136.4a56,56,0,0,0,79.2,79.2l30.06-30.07a8,8,0,0,0-11.32-11.31Z"></path></svg><div><h2 id="webmentions-heading">来自开放网络的回应</h2><p>引用、喜欢、转发和站外回复会通过 Webmention 回到这里。</p></div></div><div class="integration-notice"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"><path d="M116,72v88a48.05,48.05,0,0,1-48,48,8,8,0,0,1,0-16,32,32,0,0,0,32-32v-8H40a16,16,0,0,1-16-16V72A16,16,0,0,1,40,56h60A16,16,0,0,1,116,72ZM216,56H156a16,16,0,0,0-16,16v64a16,16,0,0,0,16,16h60v8a32,32,0,0,1-32,32,8,8,0,0,0,0,16,48.05,48.05,0,0,0,48-48V72A16,16,0,0,0,216,56Z"></path></svg><p>接收与展示代码已经就绪，注册正式域名后即可开始收集回应。</p></div></section><section class="comments" aria-labelledby="comments-heading-kafka/kakfa-cluster-deploy"><div class="comments-heading"><svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" viewBox="0 0 256 256"><path d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"></path></svg><div><h2 id="comments-heading-kafka/kakfa-cluster-deploy">评论</h2><p>评论由 GitHub Discussions 保存和管理。</p></div></div><div class="giscus-container"></div></section></div><button class="toc-mobile-trigger" type="button" aria-controls="_R_2ml6_" aria-expanded="false" aria-label="打开本篇目录，当前章节：版本说明" tabindex="0" data-mobile-open="false"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true"><path d="M228,128a12,12,0,0,1-12,12H40a12,12,0,0,1,0-24H216A12,12,0,0,1,228,128ZM40,76H216a12,12,0,0,0,0-24H40a12,12,0,0,0,0,24ZM216,180H40a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24Z"></path></svg><span>目录</span></button><button class="toc-mobile-backdrop" type="button" aria-label="关闭本篇目录" tabindex="-1" data-mobile-open="false"></button><aside class="toc" id="_R_2ml6_" aria-label="本篇目录" data-mobile-open="false"><div class="toc-header"><p>本篇目录</p><button class="toc-mobile-close" type="button" aria-label="关闭本篇目录"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path></svg></button></div><ol id="_R_2ml6H1_" class="toc-list"><li class="toc-section toc-depth-2 active"><div class="toc-item-row"><a href="#版本说明" aria-current="location">版本说明</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#集群配置">集群配置</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#安装-vim-curl">安装 vim, curl</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#配置静态-ip-和-hosts">配置静态 ip 和 hosts</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#安装-jdk">安装 jdk</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#安装-zookeeper">安装 zookeeper</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#安装-kafka">安装 Kafka</a></div></li></ol></aside></div></article></main></div><footer class="site-footer"><div class="footer-inner"><p>© <!-- -->2026<!-- --> <!-- -->Hedon<!-- --> · <!-- -->保持独立，持续写作。<span class="footer-framework"> · 基于 <a href="https://github.com/hedon954/garden" target="_blank" rel="noreferrer">Garden</a> 构建</span></p><div><a href="https://github.com/hedon954" aria-label="GitHub" rel="me"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" viewBox="0 0 256 256"><path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68ZM200,112a40,40,0,0,1-40,40H112a40,40,0,0,1-40-40v-8a41.74,41.74,0,0,1,6.9-22.48A8,8,0,0,0,80,73.83a43.81,43.81,0,0,1,.79-33.58,43.88,43.88,0,0,1,32.32,20.06A8,8,0,0,0,119.82,64h32.35a8,8,0,0,0,6.74-3.69,43.87,43.87,0,0,1,32.32-20.06A43.81,43.81,0,0,1,192,73.83a8.09,8.09,0,0,0,1,7.65A41.72,41.72,0,0,1,200,104Z"></path></svg>GitHub</a><a href="/rss.xml" aria-label="RSS 订阅"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256"><path d="M106.91,149.09A71.53,71.53,0,0,1,128,200a8,8,0,0,1-16,0,56,56,0,0,0-56-56,8,8,0,0,1,0-16A71.53,71.53,0,0,1,106.91,149.09ZM56,80a8,8,0,0,0,0,16A104,104,0,0,1,160,200a8,8,0,0,0,16,0A120,120,0,0,0,56,80Zm118.79,1.21A166.9,166.9,0,0,0,56,32a8,8,0,0,0,0,16A151,151,0,0,1,163.48,92.52,151,151,0,0,1,208,200a8,8,0,0,0,16,0A166.9,166.9,0,0,0,174.79,81.21ZM60,184a12,12,0,1,0,12,12A12,12,0,0,0,60,184Z"></path></svg>RSS</a></div></div></footer><script id="_R_">import("/assets/index-iWWMjvPF.js")</script></body></html><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("2:I[\"04dff15fd24a\",[],\"SiteChrome\",1]\n3:I[\"8c0f216c4604\",[],\"Children\",1]\n4:I[\"15c18cfaeeff\",[],\"LayoutSegmentProvider\",1]\n5:I[\"8c0f216c4604\",[],\"Slot\",1]\n6:I[\"593f344dc510\",[],\"RedirectBoundary\",1]\n:HL[\"/assets/index-BlvdgL5Z.css\",\"style\"]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("0:{\"__route\":\"route:/blog/kafka/kakfa-cluster-deploy/\",\"__interceptionContext\":null,\"__layoutIds\":[\"layout:/\"],\"__rootLayout\":\"/\",\"page:/blog/kafka/kakfa-cluster-deploy/\":\"$L1\",\"layout:/\":[[[[\"$\",\"link\",\"css:/assets/index-BlvdgL5Z.css\",{\"rel\":\"stylesheet\",\"precedence\":\"vite-rsc/importer-resources\",\"href\":\"/assets/index-BlvdgL5Z.css\",\"data-rsc-css-href\":\"/assets/index-BlvdgL5Z.css\"}],\"$undefined\"],[\"$\",\"html\",null,{\"lang\":\"zh-CN\",\"suppressHydrationWarning\":true,\"children\":[[\"$\",\"head\",null,{\"children\":[\"$undefined\",\"$undefined\"]}],[\"$\",\"body\",null,{\"className\":\"__variable_geist_mono_1diim1n\",\"children\":[[\"$\",\"a\",null,{\"className\":\"skip-link\",\"href\":\"#main-content\",\"children\":\"跳到正文\"}],[\"$\",\"$L2\",null,{\"children\":[\"$\",\"$L3\",null,{}]}]]}]]}]],null],\"route:/blog/kafka/kakfa-cluster-deploy/\":[[[\"$\",\"meta\",null,{\"charSet\":\"utf-8\"}],[[\"$\",\"title\",\"0\",{\"children\":\"Kafka 集群部署 · Hedon Garden\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"本文总结了在 Ubuntu18.04 虚拟机上部署 Kafka 集群的具体过程。\"}],[\"$\",\"meta\",\"2\",{\"name\":\"author\",\"content\":\"Hedon\"}],[\"$\",\"link\",\"3\",{\"rel\":\"author\",\"href\":\"https://github.com/hedon954\"}],[\"$\",\"meta\",\"4\",{\"name\":\"robots\",\"content\":\"index, follow\"}],[\"$\",\"meta\",\"5\",{\"name\":\"googlebot\",\"content\":\"index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:title\",\"content\":\"Kafka 集群部署\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:description\",\"content\":\"本文总结了在 Ubuntu18.04 虚拟机上部署 Kafka 集群的具体过程。\"}],[\"$\",\"meta\",\"8\",{\"property\":\"og:url\",\"content\":\"https://hedon.top/blog/kafka/kakfa-cluster-deploy\"}],[\"$\",\"meta\",\"9\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"10\",{\"property\":\"article:published_time\",\"content\":\"2023-11-22T00:28:59.000Z\"}],[\"$\",\"meta\",\"11\",{\"property\":\"og:image\",\"content\":\"https://hedon.top/hedonspace/banner/kafka-cluster-deploy.jpg\"}],[\"$\",\"meta\",\"12\",{\"property\":\"og:image:alt\",\"content\":\"Kafka 集群部署 的文章封面\"}],[\"$\",\"meta\",\"13\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"14\",{\"name\":\"twitter:title\",\"content\":\"Kafka 集群部署\"}],[\"$\",\"meta\",\"15\",{\"name\":\"twitter:description\",\"content\":\"本文总结了在 Ubuntu18.04 虚拟机上部署 Kafka 集群的具体过程。\"}],[\"$\",\"meta\",\"16\",{\"name\":\"twitter:image\",\"content\":\"https://hedon.top/hedonspace/banner/kafka-cluster-deploy.jpg\"}],[\"$\",\"link\",\"17\",{\"rel\":\"icon\",\"href\":\"https://hedon.top/favicon.svg\"}],[\"$\",\"link\",\"18\",{\"rel\":\"canonical\",\"href\":\"https://hedon.top/blog/kafka/kakfa-cluster-deploy\"}]],[[\"$\",\"meta\",\"0\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]],[\"$\",\"$L4\",null,{\"segmentMap\":{\"children\":[\"blog\",\"kafka/kakfa-cluster-deploy\"]},\"children\":[\"$\",\"$L5\",null,{\"id\":\"layout:/\",\"parallelSlots\":\"$undefined\",\"children\":[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$L4\",null,{\"segmentMap\":{\"children\":[]},\"children\":[\"$\",\"$L5\",null,{\"id\":\"page:/blog/kafka/kakfa-cluster-deploy/\"}]}]}]}]}]],\"__layoutFlags\":{\"layout:/\":\"s\"},\"__artifactCompatibility\":{\"schemaVersion\":1,\"graphVersion\":\"app-route-graph:1url7xrgffgzg\",\"deploymentVersion\":\"42ea885b-ba92-4c44-8068-a1dcfe71a16b\",\"appElementsSchemaVersion\":1,\"rscPayloadSchemaVersion\":1,\"rootBoundaryId\":\"/\",\"renderEpoch\":null}}\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("7:I[\"c2747888630f\",[],\"default\",1]\n:HL[\"https://hedon.top/hedonspace/banner/kafka-cluster-deploy.jpg\",\"image\"]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("1:[\"$\",\"main\",null,{\"className\":\"reading-page post-reading-page\",\"children\":[\"$\",\"article\",null,{\"className\":\"post-article h-entry\",\"children\":[[\"$\",\"$L7\",null,{\"className\":\"u-url sr-only\",\"href\":\"/blog/kafka/kakfa-cluster-deploy\",\"children\":[\"Kafka 集群部署\",\" 永久链接\"]}],[\"$\",\"a\",null,{\"className\":\"p-author h-card sr-only\",\"href\":\"https://github.com/hedon954\",\"rel\":\"author\",\"children\":\"Hedon\"}],[\"$\",\"figure\",null,{\"className\":\"article-hero article-cover\",\"children\":[\"$\",\"img\",null,{\"className\":\"u-photo\",\"src\":\"https://hedon.top/hedonspace/banner/kafka-cluster-deploy.jpg\",\"alt\":\"Kafka 集群部署 的文章封面\"}]}],[\"$\",\"header\",null,{\"className\":\"article-header article-summary-row\",\"children\":[[\"$\",\"p\",null,{\"className\":\"eyebrow\",\"children\":\"Kafka\"}],[\"$\",\"h1\",null,{\"className\":\"p-name\",\"children\":\"Kafka 集群部署\"}],[\"$\",\"p\",null,{\"className\":\"article-deck p-summary\",\"children\":\"本文总结了在 Ubuntu18.04 虚拟机上部署 Kafka 集群的具体过程。\"}],[\"$\",\"div\",null,{\"className\":\"article-meta\",\"children\":[[\"$\",\"time\",null,{\"className\":\"dt-published\",\"dateTime\":\"2023-11-22T00:28:59.000Z\",\"children\":[\"发布于 \",\"2023/11/22\"]}],\"$undefined\",[\"$\",\"span\",null,{\"children\":\"$undefined\"}],[\"$\",\"span\",null,{\"children\":[\"约 \",\"3,111\",\" 字\"]}]]}]]}],[\"$\",\"div\",null,{\"className\":\"article-reading-layout\",\"children\":[[\"$\",\"div\",null,{\"className\":\"article-reading-column\",\"children\":[[\"$\",\"div\",null,{\"className\":\"e-content\",\"children\":[\"$\",\"div\",null,{\"className\":\"markdown-body\",\"children\":[[\"$\",\"h2\",\"h2-0\",{\"id\":\"版本说明\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#版本说明\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#版本说明\"},\"children\":[{\"type\":\"text\",\"value\":\"版本说明\",\"position\":{\"start\":{\"line\":1,\"column\":4,\"offset\":3},\"end\":{\"line\":1,\"column\":8,\"offset\":7}}}]},\"children\":\"版本说明\"}]}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"Ubuntu 18.04.6\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"Zookeeper 3.5.9\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"Kafka 2.7.0\"}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":\"JDK8\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",\"h2-1\",{\"id\":\"集群配置\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#集群配置\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#集群配置\"},\"children\":[{\"type\":\"text\",\"value\":\"集群配置\",\"position\":{\"start\":{\"line\":8,\"column\":4,\"offset\":69},\"end\":{\"line\":8,\"column\":8,\"offset\":73}}}]},\"children\":\"集群配置\"}]}],\"\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\",[\"$\",\"table\",\"table-0\",{\"children\":[[\"$\",\"thead\",\"thead-0\",{\"children\":[\"$\",\"tr\",\"tr-0\",{\"children\":[[\"$\",\"th\",\"th-0\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"操作系统\"}],[\"$\",\"th\",\"th-1\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"ip\"}],[\"$\",\"th\",\"th-2\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"域名\"}],[\"$\",\"th\",\"th-3\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"Zookeeper 端口\"}],[\"$\",\"th\",\"th-4\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"Kafka 端口\"}]]}]}],[\"$\",\"tbody\",\"tbody-0\",{\"children\":[[\"$\",\"tr\",\"tr-0\",{\"children\":[[\"$\",\"td\",\"td-0\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"Ubuntu 18.04.6\"}],[\"$\",\"td\",\"td-1\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"192.168.50.131\"}],[\"$\",\"td\",\"td-2\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"kafka1.com\"}],[\"$\",\"td\",\"td-3\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"2181\"}],[\"$\",\"td\",\"td-4\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"9092\"}]]}],[\"$\",\"tr\",\"tr-1\",{\"children\":[[\"$\",\"td\",\"td-0\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"Ubuntu 18.04.6\"}],[\"$\",\"td\",\"td-1\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"192.168.50.132\"}],[\"$\",\"td\",\"td-2\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"kafka2.com\"}],[\"$\",\"td\",\"td-3\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"2181\"}],[\"$\",\"td\",\"td-4\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"9092\"}]]}],[\"$\",\"tr\",\"tr-2\",{\"children\":[[\"$\",\"td\",\"td-0\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"Ubuntu 18.04.6\"}],[\"$\",\"td\",\"td-1\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"192.168.50.133\"}],[\"$\",\"td\",\"td-2\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"kafka3.com\"}],[\"$\",\"td\",\"td-3\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"2181\"}],[\"$\",\"td\",\"td-4\",{\"style\":{\"textAlign\":\"center\"},\"children\":\"9092\"}]]}]]}]]}],\"\\n\",[\"$\",\"h2\",\"h2-2\",{\"id\":\"安装-vim-curl\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#安装-vim-curl\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#安装-vim-curl\"},\"children\":[{\"type\":\"text\",\"value\":\"安装 vim, curl\",\"position\":{\"start\":{\"line\":16,\"column\":4,\"offset\":464},\"end\":{\"line\":16,\"column\":16,\"offset\":476}}}]},\"children\":\"安装 vim, curl\"}]}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" apt update\\n\",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" apt install vim\\n\",[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" apt install curl\\n\"]}]}],\"\\n\",[\"$\",\"h2\",\"h2-3\",{\"id\":\"配置静态-ip-和-hosts\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#配置静态-ip-和-hosts\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#配置静态-ip-和-hosts\"},\"children\":[{\"type\":\"text\",\"value\":\"配置静态 ip 和 hosts\",\"position\":{\"start\":{\"line\":24,\"column\":4,\"offset\":551},\"end\":{\"line\":24,\"column\":19,\"offset\":566}}}]},\"children\":\"配置静态 ip 和 hosts\"}]}],\"\\n\",\"$L8\",\"\\n\",\"$L9\",\"\\n\",\"$La\",\"\\n\",\"$Lb\",\"\\n\",\"$Lc\",\"\\n\",\"$Ld\",\"\\n\",\"$Le\",\"\\n\",\"$Lf\",\"\\n\",\"$L10\",\"\\n\",\"$L11\",\"\\n\",\"$L12\",\"\\n\",\"$L13\",\"\\n\",\"$L14\",\"\\n\",\"$L15\",\"\\n\",\"$L16\",\"\\n\",\"$L17\",\"\\n\",\"$L18\",\"\\n\",\"$L19\",\"\\n\",\"$L1a\",\"\\n\",\"$L1b\",\"\\n\",\"$L1c\",\"\\n\",\"$L1d\",\"\\n\",\"$L1e\",\"\\n\",\"$L1f\",\"\\n\",\"$L20\",\"\\n\",\"$L21\",\"\\n\",\"$L22\",\"\\n\",\"$L23\",\"\\n\",\"$L24\",\"\\n\",\"$L25\",\"\\n\",\"$L26\",\"\\n\",\"$L27\",\"\\n\",\"$L28\",\"\\n\",\"$L29\"]}]}],\"$L2a\",\"$L2b\",\"$L2c\"]}],\"$L2d\"]}]]}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("36:I[\"201d37663261\",[],\"Webmentions\",1]\n37:I[\"35e6595fba52\",[],\"GiscusComments\",1]\n38:I[\"47831e8e6cd4\",[],\"TableOfContents\",1]\n8:[\"$\",\"p\",\"p-0\",{\"children\":[\"为了使用域名，更加方便的进行配置，这里将虚拟机的 DHCP 改成了静态分配 IP，所以需要手动设置一下每台机器 IP 地址，这里以 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"192.168.50.131\"}],\" 为例。\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("9:[\"$\",\"ol\",\"ol-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"找到网络接口名称，运行以下命令：\"}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":\"ip addr\\n\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":[\"查找以 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"ens\"}],\" 或 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"eth\"}],\" 开头的接口名称。例如，\",[\"$\",\"code\",\"code-2\",{\"className\":\"$undefined\",\"children\":\"ens33\"}],\" 或 \",[\"$\",\"code\",\"code-3\",{\"className\":\"$undefined\",\"children\":\"eth0\"}],\"。\"]}],\"\\n\",[\"$\",\"pre\",\"pre-1\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[\"hedon@ubuntu:~$ ip addr\\n1: lo: \u003cLOOPBACK,UP,LOWER_UP\u003e mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000\\n    \",[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"link\"}],\"/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00\\n    inet 127.0.0.1/8 scope host lo\\n       valid_lft forever preferred_lft forever\\n    inet6 ::1/128 scope host\\n       valid_lft forever preferred_lft forever\\n2: ens33: \u003cBROADCAST,MULTICAST,UP,LOWER_UP\u003e mtu 1500 qdisc fq_codel state UP group default qlen 1000\\n    \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-built_in\",\"children\":\"link\"}],\"/ether 00:0c:29:82:9e:69 brd ff:ff:ff:ff:ff:ff\\n    inet 192.168.50.133/24 brd 192.168.50.255 scope global dynamic noprefixroute ens33\\n       valid_lft 1644sec preferred_lft 1644sec\\n    inet6 fe80::c367:c7cc:3ad4:23b3/64 scope \",[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-built_in\",\"children\":\"link\"}],\"\\n       valid_lft forever preferred_lft forever\\n\"]}]}],\"\\n\",[\"$\",\"p\",\"p-2\",{\"children\":[\"可以找到 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"ens33\"}],\"，其中 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"inet 192.168.50.133/24\"}],\" 表示 IP 地址为 \",[\"$\",\"code\",\"code-2\",{\"className\":\"$undefined\",\"children\":\"192.168.50.133\"}],\"，子网掩码为 \",[\"$\",\"code\",\"code-3\",{\"className\":\"$undefined\",\"children\":\"/24\"}],\"（等于 \",[\"$\",\"code\",\"code-4\",{\"className\":\"$undefined\",\"children\":\"255.255.255.0\"}],\"）。\"]}],\"\\n\",[\"$\",\"p\",\"p-3\",{\"children\":[\"这个 IP 地址是 DHCP 动态分配的，说明宿主机分配给虚拟机的 IP 范围就在 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"192.168.50.xxx\"}],\"，所以我们会将静态 IP 配置在这个范围内。\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"获取网关地址\"}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":\"ip route | grep default\\n\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"输出：\"}],\"\\n\",[\"$\",\"pre\",\"pre-1\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":\"hedon@ubuntu:~$ ip route | grep default\\ndefault via 192.168.50.2 dev ens33 proto dhcp metric 100\\n\"}]}],\"\\n\",[\"$\",\"p\",\"p-2\",{\"children\":[\"说明默认网关是 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"192.168.50.2\"}],\"，\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"编辑 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"/etc/network/interfaces\"}],\" 文件，配置静态 IP 地址，内容如下：\"]}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"TEX\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-tex\",\"children\":\"auto ens33\\niface ens33 inet static\\n\\taddress 192.168.50.131\\n\\tnetmask 255.255.255.0\\n\\tgateway 192.168.50.2\\n\\tdns-nameservers 8.8.8.8 8.8.4.4\\n\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"重启\"}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":\"su reboot\\n\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-4\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"再次查看 ip 地址\"}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":\"ip addr\\n\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"有以下输出便说明静态 IP 配置成功了。\"}],\"\\n\",[\"$\",\"pre\",\"pre-1\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[\"1: lo: \u003cLOOPBACK,UP,LOWER_UP\u003e mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000\\n    \",[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"link\"}],\"/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00\\n    inet 127.0.0.1/8 scope host lo\\n       valid_lft forever preferred_lft forever\\n    inet6 ::1/128 scope host\\n       valid_lft forever preferred_lft forever\\n2: ens33: \u003cBROADCAST,MULTICAST,UP,LOWER_UP\u003e mtu 1500 qdisc fq_codel state UP group default qlen 1000\\n    \",\"$L2e\",\"/ether 00:0c:29:82:9e:69 brd ff:ff:ff:ff:ff:ff\\n    inet 192.168.50.131/24 brd 192.168.50.255 scope global ens33\\n       valid_lft forever preferred_lft forever\\n    inet6 fe80::20c:29ff:fe82:9e69/64 scope \",\"$L2f\",\"\\n       valid_lft forever preferred_lft forever\\n\"]}]}],\"\\n\"]}],\"\\n\",\"$L30\",\"\\n\",\"$L31\",\"\\n\",\"$L32\",\"\\n\",\"$L33\",\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("a:[\"$\",\"details\",\"details-0\",{\"open\":true,\"children\":[\"\\n\",[\"$\",\"summary\",\"summary-0\",{\"children\":\"补充说明：`/etc/network/interfaces` 文件的配置\"}],\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"这是一个用于配置 Linux 系统上网络接口的文件。在这个示例中，我们为名为 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"ens33\"}],\" 的网络接口配置了静态 IP 地址和相关的网络设置。下面是各行的解释：\"]}],\"\\n\",[\"$\",\"ol\",\"ol-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"auto ens33\"}],\": 这一行表示在系统启动时自动激活 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"ens33\"}],\" 网络接口。\",[\"$\",\"code\",\"code-2\",{\"className\":\"$undefined\",\"children\":\"auto\"}],\" 关键字后面跟着接口名称。\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"iface ens33 inet static\"}],\": 这一行定义了 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"ens33\"}],\" 网络接口的配置。\",[\"$\",\"code\",\"code-2\",{\"className\":\"$undefined\",\"children\":\"iface\"}],\" 关键字后面跟着接口名称，\",[\"$\",\"code\",\"code-3\",{\"className\":\"$undefined\",\"children\":\"inet\"}],\" 表示我们正在配置 IPv4 地址，\",[\"$\",\"code\",\"code-4\",{\"className\":\"$undefined\",\"children\":\"static\"}],\" 表示我们要为接口分配一个静态 IP 地址（而不是通过 DHCP 获得）。\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"address 192.168.50.131\"}],\": 这一行设置了网络接口的静态 IP 地址。在这个例子中，我们为 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"ens33\"}],\" 接口分配了 \",[\"$\",\"code\",\"code-2\",{\"className\":\"$undefined\",\"children\":\"192.168.50.131\"}],\" IP 地址。\"]}],\"\\n\",[\"$\",\"blockquote\",\"blockquote-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"IP 地址是 Internet 协议（IP）用于在网络中唯一标识设备的数字标签。每个连接到网络的设备都需要一个唯一的 IP 地址，以便其他设备可以找到并与之通信。IP 地址通常分为两种版本：IPv4 和 IPv6。在此示例中，我们使用了一个 IPv4 地址。\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"netmask 255.255.255.0\"}],\": 这一行定义了子网掩码。在这个例子中，子网掩码是 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"255.255.255.0\"}],\"，表示前三个字节（24 位）是网络地址，最后一个字节（8 位）是主机地址。\"]}],\"\\n\",[\"$\",\"blockquote\",\"blockquote-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"子网掩码用于划分 IP 地址的网络部分和主机部分。子网掩码与 IP 地址进行按位与操作，从而得到网络地址。这有助于确定哪些 IP 地址属于同一子网，以便正确地将数据包路由到目的地。子网划分有助于组织网络、提高安全性和管理性。\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-4\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"gateway 192.168.50.2\"}],\": 这一行设置了默认网关。在这个例子中，我们将默认网关设置为 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"192.168.50.2\"}],\"。默认网关是用于将数据包发送到其他网络的路由器或设备的 IP 地址。\"]}],\"\\n\",[\"$\",\"blockquote\",\"blockquote-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"网关是一个充当网络中数据包传输的中继点的设备，通常是一个路由器。当一个设备需要将数据包发送到不同子网的另一个设备时，它会将数据包发送到网关。网关负责将数据包路由到正确的目的地。默认网关是设备用于将数据包发送到其他网络的首选网关。\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-5\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"dns-nameservers 8.8.8.8 8.8.4.4\"}],\": 这一行指定了 DNS 服务器的 IP 地址。在这个例子中，我们使用了谷歌的公共 DNS 服务器 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"8.8.8.8\"}],\" 和 \",[\"$\",\"code\",\"code-2\",{\"className\":\"$undefined\",\"children\":\"8.8.4.4\"}],\"。DNS 服务器用于将主机名解析为 IP 地址。\"]}],\"\\n\",[\"$\",\"blockquote\",\"blockquote-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"域名系统（DNS）是将人类可读的域名（例如 \",[\"$\",\"a\",\"a-0\",{\"href\":\"http://www.baidu.com%EF%BC%89IP\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"http://www.baidu.com%EF%BC%89IP\"},\"children\":[{\"type\":\"text\",\"value\":\"www.baidu.com）IP\",\"position\":{\"start\":{\"line\":200,\"column\":28,\"offset\":5814},\"end\":{\"line\":200,\"column\":44,\"offset\":5830}}}],\"position\":{\"start\":{\"line\":200,\"column\":28,\"offset\":5814},\"end\":{\"line\":200,\"column\":44,\"offset\":5830}}},\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":\"www.baidu.com）IP\"}],\" 地址的系统。DNS 服务器是负责执行此解析过程的服务器。当您在浏览器中输入一个网址时，计算机会向 DNS 服务器查询该域名对应的 IP 地址，然后将请求发送到该 IP 地址以获取网页内容。\"]}],\"\\n\"]}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"配置文件中的这些设置将在系统启动时生效。要立即应用更改，您可以使用以下命令重启网络服务：\"}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"BASH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-bash\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" systemctl restart networking\\n\"]}]}],\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("b:[\"$\",\"h2\",\"h2-4\",{\"id\":\"安装-jdk\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#安装-jdk\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#安装-jdk\"},\"children\":[{\"type\":\"text\",\"value\":\"安装 jdk\",\"position\":{\"start\":{\"line\":210,\"column\":4,\"offset\":6035},\"end\":{\"line\":210,\"column\":10,\"offset\":6041}}}]},\"children\":\"安装 jdk\"}]}]\nc:[\"$\",\"pre\",\"pre-1\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" apt update\\n\",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" apt install openjdk-8-jdk\\n\"]}]}]\nd:[\"$\",\"p\",\"p-1\",{\"children\":\"验证 java8 是否已经安装成功：\"}]\ne:[\"$\",\"pre\",\"pre-2\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":\"java -version\\n\"}]}]\nf:[\"$\",\"p\",\"p-2\",{\"children\":\"有以下类似输出的话则表明安装成功：\"}]\n10:[\"$\",\"pre\",\"pre-3\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[\"openjdk version \",[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-string\",\"children\":\"\\\"1.8.0_362\\\"\"}],\"\\nOpenJDK Runtime Environment (build 1.8.0_362-8u372-ga~us1-0ubuntu1~18.04-b09)\\nOpenJDK 64-Bit Server VM (build 25.362-b09, mixed mode)\\n\"]}]}]\n11:[\"$\",\"h2\",\"h2-5\",{\"id\":\"安装-zookeeper\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#安装-zookeeper\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#安装-zookeeper\"},\"children\":[{\"type\":\"text\",\"value\":\"安装 zookeeper\",\"position\":{\"start\":{\"line\":231,\"column\":4,\"offset\":6341},\"end\":{\"line\":231,\"column\":16,\"offset\":6353}}}]},\"children\":\"安装 zookeeper\"}]}]\n12:[\"$\",\"p\",\"p-3\",{\"children\":\"在 Ubuntu 上，您可以通过以下步骤安装 Apache Zookeeper 3.5.9：\"}]\n13:[\"$\",\"ol\",\"ol-1\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"下载 Apache Zookeeper 3.5.9 的二进制文件。使用以下命令下载并解压缩 Zookeeper：\"}],\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("14:[\"$\",\"pre\",\"pre-4\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":\"wget https://archive.apache.org/dist/zookeeper/zookeeper-3.5.9/apache-zookeeper-3.5.9-bin.tar.gz\\ntar -xzf apache-zookeeper-3.5.9-bin.tar.gz\\n\"}]}]\n15:[\"$\",\"ol\",\"ol-2\",{\"start\":4,\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"将解压缩后的文件夹移动到 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"/opt\"}],\" 目录中：\"]}],\"\\n\"]}]\n16:[\"$\",\"pre\",\"pre-5\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-built_in\",\"children\":\"mv\"}],\" apache-zookeeper-3.5.9-bin /opt/zookeeper-3.5.9\\n\"]}]}]\n17:[\"$\",\"ol\",\"ol-3\",{\"start\":5,\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"在 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"/opt/zookeeper-3.5.9\"}],\" 目录中创建一个名为 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"data\"}],\" 的文件夹，用于存储 Zookeeper 的数据：\"]}],\"\\n\"]}]\n18:[\"$\",\"pre\",\"pre-6\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-built_in\",\"children\":\"mkdir\"}],\" /opt/zookeeper-3.5.9/data\\n\"]}]}]\n19:[\"$\",\"ol\",\"ol-4\",{\"start\":6,\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"在 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"/opt/zookeeper-3.5.9/data\"}],\" 下创建 myid 文件并设置内容为 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"1\"}],\"，其他两台机器则为 \",[\"$\",\"code\",\"code-2\",{\"className\":\"$undefined\",\"children\":\"2\"}],\" 和 \",[\"$\",\"code\",\"code-3\",{\"className\":\"$undefined\",\"children\":\"3\"}],\"：\"]}],\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("1a:[\"$\",\"pre\",\"pre-7\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"echo\"}],\" 1 | \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" \",[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-built_in\",\"children\":\"tee\"}],\" /opt/zookeeper-3.5.9/data/myid\\n\"]}]}]\n1b:[\"$\",\"ol\",\"ol-5\",{\"start\":7,\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"复制 Zookeeper 配置文件样本，并将其命名为 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"zoo.cfg\"}],\"：\"]}],\"\\n\"]}]\n1c:[\"$\",\"pre\",\"pre-8\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-built_in\",\"children\":\"cp\"}],\" /opt/zookeeper-3.5.9/conf/zoo_sample.cfg /opt/zookeeper-3.5.9/conf/zoo.cfg\\n\"]}]}]\n1d:[\"$\",\"ol\",\"ol-6\",{\"start\":8,\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"使用文本编辑器（例如 vim）编辑 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"zoo.cfg\"}],\" 文件：\"]}],\"\\n\"]}]\n1e:[\"$\",\"pre\",\"pre-9\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" vim /opt/zookeeper-3.5.9/conf/zoo.cfg\\n\"]}]}]\n1f:[\"$\",\"ol\",\"ol-7\",{\"start\":9,\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"修改 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"zoo.cfg\"}],\" 文件：\"]}],\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("20:[\"$\",\"pre\",\"pre-10\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-comment\",\"children\":\"# The number of milliseconds of each tick\"}],\"\\ntickTime=2000\\n\",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-comment\",\"children\":\"# The number of ticks that the initial\"}],\"\\n\",[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-comment\",\"children\":\"# synchronization phase can take\"}],\"\\ninitLimit=10\\n\",[\"$\",\"span\",\"span-3\",{\"className\":\"hljs-comment\",\"children\":\"# The number of ticks that can pass between\"}],\"\\n\",[\"$\",\"span\",\"span-4\",{\"className\":\"hljs-comment\",\"children\":\"# sending a request and getting an acknowledgement\"}],\"\\nsyncLimit=5\\n\",[\"$\",\"span\",\"span-5\",{\"className\":\"hljs-comment\",\"children\":\"# the directory where the snapshot is stored.\"}],\"\\n\",[\"$\",\"span\",\"span-6\",{\"className\":\"hljs-comment\",\"children\":\"# 设置数据存储目录\"}],\"\\ndataDir=/opt/zookeeper-3.5.9/data\\n\",[\"$\",\"span\",\"span-7\",{\"className\":\"hljs-comment\",\"children\":\"# the port at which the clients will connect\"}],\"\\nclientPort=2181\\n\",[\"$\",\"span\",\"span-8\",{\"className\":\"hljs-comment\",\"children\":\"# 设置集群信息\"}],\"\\nserver.1=kafka1.com:2888:3888\\nserver.2=kafka2.com:2888:3888\\nserver.3=kafka3.com:2888:3888\\n\"]}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("21:[\"$\",\"blockquote\",\"blockquote-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"在 Zookeeper 的配置文件中，\",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"server.x=hostname:port1:port2\"}],\" 这种格式的配置项是用来设置 Zookeeper 集群（集群模式下）的。其中，\",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"x\"}],\" 是服务器的 ID，\",[\"$\",\"code\",\"code-2\",{\"className\":\"$undefined\",\"children\":\"hostname\"}],\" 是服务器的主机名或 IP 地址，\",[\"$\",\"code\",\"code-3\",{\"className\":\"$undefined\",\"children\":\"port1\"}],\" 和 \",[\"$\",\"code\",\"code-4\",{\"className\":\"$undefined\",\"children\":\"port2\"}],\" 是用于集群间通信的端口。\"]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"具体来说：\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"port1（2888）\"}],\"：这是服务器之间用于相互通信的端口。Zookeeper 服务器使用这个端口进行 leader 选举以及同步 follower 和 leader 之间的状态。\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"port2（3888）\"}],\"：这个端口用于服务器之间的 leader 选举。在 Zookeeper 集群启动或者在 leader 服务器崩溃后，follower 服务器会通过这个端口进行新一轮的 leader 选举。\"]}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",\"p-2\",{\"children\":\"这两个端口可以根据你的网络配置进行修改，但必须在所有的 Zookeeper 服务器上保持一致。\"}],\"\\n\"]}]\n22:[\"$\",\"ol\",\"ol-8\",{\"start\":10,\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"三个节点都启动 Zookeeper 服务器：\"}],\"\\n\"]}]\n23:[\"$\",\"pre\",\"pre-11\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":\"/opt/zookeeper/bin/zkServer.sh start\\n\"}]}]\n24:[\"$\",\"p\",\"p-4\",{\"children\":[\"可以连接到 Zookeeper 的端口上（默认是 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"2181\"}],\"），通过发送四字命令 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"srvr\"}],\" 来验证 Zookeeper 是否安装正确（部署集群的话需要把所有 Zookeeper 启动）：\"]}]\n25:[\"$\",\"pre\",\"pre-12\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[\"hedon@ubuntu:/opt/zookeeper-3.5.9$ telnet localhost 2181\\nTrying 127.0.0.1...\\nConnected to localhost.\\nEscape character is \",[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-string\",\"children\":\"'^]'\"}],\".\\nsrvr\\nZookeeper version: 3.5.9-83df9301aa5c2a5d284a9940177808c01bc35cef, built on 01/06/2021 19:49 GMT\\nLatency min/avg/max: 0/0/0\\nReceived: 1\\nSent: 0\\nConnections: 1\\nOutstanding: 0\\nZxid: 0x0\\nMode: standalone\\nNode count: 5\\nConnection closed by foreign host.\\n\"]}]}]\n26:[\"$\",\"ol\",\"ol-9\",{\"start\":11,\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"要停止 Zookeeper 服务器，可以使用以下命令：\"}],\"\\n\"]}]\n27:[\"$\",\"pre\",\"pre-13\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":\"/opt/zookeeper/bin/zkServer.sh stop\\n\"}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("28:[\"$\",\"h2\",\"h2-6\",{\"id\":\"安装-kafka\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#安装-kafka\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#安装-kafka\"},\"children\":[{\"type\":\"text\",\"value\":\"安装 Kafka\",\"position\":{\"start\":{\"line\":336,\"column\":4,\"offset\":8810},\"end\":{\"line\":336,\"column\":12,\"offset\":8818}}}]},\"children\":\"安装 Kafka\"}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("29:[\"$\",\"ol\",\"ol-10\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"下载并解压 Kafka\"}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":\"wget https://archive.apache.org/dist/kafka/2.7.0/kafka_2.13-2.7.0.tgz\\ntar -zxvf kafka_2.13-2.7.0.tgz\\n\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"将解压缩后的文件夹移动到 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"/opt\"}],\" 目录中：\"]}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-built_in\",\"children\":\"mv\"}],\" kafka_2.13-2.7.0 /opt/kafka-2.7.0\\n\"]}]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"创建日志目录\"}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-built_in\",\"children\":\"mkdir\"}],\" /opt/kafka-2.7.0/kafka-logs\\n\"]}]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"备份 Kafka 默认配置\"}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-built_in\",\"children\":\"cp\"}],\" /opt/kafka-2.7.0/config/server.properties /opt/kafka-2.7.0/config/server.properties.bak\\n\"]}]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-4\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"修改 Kafka 配置\"}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" vim /opt/kafka-2.7.0/config/server.properties\\n\"]}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"主要是修改下面几个配置：\"}],\"\\n\",[\"$\",\"pre\",\"pre-1\",{\"data-language\":\"PROPERTIES\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-properties\",\"children\":\"# 集群中每个 broker 的 id 必须唯一，这里分别为 1，2，3\\nbroker.id=1\\n# 日志目录\\nlog.dirs=/opt/kafka-2.7.0/kafka-logs\\n# 配置 Zookeeper\\nzookeeper.connect=kafka1.com:2181,kafka2.com:2181,kafka3.com:2181\\n# 定义 Kafka Broker 在哪些网络地址上监听连接，下面配置表示在所有的 IP 地址上监听 9092 端口\\nlisteners=PLAINTEXT://:9092\\n# 定义 Kafka Broker 如何向外部公布它的地址。这是 Kafka Broker 通知 Producer 和 Consumer 如何连接到自己的方式。例如，如果你设置 advertised.listeners=PLAINTEXT://my.public.ip:9092，那么 Kafka Broker 将告诉 Producer 和 Consumer 它的公共 IP 地址是 my.public.ip，并且它在 9092 端口上监听连接。\\nadvertised.listeners=PLAINTEXT://kafka1.com:9092\\n\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-5\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"三个节点都启动 Kafka\"}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":\"/opt/kafka-2.7.0/bin/kafka-server-start.sh -daemon /opt/kafka-2.7.0/config/server.properties\\n\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-6\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"选择任意一个节点创建一个新 topic\"}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[\"/opt/kafka-2.7.0/bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic \",[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"test\"}],\" --replication-factor 1 --partitions=2\\n\"]}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"输出：\"}],\"\\n\",[\"$\",\"pre\",\"pre-1\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[\"Created topic \",[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"test\"}],\".\\n\"]}]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-7\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"在其他节点获取 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"test\"}],\" 这个 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"topic\"}],\" 的信息\"]}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[\"/opt/kafka-2.7.0/bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic \",[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"test\"}],\"\\n\"]}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":[\"可以看到关于 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"test\"}],\" 这个 \",\"$L34\",\" 的信息是可以获取到的，说明集群之前信息是互通的，集群搭建完毕。\"]}],\"\\n\",\"$L35\",\"\\n\"]}],\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("2a:[\"$\",\"div\",null,{\"className\":\"article-tags\",\"children\":[[\"$\",\"span\",\"Kafka\",{\"className\":\"p-category\",\"children\":[\"#\",\"Kafka\"]}],[\"$\",\"span\",\"部署\",{\"className\":\"p-category\",\"children\":[\"#\",\"部署\"]}],[\"$\",\"span\",\"中间件\",{\"className\":\"p-category\",\"children\":[\"#\",\"中间件\"]}],[\"$\",\"span\",\"消息队列\",{\"className\":\"p-category\",\"children\":[\"#\",\"消息队列\"]}]]}]\n2b:[\"$\",\"$L36\",null,{\"target\":\"https://hedon.top/blog/kafka/kakfa-cluster-deploy\",\"endpoint\":\"$undefined\"}]\n2c:[\"$\",\"section\",null,{\"className\":\"comments\",\"aria-labelledby\":\"comments-heading-kafka/kakfa-cluster-deploy\",\"children\":[[\"$\",\"div\",null,{\"className\":\"comments-heading\",\"children\":[[\"$\",\"svg\",null,{\"ref\":\"$undefined\",\"xmlns\":\"http://www.w3.org/2000/svg\",\"width\":23,\"height\":23,\"fill\":\"currentColor\",\"viewBox\":\"0 0 256 256\",\"transform\":\"$undefined\",\"children\":[false,\"$undefined\",[\"$\",\"path\",null,{\"d\":\"M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z\"}]]}],[\"$\",\"div\",null,{\"children\":[[\"$\",\"h2\",null,{\"id\":\"comments-heading-kafka/kakfa-cluster-deploy\",\"children\":\"评论\"}],[\"$\",\"p\",null,{\"children\":\"评论由 GitHub Discussions 保存和管理。\"}]]}]]}],[\"$\",\"$L37\",null,{\"slug\":\"kafka/kakfa-cluster-deploy\",\"config\":{\"repo\":\"hedon954/blog-comments\",\"repoId\":\"R_kgDOTjDfbQ\",\"category\":\"General\",\"categoryId\":\"DIC_kwDOTjDfbc4DB7pG\"}}]]}]\n2d:[\"$\",\"$L38\",null,{\"headings\":[{\"depth\":2,\"text\":\"版本说明\",\"id\":\"版本说明\"},{\"depth\":2,\"text\":\"集群配置\",\"id\":\"集群配置\"},{\"depth\":2,\"text\":\"安装 vim, curl\",\"id\":\"安装-vim-curl\"},{\"depth\":2,\"text\":\"配置静态 ip 和 hosts\",\"id\":\"配置静态-ip-和-hosts\"},{\"depth\":2,\"text\":\"安装 jdk\",\"id\":\"安装-jdk\"},{\"depth\":2,\"text\":\"安装 zookeeper\",\"id\":\"安装-zookeeper\"},{\"depth\":2,\"text\":\"安装 Kafka\",\"id\":\"安装-kafka\"}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("2e:[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-built_in\",\"children\":\"link\"}]\n2f:[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-built_in\",\"children\":\"link\"}]\n30:[\"$\",\"li\",\"li-5\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"配置域名\"}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" vim /etc/hosts\\n\"]}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"追加内容如下：\"}],\"\\n\",[\"$\",\"pre\",\"pre-1\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":\"192.168.50.131 kafka1.com\\n192.168.50.132 kafka2.com\\n192.168.50.133 kafka3.com\\n\"}]}],\"\\n\"]}]\n31:[\"$\",\"li\",\"li-6\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"ping 一下\"}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[\"hedon@ubuntu:~$ ping kafka1.com\\nPING kafka1.com (192.168.50.131) 56(84) bytes of data.\\n64 bytes from kafka1.com (192.168.50.131): icmp_seq=1 ttl=64 \",[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-keyword\",\"children\":\"time\"}],\"=0.024 ms\\n64 bytes from kafka1.com (192.168.50.131): icmp_seq=2 ttl=64 \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-keyword\",\"children\":\"time\"}],\"=0.021 ms\\n64 bytes from kafka1.com (192.168.50.131): icmp_seq=3 ttl=64 \",[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-keyword\",\"children\":\"time\"}],\"=0.029 ms\\n^C\\n--- kafka1.com ping statistics ---\\n3 packets transmitted, 3 received, 0% packet loss, \",[\"$\",\"span\",\"span-3\",{\"className\":\"hljs-keyword\",\"children\":\"time\"}],\" 2029ms\\nrtt min/avg/max/mdev = 0.021/0.024/0.029/0.006 ms\\n\"]}]}],\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("32:[\"$\",\"li\",\"li-7\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"ping 一下百度，看看能不能访问外网\"}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":\"hedon@ubuntu:~$ ping baidu.com\\nping: baidu.com: Name or service not known\\n\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"如果这里可以访问，则直接跳过进入下一步，不可以的话，需要配置一下域名解析系统。\"}],\"\\n\"]}]\n33:[\"$\",\"li\",\"li-8\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"配置域名解析系统\"}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" vim /etc/resolv.conf\\n\"]}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"追加下面内容：\"}],\"\\n\",[\"$\",\"pre\",\"pre-1\",{\"data-language\":\"TEX\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-tex\",\"children\":\"nameserver 8.8.8.8\\nnameserver 8.8.4.4\\n\"}]}],\"\\n\",[\"$\",\"p\",\"p-2\",{\"children\":\"再尝试 ping 一下百度：\"}],\"\\n\",[\"$\",\"pre\",\"pre-2\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[\"hedon@ubuntu:~$ ping www.baidu.com\\nPING www.a.shifen.com (153.3.238.110) 56(84) bytes of data.\\n64 bytes from 153.3.238.110 (153.3.238.110): icmp_seq=1 ttl=128 \",[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-keyword\",\"children\":\"time\"}],\"=15.9 ms\\n64 bytes from 153.3.238.110 (153.3.238.110): icmp_seq=2 ttl=128 \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-keyword\",\"children\":\"time\"}],\"=15.9 ms\\n64 bytes from 153.3.238.110 (153.3.238.110): icmp_seq=3 ttl=128 \",[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-keyword\",\"children\":\"time\"}],\"=16.1 ms\\n64 bytes from 153.3.238.110 (153.3.238.110): icmp_seq=4 ttl=128 \",[\"$\",\"span\",\"span-3\",{\"className\":\"hljs-keyword\",\"children\":\"time\"}],\"=15.3 ms\\n^C\\n--- www.a.shifen.com ping statistics ---\\n4 packets transmitted, 4 received, 0% packet loss, \",[\"$\",\"span\",\"span-4\",{\"className\":\"hljs-keyword\",\"children\":\"time\"}],\" 14104ms\\nrtt min/avg/max/mdev = 15.368/15.850/16.145/0.291 ms\\n\"]}]}],\"\\n\"]}]\n34:[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"topic\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("35:[\"$\",\"pre\",\"pre-1\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":[\"Topic: \",[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"test\"}],\"\\tPartitionCount: 2\\tReplicationFactor: 1\\tConfigs: segment.bytes=1073741824\\n\\tTopic: \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-built_in\",\"children\":\"test\"}],\"\\tPartition: 0\\tLeader: 1\\tReplicas: 1\\tIsr: 1\\n\\tTopic: \",[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-built_in\",\"children\":\"test\"}],\"\\tPartition: 1\\tLeader: 2\\tReplicas: 2\\tIsr: 2\\n\"]}]}]\n")</script><script>self.__VINEXT_RSC_DONE__=true</script>

@@ -1,0 +1,386 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="preload" href="https://hedon.top/hedonspace/banner/ai-rag-tech-overview.jpg" as="image"/><link rel="stylesheet" href="/assets/index-BlvdgL5Z.css" data-rsc-css-href="/assets/index-BlvdgL5Z.css" data-precedence="vite-rsc/importer-resources"/><link rel="modulepreload" href="/assets/layout-segment-context-D05hAiNS.js" crossorigin=""/><link rel="modulepreload" href="/assets/rolldown-runtime-S-ySWqyJ.js" crossorigin=""/><link rel="modulepreload" href="/assets/index-iWWMjvPF.js" crossorigin=""/><link rel="modulepreload" href="/assets/framework-lj9SIvjL.js" crossorigin=""/><link rel="modulepreload" href="/assets/SiteChrome-fw3-nA9J.js" crossorigin=""/><link rel="modulepreload" href="/assets/site.config-9xFcKv1R.js" crossorigin=""/><link rel="modulepreload" href="/assets/X.es-CE2QbOE6.js" crossorigin=""/><link rel="modulepreload" href="/assets/IconBase.es-BcuMBetk.js" crossorigin=""/><link rel="modulepreload" href="/assets/GithubLogo.es-CzPW7yFN.js" crossorigin=""/><link rel="modulepreload" href="/assets/link-DNRhlV_g.js" crossorigin=""/><link rel="modulepreload" href="/assets/MarkdownImage-B5SQPuf9.js" crossorigin=""/><link rel="modulepreload" href="/assets/Webmentions-Boui1ZtL.js" crossorigin=""/><link rel="modulepreload" href="/assets/LinkSimple.es-BqfusCPX.js" crossorigin=""/><link rel="modulepreload" href="/assets/Quotes.es-Cs5Y7all.js" crossorigin=""/><link rel="modulepreload" href="/assets/GiscusComments-N0fYqhTC.js" crossorigin=""/><link rel="modulepreload" href="/assets/TableOfContents-CBBw91S5.js" crossorigin=""/><title>RAG 技术概览 · Hedon Garden</title><meta name="description" content="本文是在笔者学习了极客时间《RAG 快速开发实战》课程后，对 RAG 相关技术进行一个梳理归纳，帮助开发者在 RAG 开发中进行快速定位、系统学习。"/><meta name="author" content="Hedon"/><link rel="author" href="https://github.com/hedon954"/><meta name="robots" content="index, follow"/><meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/><meta property="og:title" content="RAG 技术概览"/><meta property="og:description" content="本文是在笔者学习了极客时间《RAG 快速开发实战》课程后，对 RAG 相关技术进行一个梳理归纳，帮助开发者在 RAG 开发中进行快速定位、系统学习。"/><meta property="og:url" content="https://hedon.top/blog/ai-rag-tech-overview"/><meta property="og:type" content="article"/><meta property="article:published_time" content="2025-04-13T22:23:22.000Z"/><meta property="og:image" content="https://hedon.top/hedonspace/banner/ai-rag-tech-overview.jpg"/><meta property="og:image:alt" content="RAG 技术概览 的文章封面"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="RAG 技术概览"/><meta name="twitter:description" content="本文是在笔者学习了极客时间《RAG 快速开发实战》课程后，对 RAG 相关技术进行一个梳理归纳，帮助开发者在 RAG 开发中进行快速定位、系统学习。"/><meta name="twitter:image" content="https://hedon.top/hedonspace/banner/ai-rag-tech-overview.jpg"/><link rel="icon" href="https://hedon.top/favicon.svg"/><link rel="canonical" href="https://hedon.top/blog/ai-rag-tech-overview"/><script>self.__VINEXT_RSC_PARAMS__={"path":["ai-rag-tech-overview"]}</script><script>self.__VINEXT_RSC_NAV__={"pathname":"/blog/ai-rag-tech-overview/","searchParams":[]}</script><link rel="modulepreload" href="/assets/index-iWWMjvPF.js" />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-f6b33328.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44e03052.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-0638449e.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-971fb274.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44745446.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-013b2f2f.woff2" as="font" type="font/woff2" crossorigin />
+<style data-vinext-fonts>/* cyrillic-ext */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-f6b33328.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44e03052.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* symbols2 */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-0638449e.woff2) format('woff2');
+  unicode-range: U+2000-2001, U+2004-2008, U+200A, U+23B8-23BD, U+2500-259F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-971fb274.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44745446.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-013b2f2f.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+.__font_geist_mono_1diim1n { font-family: 'Geist Mono', sans-serif; }
+
+.__variable_geist_mono_1diim1n { --font-geist-mono: 'Geist Mono', sans-serif; }
+</style>
+</head><body class="__variable_geist_mono_1diim1n"><a class="skip-link" href="#main-content">跳到正文</a><header class="site-header"><div class="header-inner"><a href="/" class="brand" aria-label="Hedon Garden 首页"><span class="brand-mark"><svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true"><path d="M216,212H164V180h8a64.07,64.07,0,0,0,64-64,24,24,0,0,0-48,0,16,16,0,0,1-16,16h-8V56a36,36,0,0,0-72,0V92H84A16,16,0,0,1,68,76a24,24,0,0,0-48,0,64.07,64.07,0,0,0,64,64h8v72H40a4,4,0,0,0,0,8H216a4,4,0,0,0,0-8ZM96,132H84A56.06,56.06,0,0,1,28,76a16,16,0,0,1,32,0,24,24,0,0,0,24,24H96a4,4,0,0,0,4-4V56a28,28,0,0,1,56,0v80a4,4,0,0,0,4,4h12a24,24,0,0,0,24-24,16,16,0,0,1,32,0,56.06,56.06,0,0,1-56,56H160a4,4,0,0,0-4,4v36H100V136A4,4,0,0,0,96,132Z"></path></svg></span><span><strong>Hedon Garden</strong><small>写作 · 构建 · 保持好奇</small></span></a><nav class="main-nav" aria-label="主导航"><a href="/">首页</a><a href="/blog">博文</a><a href="/thoughts">随想</a><a href="/columns">专栏</a><a href="/about">关于</a></nav><div class="header-actions"><button class="icon-button search-trigger" aria-label="搜索文章" aria-expanded="false" aria-controls="site-search-dialog"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 256 256"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg><span class="key-hint">⌘K</span></button><button class="icon-button" aria-label="切换到深色模式"><svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" viewBox="0 0 256 256"><path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"></path></svg></button></div></div></header><div id="main-content"><main class="reading-page post-reading-page"><article class="post-article h-entry"><a href="/blog/ai-rag-tech-overview" class="u-url sr-only">RAG 技术概览<!-- --> 永久链接</a><a class="p-author h-card sr-only" href="https://github.com/hedon954" rel="author">Hedon</a><figure class="article-hero article-cover"><img class="u-photo" src="https://hedon.top/hedonspace/banner/ai-rag-tech-overview.jpg" alt="RAG 技术概览 的文章封面"/></figure><header class="article-header article-summary-row"><p class="eyebrow">AI</p><h1 class="p-name">RAG 技术概览</h1><p class="article-deck p-summary">本文是在笔者学习了极客时间《RAG 快速开发实战》课程后，对 RAG 相关技术进行一个梳理归纳，帮助开发者在 RAG 开发中进行快速定位、系统学习。</p><div class="article-meta"><time class="dt-published" dateTime="2025-04-13T22:23:22.000Z">发布于 <!-- -->2025/04/13</time><span></span><span>约 <!-- -->3,725<!-- --> 字</span></div></header><div class="article-reading-layout"><div class="article-reading-column"><div class="e-content"><div class="markdown-body"><p>RAG 的整个流程可概括为如下图所示，主要分成<strong>索引</strong>、<strong>检索</strong>和<strong>生成</strong>三个部分。</p>
+<p>本文提供配套的完整案例，源码可参考：<a href="https://github.com/hedon-ai-road/rag-demo" node="[object Object]" target="_blank" rel="noopener noreferrer">hedon-ai-road/rag-demo</a>，每个 commit 都引入了一个新的技术点，感兴趣的读者可根据 commit 记录一一查探。</p>
+<p><button type="button" class="markdown-image-trigger" aria-label="放大查看：查看原图"><img loading="lazy" alt="" src="https://hedonspace.oss-cn-beijing.aliyuncs.com/img/image-20250413223908403.png" node="[object Object]"/></button></p>
+<h2 id="文档解析技术"><a href="#文档解析技术" node="[object Object]">文档解析技术</a></h2>
+<blockquote>
+<p><a href="https://github.com/hedon-ai-road/rag-demo/commit/26d52ac964ca099e1726fccb5f4c18adc0fd940f#diff-b10564ab7d2c520cdd0243874879fb0a782862c3c902ab535faabe57d5a505e1" node="[object Object]" target="_blank" rel="noopener noreferrer">代码示例</a></p>
+</blockquote>
+<p><button type="button" class="markdown-image-trigger" aria-label="放大查看：查看原图"><img loading="lazy" alt="" src="https://hedonspace.oss-cn-beijing.aliyuncs.com/img/c60419a3c73f3090651a4c2761e05583.png" node="[object Object]"/></button></p>
+<h3 id="pdf"><a href="#pdf" node="[object Object]">PDF</a></h3>
+<ul>
+<li>基于规则的开源库
+<ul>
+<li>pyPDF2</li>
+<li>PyMuPDF</li>
+<li>pdfminer</li>
+<li>pdfplumber</li>
+<li>papermage</li>
+</ul>
+</li>
+<li>基于深度学习的开源库
+<ul>
+<li>Layout-parser</li>
+<li>PP-StructureV2</li>
+<li>PDF-Extract-Kit</li>
+<li>pix2text</li>
+<li>MinerU</li>
+<li>marker</li>
+<li>Gptpdf（基于 LLM API）</li>
+</ul>
+</li>
+<li>商业闭源库
+<ul>
+<li>Textln.com</li>
+<li>Doc2x</li>
+<li>mathpix</li>
+<li>庖丁 PDFlux</li>
+<li>腾讯云文档识别</li>
+</ul>
+</li>
+</ul>
+<h2 id="分块策略"><a href="#分块策略" node="[object Object]">分块策略</a></h2>
+<blockquote>
+<p><a href="https://github.com/hedon-ai-road/rag-demo/commit/a26ae8895da7a9673660b31904857307a149c983" node="[object Object]" target="_blank" rel="noopener noreferrer">代码示例</a></p>
+<p><a href="https://chunkviz.up.railway.app/" node="[object Object]" target="_blank" rel="noopener noreferrer">分块演示工具</a></p>
+</blockquote>
+<p>3 个关键部分组成：</p>
+<ul>
+<li>大小</li>
+<li>重叠</li>
+<li>拆分</li>
+</ul>
+<button type="button" class="markdown-image-trigger" aria-label="放大查看：查看原图"><img loading="lazy" alt="" src="https://hedonspace.oss-cn-beijing.aliyuncs.com/img/63b052c1b1639bfa66c23342cf28d9ef.jpg" style="zoom:33%" node="[object Object]"/></button>
+<h3 id="固定大小分块fixed-size-chunking"><a href="#固定大小分块fixed-size-chunking" node="[object Object]">固定大小分块（Fixed Size Chunking）</a></h3>
+<p>适用场景：</p>
+<ol>
+<li>作为分块策略的基准线；</li>
+<li>对大型数据集进行初步分析；</li>
+<li>实现简单且可观测性高，分块便于管理；</li>
+<li>适用于格式和大小相似的同质数据集，如新闻文章或博客文章。</li>
+</ol>
+<p>问题：</p>
+<ol>
+<li>不考虑内容上下文，容易导致无意义的文本块；</li>
+<li>缺乏灵活性，无法适应文本的自然结构</li>
+</ol>
+<h3 id="重叠分块overlap-chunking"><a href="#重叠分块overlap-chunking" node="[object Object]">重叠分块（Overlap Chunking）</a></h3>
+<p>使用场景：</p>
+<ol>
+<li>需要深入理解语义并保持上下文完整性的文档，如法律文档、技术手册或科研论文；</li>
+<li>提升分块内容的连贯性，以提高分析质量。</li>
+</ol>
+<p>问题：</p>
+<ol>
+<li>计算复杂度增加，处理效率降低；</li>
+<li>冗余信息的存储和管理成为负担。</li>
+</ol>
+<h3 id="递归分块recursive-chunking"><a href="#递归分块recursive-chunking" node="[object Object]">递归分块（Recursive Chunking）</a></h3>
+<ul>
+<li>通过预定义的文本分隔符（如换行符 \n\n、\n、句号、逗号、感叹号、空格等）迭代地将文本分解为更小的块，以实现段大小的均匀性和语义完整性。</li>
+<li>先按较大的逻辑单元分割，再逐步递归到较小单元，确保在分块大小限制内保留最强的语义片段。</li>
+</ul>
+<p>使用场景：</p>
+<ol>
+<li>需要逐层分析的文本文档或需要分解成长片段、长段落的长文档，如研究报告、法律文档等。</li>
+</ol>
+<p>问题：</p>
+<ol>
+<li>在块边界处模糊语义，容易将完整的语义单元切分开。</li>
+</ol>
+<h3 id="文档特定分块document-specific-chunking"><a href="#文档特定分块document-specific-chunking" node="[object Object]">文档特定分块（Document Specific Chunking）</a></h3>
+<ul>
+<li>根据文档的格式（如 Markdown、Latex、或编程语言如 Python 等）进行定制化分割的技术。此方法依据文档的特定格式和结构规则，例如 Markdown 的标题、列表项，或 Python 代码中的函数和类定义等，来确定分块边界。</li>
+</ul>
+<p>适用场景：</p>
+<ol>
+<li>有特定的文档结构，如编程语言、Markdown、Latex 等结构文档。</li>
+</ol>
+<p>问题：</p>
+<ol>
+<li>格式依赖性强，不同格式之间的分块策略不通用；</li>
+<li>无法处理格式不规范及混合多种格式的情况。</li>
+</ol>
+<h3 id="语义分块semantic-chunking"><a href="#语义分块semantic-chunking" node="[object Object]">语义分块（Semantic Chunking）</a></h3>
+<ul>
+<li>基于文本的自然语言边界（如句子、段落或主题中断）进行分段的技术，需要使用 NLP 技术根据语义分词分句，旨在确保每个分块都包含语义连贯的信息单元。</li>
+</ul>
+<p>适用场景：</p>
+<ol>
+<li>确保每个文档块的信息完整性且语义连贯；</li>
+<li>提高检索结果的相关性和准确性；</li>
+<li>适用于复杂文档和上下文敏感的精细化分析。</li>
+</ol>
+<p>问题：</p>
+<ol>
+<li>需要额外的高计算资源，特别是在处理大型或动态变化的文档数据时；</li>
+<li>处理效率降低。</li>
+</ol>
+<h3 id="混合分块mix-chunking"><a href="#混合分块mix-chunking" node="[object Object]">混合分块（Mix Chunking）</a></h3>
+<ul>
+<li>在初始阶段使用固定长度分块快速整理大量文档，而在后续阶段使用语义分块进行更精细的分类和主题提取。根据实际业务场景，设计多种分块策略的混合，能够灵活适应各种需求，提供更强大的分块方案。</li>
+</ul>
+<p>适用场景：</p>
+<ol>
+<li>适用于多层次的精细化分块场景；</li>
+<li>数据集动态变化，包含多种文档格式与结构；</li>
+<li>平衡处理速度与准确性的场景。</li>
+</ol>
+<p>问题：</p>
+<ol>
+<li>实现复杂度高；</li>
+<li>策略调优难度高；</li>
+<li>资源消耗增加。</li>
+</ol>
+<h2 id="embedding-技术"><a href="#embedding-技术" node="[object Object]">Embedding 技术</a></h2>
+<ul>
+<li>Embedding 嵌入是指将文本、图像、音频、视频等形式的信息映射为高维空间中的密集向量表示。这些向量在语义空间中起到坐标的作用，捕捉对象之间的语义关系和隐含的意义。通过在向量空间中进行计算（例如余弦相似度），可以量化和衡量这些对象之间的语义相似性。</li>
+<li>向量检索（Vector Retrieval）是一种基于向量表示的搜索技术，通过计算查询向量与已知文本向量的相似度来识别最相关的文本数据。向量检索的高效性在于，它能在大规模数据集中快速、准确地找到与查询最相关的内容，这得益于向量表示中蕴含的丰富语义信息。</li>
+</ul>
+<p>评估指标：（MTEB、C-MTEB）</p>
+<ol>
+<li>特定领域的适用性</li>
+<li>检索精度</li>
+<li>支持的语言</li>
+<li>文本块长度</li>
+<li>模型大小</li>
+<li>检索效率</li>
+</ol>
+<h2 id="向量数据库"><a href="#向量数据库" node="[object Object]">向量数据库</a></h2>
+<blockquote>
+<p><a href="https://github.com/hedon-ai-road/rag-demo/commit/1f9c07ec6b10d6bfdb55c17c2c6a7ad461b00ab2" node="[object Object]" target="_blank" rel="noopener noreferrer">代码示例</a></p>
+</blockquote>
+<ul>
+<li>向量数据库是一种专门用于存储和检索多维向量的数据库类型，与传统的基于行列结构的数据库不同，它主要处理高维空间中的数据点。</li>
+<li>向量数据库的操作逻辑是基于相似性搜索，即在查询时，应用特定的相似性度量（如余弦相似度、欧几里得距离等）来查找与查询向量最相似的向量。</li>
+</ul>
+<p>向量数据库的核心在于其高效的索引和搜索机制。为了优化查询性能，它采用了如哈希、量化和基于图形的多种算法。</p>
+<ul>
+<li>层次化可导航小世界（<strong>HNSW</strong>）：通过在多层结构中将相似向量连接在一起，快速缩小搜索范围。</li>
+<li>产品量化（<strong>PQ</strong>）：通过压缩高维向量，减少内存占用并加速检索。</li>
+<li>位置敏感哈希（<strong>LSH</strong>）：通过哈希函数将相似向量聚集在一起，便于快速定位。</li>
+</ul>
+<p>向量数据库的工作流程：</p>
+<ol>
+<li>数据处理与向量化</li>
+<li>向量存储</li>
+<li>向量索引</li>
+<li>向量搜索
+<ul>
+<li>余弦相似度：主要用于文本处理和信息检索，关注向量之间的角度，以捕捉语义相似性。</li>
+<li>欧几里得距离：测量向量之间的实际距离，适用于密集特征集的聚类或分类。</li>
+<li>曼哈顿距离：通过计算笛卡尔坐标中的绝对差值之和，适用于稀疏数据的处理。</li>
+</ul>
+</li>
+<li>数据检索</li>
+</ol>
+<p><button type="button" class="markdown-image-trigger" aria-label="放大查看：查看原图"><img loading="lazy" alt="" src="https://hedonspace.oss-cn-beijing.aliyuncs.com/img/c27b4yy6748a414dae0c679835a1eccc.jpg" node="[object Object]"/></button></p>
+<h2 id="混合检索"><a href="#混合检索" node="[object Object]">混合检索</a></h2>
+<blockquote>
+<p><a href="https://github.com/hedon-ai-road/rag-demo/commit/38f1739c7ac1d3fc58023cb12bf863d3f502c419" node="[object Object]" target="_blank" rel="noopener noreferrer">代码示例</a></p>
+</blockquote>
+<ul>
+<li>混合检索（Hybrid Search）通过结合关键词检索和语义匹配的优势，可以首先利用关键词检索精确定位到“订单 12345”的信息，然后通过语义匹配扩展与该订单相关的其他上下文或客户操作的信息，例如“12 开头的订单、包装破损严重”等。这样不仅能够获取精确的订单详情，还能获得与之相关的额外有用信息。</li>
+</ul>
+<p><button type="button" class="markdown-image-trigger" aria-label="放大查看：查看原图"><img loading="lazy" alt="" src="https://hedonspace.oss-cn-beijing.aliyuncs.com/img/7eddf214ee696b2e1f5977d72a4db134.jpg" node="[object Object]"/></button></p>
+<h2 id="重排序技术"><a href="#重排序技术" node="[object Object]">重排序技术</a></h2>
+<blockquote>
+<p><a href="https://github.com/hedon-ai-road/rag-demo/commit/4837ef3220d177297169f28fbff5f52eaaee720e" node="[object Object]" target="_blank" rel="noopener noreferrer">代码示例</a></p>
+</blockquote>
+<ul>
+<li>重排序技术（Reranking）通过对初始检索结果进行重新排序，改善检索结果的相关性，为生成模型提供更优质的上下文，从而提升整体 RAG 系统的效果。</li>
+<li>重排序模型大多是基于<strong>双塔</strong>或<strong>交叉编码架构</strong>的模型，在此基础上进一步计算更精确的相关性分数，能够捕捉查询词与文档块之间更细致的相关性，从而在细节层面上提高检索精度。</li>
+</ul>
+<h2 id="提示工程"><a href="#提示工程" node="[object Object]">提示工程</a></h2>
+<p>一个提示（prompt）通常包含以下几个元素：</p>
+<ol>
+<li><strong>指令（Instruction）</strong>：指明模型要执行的特定任务或操作。</li>
+<li><strong>上下文（Context）</strong>：为模型提供额外信息或背景，可以帮助引导模型生成更准确的响应。</li>
+<li><strong>输入数据（Input Data）</strong>：我们希望模型回答的问题或感兴趣的输入内容。</li>
+<li><strong>输出指示符（Output Indicator）</strong>：指定模型的输出类型或格式，例如格式、是否要生成代码、总结文本或回答具体问题。</li>
+</ol>
+<p>核心技巧：</p>
+<ul>
+<li><strong>具体指令法</strong>：具体、细致地告诉大模型要做什么。</li>
+<li><strong>示例学习</strong>：给出具体详尽的期望示例。</li>
+<li><strong>默认回复策略</strong>：设定默认回复策略，避免模型产生“幻觉”，让它不知道就说不知道。</li>
+<li><strong>任务角色设定</strong>：设定身份，可以帮助模型更好地理解任务要求和角色责任，从而输出更加一致、专业的内容。</li>
+<li><strong>解释理由法</strong>：向模型解释为什么某些任务需要特定的处理方式，帮助其理解任务背景。</li>
+<li><strong>文档基础说明</strong>：提供文档的背景信息和文本来源。</li>
+</ul>
+<h2 id="优化技术"><a href="#优化技术" node="[object Object]">优化技术</a></h2>
+<h3 id="数据清洗和预处理"><a href="#数据清洗和预处理" node="[object Object]">数据清洗和预处理</a></h3>
+<blockquote>
+<p>在 RAG 索引流程中，文档解析之后、文本块切分之前，进行数据清洗和预处理能够有效减少脏数据和噪声，提升文本的整体质量和信息密度。</p>
+<p>通过清除冗余信息、统一格式、处理异常字符等手段，数据清洗和预处理过程确保文档更加规范和高质量，从而提高 RAG 系统的检索效果和信息准确性。</p>
+</blockquote>
+<ul>
+<li>处理冗余的模型内容。</li>
+<li>消除文档中的额外空白和格式不一致。</li>
+<li>去除无用的文档脚注、页眉页脚、版权信息。</li>
+</ul>
+<h3 id="查询扩展"><a href="#查询扩展" node="[object Object]">查询扩展</a></h3>
+<blockquote>
+<p>查询扩展策略通过大模型从原始查询语句生成多个语义相关的查询，可以覆盖向量空间中的不同区域，从而提高检索的全面性和准确性。</p>
+</blockquote>
+<p>查询扩展的指令模版：</p>
+<pre data-language="TXT"><code class="hljs language-txt">你是一个AI语言模型助手。
+你的任务是生成五个不同版本的用户问题，以便从向量数据库中检索相关文档。
+通过从多个角度生成用户问题，你的目标是帮助用户克服基于距离的相似性搜索的一些局限性。
+请将这些替代问题用换行符分隔。原始问题：{查询原文}
+</code></pre>
+<p>假设问题：</p>
+<pre data-language="TXT"><code class="hljs language-txt">下面报告中涉及了哪几个行业的案例以及总结各自面临的挑战？
+</code></pre>
+<p>结果示例：</p>
+<pre data-language="TXT"><code class="hljs language-txt">请问报告中提到的案例涉及了哪些行业？这些行业各自面临的挑战有哪些？
+报告中有哪些行业的案例被讨论？每个行业在报告中描述的挑战是什么？
+这个报告中具体提到了哪些行业的案例？能否总结一下这些行业当前面临的主要挑战？
+该报告中涵盖了哪些行业案例，并对各行业的挑战进行了哪些讨论？
+在报告中提到的行业案例有哪些？这些行业分别遇到的主要问题和挑战是什么？
+</code></pre>
+<p>通过这种查询扩展策略，原始问题被分解为多个子查询，每个子查询独立检索相关文档并生成相应的结果。随后，系统将所有子查询的检索结果进行合并和重新排序，效果会更全面更准确。</p>
+<h3 id="自查询"><a href="#自查询" node="[object Object]">自查询</a></h3>
+<blockquote>
+<p>自查询策略通过大语言模型自动提取查询中对业务场景至关重要的元数据字段（如标签、作者 ID、评论数量等关键信息），并将这些信息结合到嵌入检索过程中。</p>
+</blockquote>
+<p>自查询的指令模版：</p>
+<pre data-language="TXT"><code class="hljs language-txt">你是一个AI语言模型助手。
+你的任务是从用户问题中提取关键信息，你的回复应仅包含提取的关键信息。
+用户问题：{查询原文}
+</code></pre>
+<p>假设问题：</p>
+<pre data-language="TXT"><code class="hljs language-txt">下面报告中涉及了哪几个行业的案例以及总结各自面临的挑战？
+</code></pre>
+<p>结果示例：</p>
+<pre data-language="TXT"><code class="hljs language-txt">行业，案例，挑战
+</code></pre>
+<h3 id="提示压缩"><a href="#提示压缩" node="[object Object]">提示压缩</a></h3>
+<blockquote>
+<p>提示压缩通过精简上下文、过滤掉不相关的信息，确保系统只处理与查询最相关、最重要的内容。</p>
+</blockquote>
+<p>提示压缩的指令模版：</p>
+<pre data-language="TXT"><code class="hljs language-txt">你是一个AI语言模型助手，负责对检索到的文档进行上下文压缩。
+你的目标是从文档中提取与用户查询高度相关的段落，并删除与查询无关或噪声较大的部分。
+你应确保保留所有能够直接回答用户查询的问题核心信息。
+
+输入：
+用户查询：{用户的原始查询}
+检索到的文档：{检索到的文档内容}
+
+输出要求：
+提取与用户查询最相关的段落和信息。
+删除所有与查询无关的内容，包括噪声、背景信息或扩展讨论。
+压缩后的内容应简洁清晰，直指用户的核心问题。
+
+输出格式：
+{压缩段落1}
+{压缩段落2}
+{压缩段落3}
+</code></pre>
+<h2 id="rag-效果评估"><a href="#rag-效果评估" node="[object Object]">RAG 效果评估</a></h2>
+<ol>
+<li>大模型打分：通过 LLM 对 RAG 的输出进行自动评分。效率高，但是准确性一般。</li>
+<li>人工打分：手工针对 RAG 的输出进行逐一打分。更精确、细致的反馈，成本高。</li>
+</ol>
+<p>评估指标：</p>
+<ol>
+<li>**CR（Context Relevancy）**检索相关性：检索到的信息是否偏离了原始查询。</li>
+<li>**AR（Answer Relevancy）**答案相关性：是否能解决用户的问题，且内容是否逻辑连贯。</li>
+<li>**F（Faithfulness）**可信度：是否存在幻觉或不准确之处。</li>
+</ol>
+<p>打分标准：</p>
+<ol>
+<li>完美（Perfect）1.0 分</li>
+<li>可接受（Acceptable）0.75 分</li>
+<li>缺失（Missing）0.5 分</li>
+<li>错误（Incorrect）0.25 分</li>
+</ol>
+<h2 id="更高级的-rag"><a href="#更高级的-rag" node="[object Object]">更高级的 RAG</a></h2>
+<p><button type="button" class="markdown-image-trigger" aria-label="放大查看：查看原图"><img loading="lazy" alt="" src="https://hedonspace.oss-cn-beijing.aliyuncs.com/img/7c3ebbe6ec9d9f2886881d7e534396a0.jpg" node="[object Object]"/></button></p>
+<h2 id="graphrag"><a href="#graphrag" node="[object Object]">GraphRAG</a></h2>
+<p>GraphRAG 通过构建知识图谱，将实体和实体之间的关系结构化地表示出来，克服了传统 RAG 的复杂推理局限性。</p>
+<p>有以下优势：</p>
+<ol>
+<li>提高答案的准确性和完整性</li>
+<li>提高数据理解和迭代效率</li>
+<li>提升可解释性和可追溯性</li>
+</ol>
+<p>知识图谱的构建步骤：</p>
+<ol>
+<li><strong>实体识别</strong>：从文本或数据源中识别出关键实体。</li>
+<li><strong>关系抽取</strong>：确定实体之间的关系，可能通过自然语言处理技术实现。</li>
+<li><strong>三元组生成</strong>：将实体和关系表示为 (主体，关系，客体) 的形式。</li>
+<li><strong>图谱存储</strong>：使用图数据库或专门的存储系统保存知识图谱。</li>
+</ol>
+<p>知识图谱的主要<strong>成本</strong>挑战：</p>
+<ol>
+<li>数据收集与清洗成本</li>
+<li>知识图谱构建成本</li>
+<li>图谱的维护与更新</li>
+</ol></div></div><div class="article-tags"><span class="p-category">#<!-- -->AI</span><span class="p-category">#<!-- -->RAG</span></div><section class="webmentions" aria-labelledby="webmentions-heading"><div class="webmention-title"><svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="currentColor" viewBox="0 0 256 256"><path d="M165.66,90.34a8,8,0,0,1,0,11.32l-64,64a8,8,0,0,1-11.32-11.32l64-64A8,8,0,0,1,165.66,90.34ZM215.6,40.4a56,56,0,0,0-79.2,0L106.34,70.45a8,8,0,0,0,11.32,11.32l30.06-30a40,40,0,0,1,56.57,56.56l-30.07,30.06a8,8,0,0,0,11.31,11.32L215.6,119.6a56,56,0,0,0,0-79.2ZM138.34,174.22l-30.06,30.06a40,40,0,1,1-56.56-56.57l30.05-30.05a8,8,0,0,0-11.32-11.32L40.4,136.4a56,56,0,0,0,79.2,79.2l30.06-30.07a8,8,0,0,0-11.32-11.31Z"></path></svg><div><h2 id="webmentions-heading">来自开放网络的回应</h2><p>引用、喜欢、转发和站外回复会通过 Webmention 回到这里。</p></div></div><div class="integration-notice"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"><path d="M116,72v88a48.05,48.05,0,0,1-48,48,8,8,0,0,1,0-16,32,32,0,0,0,32-32v-8H40a16,16,0,0,1-16-16V72A16,16,0,0,1,40,56h60A16,16,0,0,1,116,72ZM216,56H156a16,16,0,0,0-16,16v64a16,16,0,0,0,16,16h60v8a32,32,0,0,1-32,32,8,8,0,0,0,0,16,48.05,48.05,0,0,0,48-48V72A16,16,0,0,0,216,56Z"></path></svg><p>接收与展示代码已经就绪，注册正式域名后即可开始收集回应。</p></div></section><section class="comments" aria-labelledby="comments-heading-ai-rag-tech-overview"><div class="comments-heading"><svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" viewBox="0 0 256 256"><path d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"></path></svg><div><h2 id="comments-heading-ai-rag-tech-overview">评论</h2><p>评论由 GitHub Discussions 保存和管理。</p></div></div><div class="giscus-container"></div></section></div><button class="toc-mobile-trigger" type="button" aria-controls="_R_2ml6_" aria-expanded="false" aria-label="打开本篇目录，当前章节：文档解析技术" tabindex="0" data-mobile-open="false"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true"><path d="M228,128a12,12,0,0,1-12,12H40a12,12,0,0,1,0-24H216A12,12,0,0,1,228,128ZM40,76H216a12,12,0,0,0,0-24H40a12,12,0,0,0,0,24ZM216,180H40a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24Z"></path></svg><span>目录</span></button><button class="toc-mobile-backdrop" type="button" aria-label="关闭本篇目录" tabindex="-1" data-mobile-open="false"></button><aside class="toc" id="_R_2ml6_" aria-label="本篇目录" data-mobile-open="false"><div class="toc-header"><p>本篇目录</p><button class="toc-mobile-close" type="button" aria-label="关闭本篇目录"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path></svg></button></div><ol id="_R_2ml6H1_" class="toc-list"><li class="toc-section toc-depth-2 active"><div class="toc-item-row"><a href="#文档解析技术" aria-current="location">文档解析技术</a><button class="toc-section-toggle" type="button" aria-controls="_R_2ml6H1_-0" aria-expanded="true" aria-label="收起「文档解析技术」的子目录"><span aria-hidden="true">−</span></button></div><ol id="_R_2ml6H1_-0" class="toc-sublist"><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#pdf">PDF</a></div></li></ol></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#分块策略">分块策略</a><button class="toc-section-toggle" type="button" aria-controls="_R_2ml6H1_-1" aria-expanded="true" aria-label="收起「分块策略」的子目录"><span aria-hidden="true">−</span></button></div><ol id="_R_2ml6H1_-1" class="toc-sublist"><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#固定大小分块fixed-size-chunking">固定大小分块（Fixed Size Chunking）</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#重叠分块overlap-chunking">重叠分块（Overlap Chunking）</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#递归分块recursive-chunking">递归分块（Recursive Chunking）</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#文档特定分块document-specific-chunking">文档特定分块（Document Specific Chunking）</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#语义分块semantic-chunking">语义分块（Semantic Chunking）</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#混合分块mix-chunking">混合分块（Mix Chunking）</a></div></li></ol></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#embedding-技术">Embedding 技术</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#向量数据库">向量数据库</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#混合检索">混合检索</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#重排序技术">重排序技术</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#提示工程">提示工程</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#优化技术">优化技术</a><button class="toc-section-toggle" type="button" aria-controls="_R_2ml6H1_-7" aria-expanded="true" aria-label="收起「优化技术」的子目录"><span aria-hidden="true">−</span></button></div><ol id="_R_2ml6H1_-7" class="toc-sublist"><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#数据清洗和预处理">数据清洗和预处理</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#查询扩展">查询扩展</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#自查询">自查询</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#提示压缩">提示压缩</a></div></li></ol></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#rag-效果评估">RAG 效果评估</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#更高级的-rag">更高级的 RAG</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#graphrag">GraphRAG</a></div></li></ol></aside></div></article></main></div><footer class="site-footer"><div class="footer-inner"><p>© <!-- -->2026<!-- --> <!-- -->Hedon<!-- --> · <!-- -->保持独立，持续写作。<span class="footer-framework"> · 基于 <a href="https://github.com/hedon954/garden" target="_blank" rel="noreferrer">Garden</a> 构建</span></p><div><a href="https://github.com/hedon954" aria-label="GitHub" rel="me"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" viewBox="0 0 256 256"><path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68ZM200,112a40,40,0,0,1-40,40H112a40,40,0,0,1-40-40v-8a41.74,41.74,0,0,1,6.9-22.48A8,8,0,0,0,80,73.83a43.81,43.81,0,0,1,.79-33.58,43.88,43.88,0,0,1,32.32,20.06A8,8,0,0,0,119.82,64h32.35a8,8,0,0,0,6.74-3.69,43.87,43.87,0,0,1,32.32-20.06A43.81,43.81,0,0,1,192,73.83a8.09,8.09,0,0,0,1,7.65A41.72,41.72,0,0,1,200,104Z"></path></svg>GitHub</a><a href="/rss.xml" aria-label="RSS 订阅"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256"><path d="M106.91,149.09A71.53,71.53,0,0,1,128,200a8,8,0,0,1-16,0,56,56,0,0,0-56-56,8,8,0,0,1,0-16A71.53,71.53,0,0,1,106.91,149.09ZM56,80a8,8,0,0,0,0,16A104,104,0,0,1,160,200a8,8,0,0,0,16,0A120,120,0,0,0,56,80Zm118.79,1.21A166.9,166.9,0,0,0,56,32a8,8,0,0,0,0,16A151,151,0,0,1,163.48,92.52,151,151,0,0,1,208,200a8,8,0,0,0,16,0A166.9,166.9,0,0,0,174.79,81.21ZM60,184a12,12,0,1,0,12,12A12,12,0,0,0,60,184Z"></path></svg>RSS</a></div></div></footer><script id="_R_">import("/assets/index-iWWMjvPF.js")</script></body></html><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("2:I[\"04dff15fd24a\",[],\"SiteChrome\",1]\n3:I[\"8c0f216c4604\",[],\"Children\",1]\n4:I[\"15c18cfaeeff\",[],\"LayoutSegmentProvider\",1]\n5:I[\"8c0f216c4604\",[],\"Slot\",1]\n6:I[\"593f344dc510\",[],\"RedirectBoundary\",1]\n:HL[\"/assets/index-BlvdgL5Z.css\",\"style\"]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("0:{\"__route\":\"route:/blog/ai-rag-tech-overview/\",\"__interceptionContext\":null,\"__layoutIds\":[\"layout:/\"],\"__rootLayout\":\"/\",\"page:/blog/ai-rag-tech-overview/\":\"$L1\",\"layout:/\":[[[[\"$\",\"link\",\"css:/assets/index-BlvdgL5Z.css\",{\"rel\":\"stylesheet\",\"precedence\":\"vite-rsc/importer-resources\",\"href\":\"/assets/index-BlvdgL5Z.css\",\"data-rsc-css-href\":\"/assets/index-BlvdgL5Z.css\"}],\"$undefined\"],[\"$\",\"html\",null,{\"lang\":\"zh-CN\",\"suppressHydrationWarning\":true,\"children\":[[\"$\",\"head\",null,{\"children\":[\"$undefined\",\"$undefined\"]}],[\"$\",\"body\",null,{\"className\":\"__variable_geist_mono_1diim1n\",\"children\":[[\"$\",\"a\",null,{\"className\":\"skip-link\",\"href\":\"#main-content\",\"children\":\"跳到正文\"}],[\"$\",\"$L2\",null,{\"children\":[\"$\",\"$L3\",null,{}]}]]}]]}]],null],\"route:/blog/ai-rag-tech-overview/\":[[[\"$\",\"meta\",null,{\"charSet\":\"utf-8\"}],[[\"$\",\"title\",\"0\",{\"children\":\"RAG 技术概览 · Hedon Garden\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"本文是在笔者学习了极客时间《RAG 快速开发实战》课程后，对 RAG 相关技术进行一个梳理归纳，帮助开发者在 RAG 开发中进行快速定位、系统学习。\"}],[\"$\",\"meta\",\"2\",{\"name\":\"author\",\"content\":\"Hedon\"}],[\"$\",\"link\",\"3\",{\"rel\":\"author\",\"href\":\"https://github.com/hedon954\"}],[\"$\",\"meta\",\"4\",{\"name\":\"robots\",\"content\":\"index, follow\"}],[\"$\",\"meta\",\"5\",{\"name\":\"googlebot\",\"content\":\"index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:title\",\"content\":\"RAG 技术概览\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:description\",\"content\":\"本文是在笔者学习了极客时间《RAG 快速开发实战》课程后，对 RAG 相关技术进行一个梳理归纳，帮助开发者在 RAG 开发中进行快速定位、系统学习。\"}],[\"$\",\"meta\",\"8\",{\"property\":\"og:url\",\"content\":\"https://hedon.top/blog/ai-rag-tech-overview\"}],[\"$\",\"meta\",\"9\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"10\",{\"property\":\"article:published_time\",\"content\":\"2025-04-13T22:23:22.000Z\"}],[\"$\",\"meta\",\"11\",{\"property\":\"og:image\",\"content\":\"https://hedon.top/hedonspace/banner/ai-rag-tech-overview.jpg\"}],[\"$\",\"meta\",\"12\",{\"property\":\"og:image:alt\",\"content\":\"RAG 技术概览 的文章封面\"}],[\"$\",\"meta\",\"13\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"14\",{\"name\":\"twitter:title\",\"content\":\"RAG 技术概览\"}],[\"$\",\"meta\",\"15\",{\"name\":\"twitter:description\",\"content\":\"本文是在笔者学习了极客时间《RAG 快速开发实战》课程后，对 RAG 相关技术进行一个梳理归纳，帮助开发者在 RAG 开发中进行快速定位、系统学习。\"}],[\"$\",\"meta\",\"16\",{\"name\":\"twitter:image\",\"content\":\"https://hedon.top/hedonspace/banner/ai-rag-tech-overview.jpg\"}],[\"$\",\"link\",\"17\",{\"rel\":\"icon\",\"href\":\"https://hedon.top/favicon.svg\"}],[\"$\",\"link\",\"18\",{\"rel\":\"canonical\",\"href\":\"https://hedon.top/blog/ai-rag-tech-overview\"}]],[[\"$\",\"meta\",\"0\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]],[\"$\",\"$L4\",null,{\"segmentMap\":{\"children\":[\"blog\",\"ai-rag-tech-overview\"]},\"children\":[\"$\",\"$L5\",null,{\"id\":\"layout:/\",\"parallelSlots\":\"$undefined\",\"children\":[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$L4\",null,{\"segmentMap\":{\"children\":[]},\"children\":[\"$\",\"$L5\",null,{\"id\":\"page:/blog/ai-rag-tech-overview/\"}]}]}]}]}]],\"__layoutFlags\":{\"layout:/\":\"s\"},\"__artifactCompatibility\":{\"schemaVersion\":1,\"graphVersion\":\"app-route-graph:1url7xrgffgzg\",\"deploymentVersion\":\"42ea885b-ba92-4c44-8068-a1dcfe71a16b\",\"appElementsSchemaVersion\":1,\"rscPayloadSchemaVersion\":1,\"rootBoundaryId\":\"/\",\"renderEpoch\":null}}\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("7:I[\"c2747888630f\",[],\"default\",1]\n8:I[\"3c10efde56c2\",[],\"MarkdownImage\",1]\n:HL[\"https://hedon.top/hedonspace/banner/ai-rag-tech-overview.jpg\",\"image\"]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("1:[\"$\",\"main\",null,{\"className\":\"reading-page post-reading-page\",\"children\":[\"$\",\"article\",null,{\"className\":\"post-article h-entry\",\"children\":[[\"$\",\"$L7\",null,{\"className\":\"u-url sr-only\",\"href\":\"/blog/ai-rag-tech-overview\",\"children\":[\"RAG 技术概览\",\" 永久链接\"]}],[\"$\",\"a\",null,{\"className\":\"p-author h-card sr-only\",\"href\":\"https://github.com/hedon954\",\"rel\":\"author\",\"children\":\"Hedon\"}],[\"$\",\"figure\",null,{\"className\":\"article-hero article-cover\",\"children\":[\"$\",\"img\",null,{\"className\":\"u-photo\",\"src\":\"https://hedon.top/hedonspace/banner/ai-rag-tech-overview.jpg\",\"alt\":\"RAG 技术概览 的文章封面\"}]}],[\"$\",\"header\",null,{\"className\":\"article-header article-summary-row\",\"children\":[[\"$\",\"p\",null,{\"className\":\"eyebrow\",\"children\":\"AI\"}],[\"$\",\"h1\",null,{\"className\":\"p-name\",\"children\":\"RAG 技术概览\"}],[\"$\",\"p\",null,{\"className\":\"article-deck p-summary\",\"children\":\"本文是在笔者学习了极客时间《RAG 快速开发实战》课程后，对 RAG 相关技术进行一个梳理归纳，帮助开发者在 RAG 开发中进行快速定位、系统学习。\"}],[\"$\",\"div\",null,{\"className\":\"article-meta\",\"children\":[[\"$\",\"time\",null,{\"className\":\"dt-published\",\"dateTime\":\"2025-04-13T22:23:22.000Z\",\"children\":[\"发布于 \",\"2025/04/13\"]}],\"$undefined\",[\"$\",\"span\",null,{\"children\":\"$undefined\"}],[\"$\",\"span\",null,{\"children\":[\"约 \",\"3,725\",\" 字\"]}]]}]]}],[\"$\",\"div\",null,{\"className\":\"article-reading-layout\",\"children\":[[\"$\",\"div\",null,{\"className\":\"article-reading-column\",\"children\":[[\"$\",\"div\",null,{\"className\":\"e-content\",\"children\":[\"$\",\"div\",null,{\"className\":\"markdown-body\",\"children\":[[\"$\",\"p\",\"p-0\",{\"children\":[\"RAG 的整个流程可概括为如下图所示，主要分成\",[\"$\",\"strong\",\"strong-0\",{\"children\":\"索引\"}],\"、\",[\"$\",\"strong\",\"strong-1\",{\"children\":\"检索\"}],\"和\",[\"$\",\"strong\",\"strong-2\",{\"children\":\"生成\"}],\"三个部分。\"]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":[\"本文提供配套的完整案例，源码可参考：\",[\"$\",\"a\",\"a-0\",{\"href\":\"https://github.com/hedon-ai-road/rag-demo\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"https://github.com/hedon-ai-road/rag-demo\"},\"children\":[{\"type\":\"text\",\"value\":\"hedon-ai-road/rag-demo\",\"position\":{\"start\":{\"line\":3,\"column\":20,\"offset\":69},\"end\":{\"line\":3,\"column\":42,\"offset\":91}}}],\"position\":{\"start\":{\"line\":3,\"column\":19,\"offset\":68},\"end\":{\"line\":3,\"column\":86,\"offset\":135}}},\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":\"hedon-ai-road/rag-demo\"}],\"，每个 commit 都引入了一个新的技术点，感兴趣的读者可根据 commit 记录一一查探。\"]}],\"\\n\",[\"$\",\"p\",\"p-2\",{\"children\":[\"$\",\"$L8\",\"img-0\",{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/image-20250413223908403.png\",\"alt\":\"\",\"node\":{\"type\":\"element\",\"tagName\":\"img\",\"properties\":{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/image-20250413223908403.png\",\"alt\":\"\"},\"children\":[],\"position\":{\"start\":{\"line\":5,\"column\":1,\"offset\":184},\"end\":{\"line\":5,\"column\":84,\"offset\":267}}}}]}],\"\\n\",[\"$\",\"h2\",\"h2-0\",{\"id\":\"文档解析技术\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#文档解析技术\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#文档解析技术\"},\"children\":[{\"type\":\"text\",\"value\":\"文档解析技术\",\"position\":{\"start\":{\"line\":7,\"column\":4,\"offset\":272},\"end\":{\"line\":7,\"column\":10,\"offset\":278}}}]},\"children\":\"文档解析技术\"}]}],\"\\n\",[\"$\",\"blockquote\",\"blockquote-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"https://github.com/hedon-ai-road/rag-demo/commit/26d52ac964ca099e1726fccb5f4c18adc0fd940f#diff-b10564ab7d2c520cdd0243874879fb0a782862c3c902ab535faabe57d5a505e1\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"https://github.com/hedon-ai-road/rag-demo/commit/26d52ac964ca099e1726fccb5f4c18adc0fd940f#diff-b10564ab7d2c520cdd0243874879fb0a782862c3c902ab535faabe57d5a505e1\"},\"children\":[{\"type\":\"text\",\"value\":\"代码示例\",\"position\":{\"start\":{\"line\":9,\"column\":4,\"offset\":283},\"end\":{\"line\":9,\"column\":8,\"offset\":287}}}],\"position\":{\"start\":{\"line\":9,\"column\":3,\"offset\":282},\"end\":{\"line\":9,\"column\":170,\"offset\":449}}},\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":\"代码示例\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"p\",\"p-3\",{\"children\":[\"$\",\"$L8\",\"img-0\",{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/c60419a3c73f3090651a4c2761e05583.png\",\"alt\":\"\",\"node\":{\"type\":\"element\",\"tagName\":\"img\",\"properties\":{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/c60419a3c73f3090651a4c2761e05583.png\",\"alt\":\"\"},\"children\":[],\"position\":{\"start\":{\"line\":11,\"column\":1,\"offset\":451},\"end\":{\"line\":11,\"column\":93,\"offset\":543}}}}]}],\"\\n\",[\"$\",\"h3\",\"h3-0\",{\"id\":\"pdf\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#pdf\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#pdf\"},\"children\":[{\"type\":\"text\",\"value\":\"PDF\",\"position\":{\"start\":{\"line\":13,\"column\":5,\"offset\":549},\"end\":{\"line\":13,\"column\":8,\"offset\":552}}}]},\"children\":\"PDF\"}]}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"基于规则的开源库\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"pyPDF2\"}],\"\\n\",\"$L9\",\"\\n\",\"$La\",\"\\n\",\"$Lb\",\"\\n\",\"$Lc\",\"\\n\"]}],\"\\n\"]}],\"\\n\",\"$Ld\",\"\\n\",\"$Le\",\"\\n\"]}],\"\\n\",\"$Lf\",\"\\n\",\"$L10\",\"\\n\",\"$L11\",\"\\n\",\"$L12\",\"\\n\",\"$L13\",\"\\n\",\"$L14\",\"\\n\",\"$L15\",\"\\n\",\"$L16\",\"\\n\",\"$L17\",\"\\n\",\"$L18\",\"\\n\",\"$L19\",\"\\n\",\"$L1a\",\"\\n\",\"$L1b\",\"\\n\",\"$L1c\",\"\\n\",\"$L1d\",\"\\n\",\"$L1e\",\"\\n\",\"$L1f\",\"\\n\",\"$L20\",\"\\n\",\"$L21\",\"\\n\",\"$L22\",\"\\n\",\"$L23\",\"\\n\",\"$L24\",\"\\n\",\"$L25\",\"\\n\",\"$L26\",\"\\n\",\"$L27\",\"\\n\",\"$L28\",\"\\n\",\"$L29\",\"\\n\",\"$L2a\",\"\\n\",\"$L2b\",\"\\n\",\"$L2c\",\"\\n\",\"$L2d\",\"\\n\",\"$L2e\",\"\\n\",\"$L2f\",\"\\n\",\"$L30\",\"\\n\",\"$L31\",\"\\n\",\"$L32\",\"\\n\",\"$L33\",\"\\n\",\"$L34\",\"\\n\",\"$L35\",\"\\n\",\"$L36\",\"\\n\",\"$L37\",\"\\n\",\"$L38\",\"\\n\",\"$L39\",\"\\n\",\"$L3a\",\"\\n\",\"$L3b\",\"\\n\",\"$L3c\",\"\\n\",\"$L3d\",\"\\n\",\"$L3e\",\"\\n\",\"$L3f\",\"\\n\",\"$L40\",\"\\n\",\"$L41\",\"\\n\",\"$L42\",\"\\n\",\"$L43\",\"\\n\",\"$L44\",\"\\n\",\"$L45\",\"\\n\",\"$L46\",\"\\n\",\"$L47\",\"\\n\",\"$L48\",\"\\n\",\"$L49\",\"\\n\",\"$L4a\",\"\\n\",\"$L4b\",\"\\n\",\"$L4c\",\"\\n\",\"$L4d\",\"\\n\",\"$L4e\",\"\\n\",\"$L4f\",\"\\n\",\"$L50\",\"\\n\",\"$L51\",\"\\n\",\"$L52\",\"\\n\",\"$L53\",\"\\n\",\"$L54\",\"\\n\",\"$L55\",\"\\n\",\"$L56\",\"\\n\",\"$L57\",\"\\n\",\"$L58\",\"\\n\",\"$L59\",\"\\n\",\"$L5a\",\"\\n\",\"$L5b\",\"\\n\",\"$L5c\",\"\\n\",\"$L5d\",\"\\n\",\"$L5e\",\"\\n\",\"$L5f\",\"\\n\",\"$L60\",\"\\n\",\"$L61\",\"\\n\",\"$L62\",\"\\n\",\"$L63\",\"\\n\",\"$L64\",\"\\n\",\"$L65\",\"\\n\",\"$L66\",\"\\n\",\"$L67\",\"\\n\",\"$L68\",\"\\n\",\"$L69\",\"\\n\",\"$L6a\",\"\\n\",\"$L6b\",\"\\n\",\"$L6c\",\"\\n\",\"$L6d\",\"\\n\",\"$L6e\",\"\\n\",\"$L6f\",\"\\n\",\"$L70\",\"\\n\",\"$L71\",\"\\n\",\"$L72\",\"\\n\",\"$L73\",\"\\n\",\"$L74\",\"\\n\",\"$L75\",\"\\n\",\"$L76\"]}]}],\"$L77\",\"$L78\",\"$L79\"]}],\"$L7a\"]}]]}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("7b:I[\"201d37663261\",[],\"Webmentions\",1]\n7c:I[\"35e6595fba52\",[],\"GiscusComments\",1]\n7d:I[\"47831e8e6cd4\",[],\"TableOfContents\",1]\n9:[\"$\",\"li\",\"li-1\",{\"children\":\"PyMuPDF\"}]\na:[\"$\",\"li\",\"li-2\",{\"children\":\"pdfminer\"}]\nb:[\"$\",\"li\",\"li-3\",{\"children\":\"pdfplumber\"}]\nc:[\"$\",\"li\",\"li-4\",{\"children\":\"papermage\"}]\nd:[\"$\",\"li\",\"li-1\",{\"children\":[\"基于深度学习的开源库\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"Layout-parser\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"PP-StructureV2\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"PDF-Extract-Kit\"}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":\"pix2text\"}],\"\\n\",[\"$\",\"li\",\"li-4\",{\"children\":\"MinerU\"}],\"\\n\",[\"$\",\"li\",\"li-5\",{\"children\":\"marker\"}],\"\\n\",[\"$\",\"li\",\"li-6\",{\"children\":\"Gptpdf（基于 LLM API）\"}],\"\\n\"]}],\"\\n\"]}]\ne:[\"$\",\"li\",\"li-2\",{\"children\":[\"商业闭源库\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"Textln.com\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"Doc2x\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"mathpix\"}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":\"庖丁 PDFlux\"}],\"\\n\",[\"$\",\"li\",\"li-4\",{\"children\":\"腾讯云文档识别\"}],\"\\n\"]}],\"\\n\"]}]\nf:[\"$\",\"h2\",\"h2-1\",{\"id\":\"分块策略\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#分块策略\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#分块策略\"},\"children\":[{\"type\":\"text\",\"value\":\"分块策略\",\"position\":{\"start\":{\"line\":36,\"column\":4,\"offset\":833},\"end\":{\"line\":36,\"column\":8,\"offset\":837}}}]},\"children\":\"分块策略\"}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("10:[\"$\",\"blockquote\",\"blockquote-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"https://github.com/hedon-ai-road/rag-demo/commit/a26ae8895da7a9673660b31904857307a149c983\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"https://github.com/hedon-ai-road/rag-demo/commit/a26ae8895da7a9673660b31904857307a149c983\"},\"children\":[{\"type\":\"text\",\"value\":\"代码示例\",\"position\":{\"start\":{\"line\":38,\"column\":4,\"offset\":842},\"end\":{\"line\":38,\"column\":8,\"offset\":846}}}],\"position\":{\"start\":{\"line\":38,\"column\":3,\"offset\":841},\"end\":{\"line\":38,\"column\":100,\"offset\":938}}},\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":\"代码示例\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"https://chunkviz.up.railway.app/\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"https://chunkviz.up.railway.app/\"},\"children\":[{\"type\":\"text\",\"value\":\"分块演示工具\",\"position\":{\"start\":{\"line\":40,\"column\":4,\"offset\":944},\"end\":{\"line\":40,\"column\":10,\"offset\":950}}}],\"position\":{\"start\":{\"line\":40,\"column\":3,\"offset\":943},\"end\":{\"line\":40,\"column\":45,\"offset\":985}}},\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":\"分块演示工具\"}]}],\"\\n\"]}]\n11:[\"$\",\"p\",\"p-4\",{\"children\":\"3 个关键部分组成：\"}]\n12:[\"$\",\"ul\",\"ul-1\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"大小\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"重叠\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"拆分\"}],\"\\n\"]}]\n13:[\"$\",\"$L8\",\"img-0\",{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/63b052c1b1639bfa66c23342cf28d9ef.jpg\",\"style\":{\"zoom\":\"33%\"},\"node\":{\"type\":\"element\",\"tagName\":\"img\",\"properties\":{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/63b052c1b1639bfa66c23342cf28d9ef.jpg\",\"style\":\"zoom: 33%;\"},\"children\":[],\"position\":{\"start\":{\"line\":48,\"column\":1,\"offset\":1015},\"end\":{\"line\":48,\"column\":121,\"offset\":1135}}}}]\n14:[\"$\",\"h3\",\"h3-1\",{\"id\":\"固定大小分块fixed-size-chunking\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#固定大小分块fixed-size-chunking\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#固定大小分块fixed-size-chunking\"},\"children\":[{\"type\":\"text\",\"value\":\"固定大小分块（Fixed Size Chunking）\",\"position\":{\"start\":{\"line\":50,\"column\":5,\"offset\":1141},\"end\":{\"line\":50,\"column\":32,\"offset\":1168}}}]},\"children\":\"固定大小分块（Fixed Size Chunking）\"}]}]\n15:[\"$\",\"p\",\"p-5\",{\"children\":\"适用场景：\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("16:[\"$\",\"ol\",\"ol-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"作为分块策略的基准线；\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"对大型数据集进行初步分析；\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"实现简单且可观测性高，分块便于管理；\"}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":\"适用于格式和大小相似的同质数据集，如新闻文章或博客文章。\"}],\"\\n\"]}]\n17:[\"$\",\"p\",\"p-6\",{\"children\":\"问题：\"}]\n18:[\"$\",\"ol\",\"ol-1\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"不考虑内容上下文，容易导致无意义的文本块；\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"缺乏灵活性，无法适应文本的自然结构\"}],\"\\n\"]}]\n19:[\"$\",\"h3\",\"h3-2\",{\"id\":\"重叠分块overlap-chunking\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#重叠分块overlap-chunking\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#重叠分块overlap-chunking\"},\"children\":[{\"type\":\"text\",\"value\":\"重叠分块（Overlap Chunking）\",\"position\":{\"start\":{\"line\":64,\"column\":5,\"offset\":1320},\"end\":{\"line\":64,\"column\":27,\"offset\":1342}}}]},\"children\":\"重叠分块（Overlap Chunking）\"}]}]\n1a:[\"$\",\"p\",\"p-7\",{\"children\":\"使用场景：\"}]\n1b:[\"$\",\"ol\",\"ol-2\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"需要深入理解语义并保持上下文完整性的文档，如法律文档、技术手册或科研论文；\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"提升分块内容的连贯性，以提高分析质量。\"}],\"\\n\"]}]\n1c:[\"$\",\"p\",\"p-8\",{\"children\":\"问题：\"}]\n1d:[\"$\",\"ol\",\"ol-3\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"计算复杂度增加，处理效率降低；\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"冗余信息的存储和管理成为负担。\"}],\"\\n\"]}]\n1e:[\"$\",\"h3\",\"h3-3\",{\"id\":\"递归分块recursive-chunking\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#递归分块recursive-chunking\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#递归分块recursive-chunking\"},\"children\":[{\"type\":\"text\",\"value\":\"递归分块（Recursive Chunking）\",\"position\":{\"start\":{\"line\":76,\"column\":5,\"offset\":1464},\"end\":{\"line\":76,\"column\":29,\"offset\":1488}}}]},\"children\":\"递归分块（Recursive Chunking）\"}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("1f:[\"$\",\"ul\",\"ul-2\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"通过预定义的文本分隔符（如换行符 \\\\n\\\\n、\\\\n、句号、逗号、感叹号、空格等）迭代地将文本分解为更小的块，以实现段大小的均匀性和语义完整性。\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"先按较大的逻辑单元分割，再逐步递归到较小单元，确保在分块大小限制内保留最强的语义片段。\"}],\"\\n\"]}]\n20:[\"$\",\"p\",\"p-9\",{\"children\":\"使用场景：\"}]\n21:[\"$\",\"ol\",\"ol-4\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"需要逐层分析的文本文档或需要分解成长片段、长段落的长文档，如研究报告、法律文档等。\"}],\"\\n\"]}]\n22:[\"$\",\"p\",\"p-10\",{\"children\":\"问题：\"}]\n23:[\"$\",\"ol\",\"ol-5\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"在块边界处模糊语义，容易将完整的语义单元切分开。\"}],\"\\n\"]}]\n24:[\"$\",\"h3\",\"h3-4\",{\"id\":\"文档特定分块document-specific-chunking\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#文档特定分块document-specific-chunking\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#文档特定分块document-specific-chunking\"},\"children\":[{\"type\":\"text\",\"value\":\"文档特定分块（Document Specific Chunking）\",\"position\":{\"start\":{\"line\":89,\"column\":5,\"offset\":1701},\"end\":{\"line\":89,\"column\":39,\"offset\":1735}}}]},\"children\":\"文档特定分块（Document Specific Chunking）\"}]}]\n25:[\"$\",\"ul\",\"ul-3\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"根据文档的格式（如 Markdown、Latex、或编程语言如 Python 等）进行定制化分割的技术。此方法依据文档的特定格式和结构规则，例如 Markdown 的标题、列表项，或 Python 代码中的函数和类定义等，来确定分块边界。\"}],\"\\n\"]}]\n26:[\"$\",\"p\",\"p-11\",{\"children\":\"适用场景：\"}]\n27:[\"$\",\"ol\",\"ol-6\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"有特定的文档结构，如编程语言、Markdown、Latex 等结构文档。\"}],\"\\n\"]}]\n28:[\"$\",\"p\",\"p-12\",{\"children\":\"问题：\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("29:[\"$\",\"ol\",\"ol-7\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"格式依赖性强，不同格式之间的分块策略不通用；\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"无法处理格式不规范及混合多种格式的情况。\"}],\"\\n\"]}]\n2a:[\"$\",\"h3\",\"h3-5\",{\"id\":\"语义分块semantic-chunking\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#语义分块semantic-chunking\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#语义分块semantic-chunking\"},\"children\":[{\"type\":\"text\",\"value\":\"语义分块（Semantic Chunking）\",\"position\":{\"start\":{\"line\":102,\"column\":5,\"offset\":1968},\"end\":{\"line\":102,\"column\":28,\"offset\":1991}}}]},\"children\":\"语义分块（Semantic Chunking）\"}]}]\n2b:[\"$\",\"ul\",\"ul-4\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"基于文本的自然语言边界（如句子、段落或主题中断）进行分段的技术，需要使用 NLP 技术根据语义分词分句，旨在确保每个分块都包含语义连贯的信息单元。\"}],\"\\n\"]}]\n2c:[\"$\",\"p\",\"p-13\",{\"children\":\"适用场景：\"}]\n2d:[\"$\",\"ol\",\"ol-8\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"确保每个文档块的信息完整性且语义连贯；\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"提高检索结果的相关性和准确性；\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"适用于复杂文档和上下文敏感的精细化分析。\"}],\"\\n\"]}]\n2e:[\"$\",\"p\",\"p-14\",{\"children\":\"问题：\"}]\n2f:[\"$\",\"ol\",\"ol-9\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"需要额外的高计算资源，特别是在处理大型或动态变化的文档数据时；\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"处理效率降低。\"}],\"\\n\"]}]\n30:[\"$\",\"h3\",\"h3-6\",{\"id\":\"混合分块mix-chunking\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#混合分块mix-chunking\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#混合分块mix-chunking\"},\"children\":[{\"type\":\"text\",\"value\":\"混合分块（Mix Chunking）\",\"position\":{\"start\":{\"line\":117,\"column\":5,\"offset\":2200},\"end\":{\"line\":117,\"column\":23,\"offset\":2218}}}]},\"children\":\"混合分块（Mix Chunking）\"}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("31:[\"$\",\"ul\",\"ul-5\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"在初始阶段使用固定长度分块快速整理大量文档，而在后续阶段使用语义分块进行更精细的分类和主题提取。根据实际业务场景，设计多种分块策略的混合，能够灵活适应各种需求，提供更强大的分块方案。\"}],\"\\n\"]}]\n32:[\"$\",\"p\",\"p-15\",{\"children\":\"适用场景：\"}]\n33:[\"$\",\"ol\",\"ol-10\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"适用于多层次的精细化分块场景；\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"数据集动态变化，包含多种文档格式与结构；\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"平衡处理速度与准确性的场景。\"}],\"\\n\"]}]\n34:[\"$\",\"p\",\"p-16\",{\"children\":\"问题：\"}]\n35:[\"$\",\"ol\",\"ol-11\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"实现复杂度高；\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"策略调优难度高；\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"资源消耗增加。\"}],\"\\n\"]}]\n36:[\"$\",\"h2\",\"h2-2\",{\"id\":\"embedding-技术\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#embedding-技术\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#embedding-技术\"},\"children\":[{\"type\":\"text\",\"value\":\"Embedding 技术\",\"position\":{\"start\":{\"line\":133,\"column\":4,\"offset\":2427},\"end\":{\"line\":133,\"column\":16,\"offset\":2439}}}]},\"children\":\"Embedding 技术\"}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("37:[\"$\",\"ul\",\"ul-6\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"Embedding 嵌入是指将文本、图像、音频、视频等形式的信息映射为高维空间中的密集向量表示。这些向量在语义空间中起到坐标的作用，捕捉对象之间的语义关系和隐含的意义。通过在向量空间中进行计算（例如余弦相似度），可以量化和衡量这些对象之间的语义相似性。\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"向量检索（Vector Retrieval）是一种基于向量表示的搜索技术，通过计算查询向量与已知文本向量的相似度来识别最相关的文本数据。向量检索的高效性在于，它能在大规模数据集中快速、准确地找到与查询最相关的内容，这得益于向量表示中蕴含的丰富语义信息。\"}],\"\\n\"]}]\n38:[\"$\",\"p\",\"p-17\",{\"children\":\"评估指标：（MTEB、C-MTEB）\"}]\n39:[\"$\",\"ol\",\"ol-12\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"特定领域的适用性\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"检索精度\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"支持的语言\"}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":\"文本块长度\"}],\"\\n\",[\"$\",\"li\",\"li-4\",{\"children\":\"模型大小\"}],\"\\n\",[\"$\",\"li\",\"li-5\",{\"children\":\"检索效率\"}],\"\\n\"]}]\n3a:[\"$\",\"h2\",\"h2-3\",{\"id\":\"向量数据库\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#向量数据库\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#向量数据库\"},\"children\":[{\"type\":\"text\",\"value\":\"向量数据库\",\"position\":{\"start\":{\"line\":147,\"column\":4,\"offset\":2778},\"end\":{\"line\":147,\"column\":9,\"offset\":2783}}}]},\"children\":\"向量数据库\"}]}]\n3b:[\"$\",\"blockquote\",\"blockquote-2\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"https://github.com/hedon-ai-road/rag-demo/commit/1f9c07ec6b10d6bfdb55c17c2c6a7ad461b00ab2\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"https://github.com/hedon-ai-road/rag-demo/commit/1f9c07ec6b10d6bfdb55c17c2c6a7ad461b00ab2\"},\"children\":[{\"type\":\"text\",\"value\":\"代码示例\",\"position\":{\"start\":{\"line\":149,\"column\":4,\"offset\":2788},\"end\":{\"line\":149,\"column\":8,\"offset\":2792}}}],\"position\":{\"start\":{\"line\":149,\"column\":3,\"offset\":2787},\"end\":{\"line\":149,\"column\":100,\"offset\":2884}}},\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":\"代码示例\"}]}],\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("3c:[\"$\",\"ul\",\"ul-7\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"向量数据库是一种专门用于存储和检索多维向量的数据库类型，与传统的基于行列结构的数据库不同，它主要处理高维空间中的数据点。\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"向量数据库的操作逻辑是基于相似性搜索，即在查询时，应用特定的相似性度量（如余弦相似度、欧几里得距离等）来查找与查询向量最相似的向量。\"}],\"\\n\"]}]\n3d:[\"$\",\"p\",\"p-18\",{\"children\":\"向量数据库的核心在于其高效的索引和搜索机制。为了优化查询性能，它采用了如哈希、量化和基于图形的多种算法。\"}]\n3e:[\"$\",\"ul\",\"ul-8\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"层次化可导航小世界（\",[\"$\",\"strong\",\"strong-0\",{\"children\":\"HNSW\"}],\"）：通过在多层结构中将相似向量连接在一起，快速缩小搜索范围。\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"产品量化（\",[\"$\",\"strong\",\"strong-0\",{\"children\":\"PQ\"}],\"）：通过压缩高维向量，减少内存占用并加速检索。\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"位置敏感哈希（\",[\"$\",\"strong\",\"strong-0\",{\"children\":\"LSH\"}],\"）：通过哈希函数将相似向量聚集在一起，便于快速定位。\"]}],\"\\n\"]}]\n3f:[\"$\",\"p\",\"p-19\",{\"children\":\"向量数据库的工作流程：\"}]\n40:[\"$\",\"ol\",\"ol-13\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"数据处理与向量化\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"向量存储\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"向量索引\"}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":[\"向量搜索\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"余弦相似度：主要用于文本处理和信息检索，关注向量之间的角度，以捕捉语义相似性。\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"欧几里得距离：测量向量之间的实际距离，适用于密集特征集的聚类或分类。\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"曼哈顿距离：通过计算笛卡尔坐标中的绝对差值之和，适用于稀疏数据的处理。\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-4\",{\"children\":\"数据检索\"}],\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("41:[\"$\",\"p\",\"p-20\",{\"children\":[\"$\",\"$L8\",\"img-0\",{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/c27b4yy6748a414dae0c679835a1eccc.jpg\",\"alt\":\"\",\"node\":{\"type\":\"element\",\"tagName\":\"img\",\"properties\":{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/c27b4yy6748a414dae0c679835a1eccc.jpg\",\"alt\":\"\"},\"children\":[],\"position\":{\"start\":{\"line\":171,\"column\":1,\"offset\":3389},\"end\":{\"line\":171,\"column\":93,\"offset\":3481}}}}]}]\n42:[\"$\",\"h2\",\"h2-4\",{\"id\":\"混合检索\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#混合检索\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#混合检索\"},\"children\":[{\"type\":\"text\",\"value\":\"混合检索\",\"position\":{\"start\":{\"line\":173,\"column\":4,\"offset\":3486},\"end\":{\"line\":173,\"column\":8,\"offset\":3490}}}]},\"children\":\"混合检索\"}]}]\n43:[\"$\",\"blockquote\",\"blockquote-3\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"https://github.com/hedon-ai-road/rag-demo/commit/38f1739c7ac1d3fc58023cb12bf863d3f502c419\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"https://github.com/hedon-ai-road/rag-demo/commit/38f1739c7ac1d3fc58023cb12bf863d3f502c419\"},\"children\":[{\"type\":\"text\",\"value\":\"代码示例\",\"position\":{\"start\":{\"line\":175,\"column\":4,\"offset\":3495},\"end\":{\"line\":175,\"column\":8,\"offset\":3499}}}],\"position\":{\"start\":{\"line\":175,\"column\":3,\"offset\":3494},\"end\":{\"line\":175,\"column\":100,\"offset\":3591}}},\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":\"代码示例\"}]}],\"\\n\"]}]\n44:[\"$\",\"ul\",\"ul-9\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"混合检索（Hybrid Search）通过结合关键词检索和语义匹配的优势，可以首先利用关键词检索精确定位到“订单 12345”的信息，然后通过语义匹配扩展与该订单相关的其他上下文或客户操作的信息，例如“12 开头的订单、包装破损严重”等。这样不仅能够获取精确的订单详情，还能获得与之相关的额外有用信息。\"}],\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("45:[\"$\",\"p\",\"p-21\",{\"children\":[\"$\",\"$L8\",\"img-0\",{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/7eddf214ee696b2e1f5977d72a4db134.jpg\",\"alt\":\"\",\"node\":{\"type\":\"element\",\"tagName\":\"img\",\"properties\":{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/7eddf214ee696b2e1f5977d72a4db134.jpg\",\"alt\":\"\"},\"children\":[],\"position\":{\"start\":{\"line\":179,\"column\":1,\"offset\":3748},\"end\":{\"line\":179,\"column\":93,\"offset\":3840}}}}]}]\n46:[\"$\",\"h2\",\"h2-5\",{\"id\":\"重排序技术\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#重排序技术\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#重排序技术\"},\"children\":[{\"type\":\"text\",\"value\":\"重排序技术\",\"position\":{\"start\":{\"line\":181,\"column\":4,\"offset\":3845},\"end\":{\"line\":181,\"column\":9,\"offset\":3850}}}]},\"children\":\"重排序技术\"}]}]\n47:[\"$\",\"blockquote\",\"blockquote-4\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"https://github.com/hedon-ai-road/rag-demo/commit/4837ef3220d177297169f28fbff5f52eaaee720e\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"https://github.com/hedon-ai-road/rag-demo/commit/4837ef3220d177297169f28fbff5f52eaaee720e\"},\"children\":[{\"type\":\"text\",\"value\":\"代码示例\",\"position\":{\"start\":{\"line\":183,\"column\":4,\"offset\":3855},\"end\":{\"line\":183,\"column\":8,\"offset\":3859}}}],\"position\":{\"start\":{\"line\":183,\"column\":3,\"offset\":3854},\"end\":{\"line\":183,\"column\":100,\"offset\":3951}}},\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":\"代码示例\"}]}],\"\\n\"]}]\n48:[\"$\",\"ul\",\"ul-10\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"重排序技术（Reranking）通过对初始检索结果进行重新排序，改善检索结果的相关性，为生成模型提供更优质的上下文，从而提升整体 RAG 系统的效果。\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"重排序模型大多是基于\",[\"$\",\"strong\",\"strong-0\",{\"children\":\"双塔\"}],\"或\",[\"$\",\"strong\",\"strong-1\",{\"children\":\"交叉编码架构\"}],\"的模型，在此基础上进一步计算更精确的相关性分数，能够捕捉查询词与文档块之间更细致的相关性，从而在细节层面上提高检索精度。\"]}],\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("49:[\"$\",\"h2\",\"h2-6\",{\"id\":\"提示工程\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#提示工程\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#提示工程\"},\"children\":[{\"type\":\"text\",\"value\":\"提示工程\",\"position\":{\"start\":{\"line\":188,\"column\":4,\"offset\":4125},\"end\":{\"line\":188,\"column\":8,\"offset\":4129}}}]},\"children\":\"提示工程\"}]}]\n4a:[\"$\",\"p\",\"p-22\",{\"children\":\"一个提示（prompt）通常包含以下几个元素：\"}]\n4b:[\"$\",\"ol\",\"ol-14\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"指令（Instruction）\"}],\"：指明模型要执行的特定任务或操作。\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"上下文（Context）\"}],\"：为模型提供额外信息或背景，可以帮助引导模型生成更准确的响应。\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"输入数据（Input Data）\"}],\"：我们希望模型回答的问题或感兴趣的输入内容。\"]}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"输出指示符（Output Indicator）\"}],\"：指定模型的输出类型或格式，例如格式、是否要生成代码、总结文本或回答具体问题。\"]}],\"\\n\"]}]\n4c:[\"$\",\"p\",\"p-23\",{\"children\":\"核心技巧：\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("4d:[\"$\",\"ul\",\"ul-11\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"具体指令法\"}],\"：具体、细致地告诉大模型要做什么。\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"示例学习\"}],\"：给出具体详尽的期望示例。\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"默认回复策略\"}],\"：设定默认回复策略，避免模型产生“幻觉”，让它不知道就说不知道。\"]}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"任务角色设定\"}],\"：设定身份，可以帮助模型更好地理解任务要求和角色责任，从而输出更加一致、专业的内容。\"]}],\"\\n\",[\"$\",\"li\",\"li-4\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"解释理由法\"}],\"：向模型解释为什么某些任务需要特定的处理方式，帮助其理解任务背景。\"]}],\"\\n\",[\"$\",\"li\",\"li-5\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"文档基础说明\"}],\"：提供文档的背景信息和文本来源。\"]}],\"\\n\"]}]\n4e:[\"$\",\"h2\",\"h2-7\",{\"id\":\"优化技术\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#优化技术\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#优化技术\"},\"children\":[{\"type\":\"text\",\"value\":\"优化技术\",\"position\":{\"start\":{\"line\":206,\"column\":4,\"offset\":4602},\"end\":{\"line\":206,\"column\":8,\"offset\":4606}}}]},\"children\":\"优化技术\"}]}]\n4f:[\"$\",\"h3\",\"h3-7\",{\"id\":\"数据清洗和预处理\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#数据清洗和预处理\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#数据清洗和预处理\"},\"children\":[{\"type\":\"text\",\"value\":\"数据清洗和预处理\",\"position\":{\"start\":{\"line\":208,\"column\":5,\"offset\":4612},\"end\":{\"line\":208,\"column\":13,\"offset\":4620}}}]},\"children\":\"数据清洗和预处理\"}]}]\n50:[\"$\",\"blockquote\",\"blockquote-5\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"在 RAG 索引流程中，文档解析之后、文本块切分之前，进行数据清洗和预处理能够有效减少脏数据和噪声，提升文本的整体质量和信息密度。\"}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"通过清除冗余信息、统一格式、处理异常字符等手段，数据清洗和预处理过程确保文档更加规范和高质量，从而提高 RAG 系统的检索效果和信息准确性。\"}],\"\\n\"]}]\n51:[\"$\",\"ul\",\"ul-12\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"处理冗余的模型内容。\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"消除文档中的额外空白和格式不一致。\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"去除无用的文档脚注、页眉页脚、版权信息。\"}],\"\\n\"]}]\n52:[\"$\",\"h3\",\"h3-8\",{\"id\":\"查询扩展\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#查询扩展\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#查询扩展\"},\"children\":[{\"type\":\"text\",\"value\":\"查询扩展\",\"position\":{\"start\":{\"line\":218,\"column\":5,\"offset\":4827},\"end\":{\"line\":218,\"column\":9,\"offset\":4831}}}]},\"children\":\"查询扩展\"}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("53:[\"$\",\"blockquote\",\"blockquote-6\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"查询扩展策略通过大模型从原始查询语句生成多个语义相关的查询，可以覆盖向量空间中的不同区域，从而提高检索的全面性和准确性。\"}],\"\\n\"]}]\n54:[\"$\",\"p\",\"p-24\",{\"children\":\"查询扩展的指令模版：\"}]\n55:[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"TXT\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-txt\",\"children\":\"你是一个AI语言模型助手。\\n你的任务是生成五个不同版本的用户问题，以便从向量数据库中检索相关文档。\\n通过从多个角度生成用户问题，你的目标是帮助用户克服基于距离的相似性搜索的一些局限性。\\n请将这些替代问题用换行符分隔。原始问题：{查询原文}\\n\"}]}]\n56:[\"$\",\"p\",\"p-25\",{\"children\":\"假设问题：\"}]\n57:[\"$\",\"pre\",\"pre-1\",{\"data-language\":\"TXT\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-txt\",\"children\":\"下面报告中涉及了哪几个行业的案例以及总结各自面临的挑战？\\n\"}]}]\n58:[\"$\",\"p\",\"p-26\",{\"children\":\"结果示例：\"}]\n59:[\"$\",\"pre\",\"pre-2\",{\"data-language\":\"TXT\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-txt\",\"children\":\"请问报告中提到的案例涉及了哪些行业？这些行业各自面临的挑战有哪些？\\n报告中有哪些行业的案例被讨论？每个行业在报告中描述的挑战是什么？\\n这个报告中具体提到了哪些行业的案例？能否总结一下这些行业当前面临的主要挑战？\\n该报告中涵盖了哪些行业案例，并对各行业的挑战进行了哪些讨论？\\n在报告中提到的行业案例有哪些？这些行业分别遇到的主要问题和挑战是什么？\\n\"}]}]\n5a:[\"$\",\"p\",\"p-27\",{\"children\":\"通过这种查询扩展策略，原始问题被分解为多个子查询，每个子查询独立检索相关文档并生成相应的结果。随后，系统将所有子查询的检索结果进行合并和重新排序，效果会更全面更准确。\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("5b:[\"$\",\"h3\",\"h3-9\",{\"id\":\"自查询\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#自查询\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#自查询\"},\"children\":[{\"type\":\"text\",\"value\":\"自查询\",\"position\":{\"start\":{\"line\":249,\"column\":5,\"offset\":5370},\"end\":{\"line\":249,\"column\":8,\"offset\":5373}}}]},\"children\":\"自查询\"}]}]\n5c:[\"$\",\"blockquote\",\"blockquote-7\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"自查询策略通过大语言模型自动提取查询中对业务场景至关重要的元数据字段（如标签、作者 ID、评论数量等关键信息），并将这些信息结合到嵌入检索过程中。\"}],\"\\n\"]}]\n5d:[\"$\",\"p\",\"p-28\",{\"children\":\"自查询的指令模版：\"}]\n5e:[\"$\",\"pre\",\"pre-3\",{\"data-language\":\"TXT\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-txt\",\"children\":\"你是一个AI语言模型助手。\\n你的任务是从用户问题中提取关键信息，你的回复应仅包含提取的关键信息。\\n用户问题：{查询原文}\\n\"}]}]\n5f:[\"$\",\"p\",\"p-29\",{\"children\":\"假设问题：\"}]\n60:[\"$\",\"pre\",\"pre-4\",{\"data-language\":\"TXT\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-txt\",\"children\":\"下面报告中涉及了哪几个行业的案例以及总结各自面临的挑战？\\n\"}]}]\n61:[\"$\",\"p\",\"p-30\",{\"children\":\"结果示例：\"}]\n62:[\"$\",\"pre\",\"pre-5\",{\"data-language\":\"TXT\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-txt\",\"children\":\"行业，案例，挑战\\n\"}]}]\n63:[\"$\",\"h3\",\"h3-10\",{\"id\":\"提示压缩\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#提示压缩\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#提示压缩\"},\"children\":[{\"type\":\"text\",\"value\":\"提示压缩\",\"position\":{\"start\":{\"line\":273,\"column\":5,\"offset\":5616},\"end\":{\"line\":273,\"column\":9,\"offset\":5620}}}]},\"children\":\"提示压缩\"}]}]\n64:[\"$\",\"blockquote\",\"blockquote-8\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"提示压缩通过精简上下文、过滤掉不相关的信息，确保系统只处理与查询最相关、最重要的内容。\"}],\"\\n\"]}]\n65:[\"$\",\"p\",\"p-31\",{\"children\":\"提示压缩的指令模版：\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("66:[\"$\",\"pre\",\"pre-6\",{\"data-language\":\"TXT\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-txt\",\"children\":\"你是一个AI语言模型助手，负责对检索到的文档进行上下文压缩。\\n你的目标是从文档中提取与用户查询高度相关的段落，并删除与查询无关或噪声较大的部分。\\n你应确保保留所有能够直接回答用户查询的问题核心信息。\\n\\n输入：\\n用户查询：{用户的原始查询}\\n检索到的文档：{检索到的文档内容}\\n\\n输出要求：\\n提取与用户查询最相关的段落和信息。\\n删除所有与查询无关的内容，包括噪声、背景信息或扩展讨论。\\n压缩后的内容应简洁清晰，直指用户的核心问题。\\n\\n输出格式：\\n{压缩段落1}\\n{压缩段落2}\\n{压缩段落3}\\n\"}]}]\n67:[\"$\",\"h2\",\"h2-8\",{\"id\":\"rag-效果评估\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#rag-效果评估\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#rag-效果评估\"},\"children\":[{\"type\":\"text\",\"value\":\"RAG 效果评估\",\"position\":{\"start\":{\"line\":299,\"column\":4,\"offset\":5942},\"end\":{\"line\":299,\"column\":12,\"offset\":5950}}}]},\"children\":\"RAG 效果评估\"}]}]\n68:[\"$\",\"ol\",\"ol-15\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"大模型打分：通过 LLM 对 RAG 的输出进行自动评分。效率高，但是准确性一般。\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"人工打分：手工针对 RAG 的输出进行逐一打分。更精确、细致的反馈，成本高。\"}],\"\\n\"]}]\n69:[\"$\",\"p\",\"p-32\",{\"children\":\"评估指标：\"}]\n6a:[\"$\",\"ol\",\"ol-16\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"**CR（Context Relevancy）**检索相关性：检索到的信息是否偏离了原始查询。\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"**AR（Answer Relevancy）**答案相关性：是否能解决用户的问题，且内容是否逻辑连贯。\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"**F（Faithfulness）**可信度：是否存在幻觉或不准确之处。\"}],\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("6b:[\"$\",\"p\",\"p-33\",{\"children\":\"打分标准：\"}]\n6c:[\"$\",\"ol\",\"ol-17\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"完美（Perfect）1.0 分\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"可接受（Acceptable）0.75 分\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"缺失（Missing）0.5 分\"}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":\"错误（Incorrect）0.25 分\"}],\"\\n\"]}]\n6d:[\"$\",\"h2\",\"h2-9\",{\"id\":\"更高级的-rag\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#更高级的-rag\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#更高级的-rag\"},\"children\":[{\"type\":\"text\",\"value\":\"更高级的 RAG\",\"position\":{\"start\":{\"line\":317,\"column\":4,\"offset\":6293},\"end\":{\"line\":317,\"column\":12,\"offset\":6301}}}]},\"children\":\"更高级的 RAG\"}]}]\n6e:[\"$\",\"p\",\"p-34\",{\"children\":[\"$\",\"$L8\",\"img-0\",{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/7c3ebbe6ec9d9f2886881d7e534396a0.jpg\",\"alt\":\"\",\"node\":{\"type\":\"element\",\"tagName\":\"img\",\"properties\":{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/7c3ebbe6ec9d9f2886881d7e534396a0.jpg\",\"alt\":\"\"},\"children\":[],\"position\":{\"start\":{\"line\":319,\"column\":1,\"offset\":6303},\"end\":{\"line\":319,\"column\":93,\"offset\":6395}}}}]}]\n6f:[\"$\",\"h2\",\"h2-10\",{\"id\":\"graphrag\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#graphrag\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#graphrag\"},\"children\":[{\"type\":\"text\",\"value\":\"GraphRAG\",\"position\":{\"start\":{\"line\":321,\"column\":4,\"offset\":6400},\"end\":{\"line\":321,\"column\":12,\"offset\":6408}}}]},\"children\":\"GraphRAG\"}]}]\n70:[\"$\",\"p\",\"p-35\",{\"children\":\"GraphRAG 通过构建知识图谱，将实体和实体之间的关系结构化地表示出来，克服了传统 RAG 的复杂推理局限性。\"}]\n71:[\"$\",\"p\",\"p-36\",{\"children\":\"有以下优势：\"}]\n72:[\"$\",\"ol\",\"ol-18\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"提高答案的准确性和完整性\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"提高数据理解和迭代效率\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"提升可解释性和可追溯性\"}],\"\\n\"]}]\n73:[\"$\",\"p\",\"p-37\",{\"children\":\"知识图谱的构建步骤：\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("74:[\"$\",\"ol\",\"ol-19\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"实体识别\"}],\"：从文本或数据源中识别出关键实体。\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"关系抽取\"}],\"：确定实体之间的关系，可能通过自然语言处理技术实现。\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"三元组生成\"}],\"：将实体和关系表示为 (主体，关系，客体) 的形式。\"]}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"图谱存储\"}],\"：使用图数据库或专门的存储系统保存知识图谱。\"]}],\"\\n\"]}]\n75:[\"$\",\"p\",\"p-38\",{\"children\":[\"知识图谱的主要\",[\"$\",\"strong\",\"strong-0\",{\"children\":\"成本\"}],\"挑战：\"]}]\n76:[\"$\",\"ol\",\"ol-20\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"数据收集与清洗成本\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"知识图谱构建成本\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"图谱的维护与更新\"}],\"\\n\"]}]\n77:[\"$\",\"div\",null,{\"className\":\"article-tags\",\"children\":[[\"$\",\"span\",\"AI\",{\"className\":\"p-category\",\"children\":[\"#\",\"AI\"]}],[\"$\",\"span\",\"RAG\",{\"className\":\"p-category\",\"children\":[\"#\",\"RAG\"]}]]}]\n78:[\"$\",\"$L7b\",null,{\"target\":\"https://hedon.top/blog/ai-rag-tech-overview\",\"endpoint\":\"$undefined\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("79:[\"$\",\"section\",null,{\"className\":\"comments\",\"aria-labelledby\":\"comments-heading-ai-rag-tech-overview\",\"children\":[[\"$\",\"div\",null,{\"className\":\"comments-heading\",\"children\":[[\"$\",\"svg\",null,{\"ref\":\"$undefined\",\"xmlns\":\"http://www.w3.org/2000/svg\",\"width\":23,\"height\":23,\"fill\":\"currentColor\",\"viewBox\":\"0 0 256 256\",\"transform\":\"$undefined\",\"children\":[false,\"$undefined\",[\"$\",\"path\",null,{\"d\":\"M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z\"}]]}],[\"$\",\"div\",null,{\"children\":[[\"$\",\"h2\",null,{\"id\":\"comments-heading-ai-rag-tech-overview\",\"children\":\"评论\"}],[\"$\",\"p\",null,{\"children\":\"评论由 GitHub Discussions 保存和管理。\"}]]}]]}],[\"$\",\"$L7c\",null,{\"slug\":\"ai-rag-tech-overview\",\"config\":{\"repo\":\"hedon954/blog-comments\",\"repoId\":\"R_kgDOTjDfbQ\",\"category\":\"General\",\"categoryId\":\"DIC_kwDOTjDfbc4DB7pG\"}}]]}]\n7a:[\"$\",\"$L7d\",null,{\"headings\":[{\"depth\":2,\"text\":\"文档解析技术\",\"id\":\"文档解析技术\"},{\"depth\":3,\"text\":\"PDF\",\"id\":\"pdf\"},{\"depth\":2,\"text\":\"分块策略\",\"id\":\"分块策略\"},{\"depth\":3,\"text\":\"固定大小分块（Fixed Size Chunking）\",\"id\":\"固定大小分块fixed-size-chunking\"},{\"depth\":3,\"text\":\"重叠分块（Overlap Chunking）\",\"id\":\"重叠分块overlap-chunking\"},{\"depth\":3,\"text\":\"递归分块（Recursive Chunking）\",\"id\":\"递归分块recursive-chunking\"},{\"depth\":3,\"text\":\"文档特定分块（Document Specific Chunking）\",\"id\":\"文档特定分块document-specific-chunking\"},{\"depth\":3,\"text\":\"语义分块（Semantic Chunking）\",\"id\":\"语义分块semantic-chunking\"},{\"depth\":3,\"text\":\"混合分块（Mix Chunking）\",\"id\":\"混合分块mix-chunking\"},{\"depth\":2,\"text\":\"Embedding 技术\",\"id\":\"embedding-技术\"},{\"depth\":2,\"text\":\"向量数据库\",\"id\":\"向量数据库\"},{\"depth\":2,\"text\":\"混合检索\",\"id\":\"混合检索\"},{\"depth\":2,\"text\":\"重排序技术\",\"id\":\"重排序技术\"},{\"depth\":2,\"text\":\"提示工程\",\"id\":\"提示工程\"},{\"depth\":2,\"text\":\"优化技术\",\"id\":\"优化技术\"},{\"depth\":3,\"text\":\"数据清洗和预处理\",\"id\":\"数据清洗和预处理\"},{\"depth\":3,\"text\":\"查询扩展\",\"id\":\"查询扩展\"},{\"depth\":3,\"text\":\"自查询\",\"id\":\"自查询\"},{\"depth\":3,\"text\":\"提示压缩\",\"id\":\"提示压缩\"},{\"depth\":2,\"text\":\"RAG 效果评估\",\"id\":\"rag-效果评估\"},{\"depth\":2,\"text\":\"更高级的 RAG\",\"id\":\"更高级的-rag\"},{\"depth\":2,\"text\":\"GraphRAG\",\"id\":\"graphrag\"}]}]\n")</script><script>self.__VINEXT_RSC_DONE__=true</script>

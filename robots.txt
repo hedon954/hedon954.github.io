@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://hedon.top/sitemap.xml

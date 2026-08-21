@@ -1,0 +1,502 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/assets/index-BlvdgL5Z.css" data-rsc-css-href="/assets/index-BlvdgL5Z.css" data-precedence="vite-rsc/importer-resources"/><link rel="modulepreload" href="/assets/layout-segment-context-D05hAiNS.js" crossorigin=""/><link rel="modulepreload" href="/assets/rolldown-runtime-S-ySWqyJ.js" crossorigin=""/><link rel="modulepreload" href="/assets/index-iWWMjvPF.js" crossorigin=""/><link rel="modulepreload" href="/assets/framework-lj9SIvjL.js" crossorigin=""/><link rel="modulepreload" href="/assets/SiteChrome-fw3-nA9J.js" crossorigin=""/><link rel="modulepreload" href="/assets/site.config-9xFcKv1R.js" crossorigin=""/><link rel="modulepreload" href="/assets/X.es-CE2QbOE6.js" crossorigin=""/><link rel="modulepreload" href="/assets/IconBase.es-BcuMBetk.js" crossorigin=""/><link rel="modulepreload" href="/assets/GithubLogo.es-CzPW7yFN.js" crossorigin=""/><link rel="modulepreload" href="/assets/link-DNRhlV_g.js" crossorigin=""/><link rel="modulepreload" href="/assets/Webmentions-Boui1ZtL.js" crossorigin=""/><link rel="modulepreload" href="/assets/LinkSimple.es-BqfusCPX.js" crossorigin=""/><link rel="modulepreload" href="/assets/Quotes.es-Cs5Y7all.js" crossorigin=""/><link rel="modulepreload" href="/assets/GiscusComments-N0fYqhTC.js" crossorigin=""/><link rel="modulepreload" href="/assets/TableOfContents-CBBw91S5.js" crossorigin=""/><title>服务监控丨Prometheus 四大数据类型详解 · Hedon Garden</title><meta name="description" content="本文介绍了 Prometheus 的四大数据类型及其 PromQL 查询语言，帮助开发团队构建强大的可观测性系统。"/><meta name="author" content="Hedon"/><link rel="author" href="https://github.com/hedon954"/><meta name="robots" content="index, follow"/><meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/><meta property="og:title" content="服务监控丨Prometheus 四大数据类型详解"/><meta property="og:description" content="本文介绍了 Prometheus 的四大数据类型及其 PromQL 查询语言，帮助开发团队构建强大的可观测性系统。"/><meta property="og:url" content="https://hedon.top/blog/prometheus-data-type"/><meta property="og:type" content="article"/><meta property="article:published_time" content="2025-02-26T15:52:10.000Z"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="服务监控丨Prometheus 四大数据类型详解"/><meta name="twitter:description" content="本文介绍了 Prometheus 的四大数据类型及其 PromQL 查询语言，帮助开发团队构建强大的可观测性系统。"/><meta name="twitter:image" content="https://hedon.top/og.png"/><link rel="icon" href="https://hedon.top/favicon.svg"/><link rel="canonical" href="https://hedon.top/blog/prometheus-data-type"/><script>self.__VINEXT_RSC_PARAMS__={"path":["prometheus-data-type"]}</script><script>self.__VINEXT_RSC_NAV__={"pathname":"/blog/prometheus-data-type/","searchParams":[]}</script><link rel="modulepreload" href="/assets/index-iWWMjvPF.js" />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-f6b33328.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44e03052.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-0638449e.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-971fb274.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44745446.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-013b2f2f.woff2" as="font" type="font/woff2" crossorigin />
+<style data-vinext-fonts>/* cyrillic-ext */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-f6b33328.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44e03052.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* symbols2 */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-0638449e.woff2) format('woff2');
+  unicode-range: U+2000-2001, U+2004-2008, U+200A, U+23B8-23BD, U+2500-259F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-971fb274.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44745446.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-013b2f2f.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+.__font_geist_mono_1diim1n { font-family: 'Geist Mono', sans-serif; }
+
+.__variable_geist_mono_1diim1n { --font-geist-mono: 'Geist Mono', sans-serif; }
+</style>
+</head><body class="__variable_geist_mono_1diim1n"><a class="skip-link" href="#main-content">跳到正文</a><header class="site-header"><div class="header-inner"><a href="/" class="brand" aria-label="Hedon Garden 首页"><span class="brand-mark"><svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true"><path d="M216,212H164V180h8a64.07,64.07,0,0,0,64-64,24,24,0,0,0-48,0,16,16,0,0,1-16,16h-8V56a36,36,0,0,0-72,0V92H84A16,16,0,0,1,68,76a24,24,0,0,0-48,0,64.07,64.07,0,0,0,64,64h8v72H40a4,4,0,0,0,0,8H216a4,4,0,0,0,0-8ZM96,132H84A56.06,56.06,0,0,1,28,76a16,16,0,0,1,32,0,24,24,0,0,0,24,24H96a4,4,0,0,0,4-4V56a28,28,0,0,1,56,0v80a4,4,0,0,0,4,4h12a24,24,0,0,0,24-24,16,16,0,0,1,32,0,56.06,56.06,0,0,1-56,56H160a4,4,0,0,0-4,4v36H100V136A4,4,0,0,0,96,132Z"></path></svg></span><span><strong>Hedon Garden</strong><small>写作 · 构建 · 保持好奇</small></span></a><nav class="main-nav" aria-label="主导航"><a href="/">首页</a><a href="/blog">博文</a><a href="/thoughts">随想</a><a href="/columns">专栏</a><a href="/about">关于</a></nav><div class="header-actions"><button class="icon-button search-trigger" aria-label="搜索文章" aria-expanded="false" aria-controls="site-search-dialog"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 256 256"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg><span class="key-hint">⌘K</span></button><button class="icon-button" aria-label="切换到深色模式"><svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" viewBox="0 0 256 256"><path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"></path></svg></button></div></div></header><div id="main-content"><main class="reading-page post-reading-page"><article class="post-article h-entry"><a href="/blog/prometheus-data-type" class="u-url sr-only">服务监控丨Prometheus 四大数据类型详解<!-- --> 永久链接</a><a class="p-author h-card sr-only" href="https://github.com/hedon954" rel="author">Hedon</a><header class="article-header article-summary-row"><p class="eyebrow">服务监控</p><h1 class="p-name">服务监控丨Prometheus 四大数据类型详解</h1><p class="article-deck p-summary">本文介绍了 Prometheus 的四大数据类型及其 PromQL 查询语言，帮助开发团队构建强大的可观测性系统。</p><div class="article-meta"><time class="dt-published" dateTime="2025-02-26T15:52:10.000Z">发布于 <!-- -->2025/02/26</time><span></span><span>约 <!-- -->2,677<!-- --> 字</span></div></header><div class="article-reading-layout"><div class="article-reading-column"><div class="e-content"><div class="markdown-body"><h2 id="前言"><a href="#前言" node="[object Object]">前言</a></h2>
+<p>在微服务和云原生架构的世界中，一套强大的监控系统是保障服务稳定性的基石。Prometheus 作为 CNCF 的明星项目，凭借其简单高效的特性，已成为事实上的云原生监控标准。本文将深入剖析 Prometheus 的四大数据类型及其 PromQL 查询语言，帮助开发团队构建强大的可观测性系统。</p>
+<h2 id="结论先行prometheus-四大数据类型速览"><a href="#结论先行prometheus-四大数据类型速览" node="[object Object]">结论先行：Prometheus 四大数据类型速览</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>特性</th><th>Counter</th><th>Gauge</th><th>Histogram</th><th>Summary</th></tr></thead><tbody><tr><td><strong>定义</strong></td><td>只增不减的累积计数器</td><td>可增可减的瞬时值</td><td>观测值分布的分桶统计</td><td>客户端计算的分位数统计</td></tr><tr><td><strong>重置行为</strong></td><td>服务重启时归零</td><td>保持当前值</td><td>桶计数归零</td><td>计数归零</td></tr><tr><td><strong>典型应用</strong></td><td>请求计数、错误数、流量统计</td><td>温度、内存使用、连接数</td><td>请求延迟、响应大小</td><td>请求延迟、队列等待时间</td></tr><tr><td><strong>数据点</strong></td><td>单一值</td><td>单一值</td><td>_bucket、_sum、count</td><td>{quantile=&quot;x&quot;}、_sum、_count</td></tr><tr><td><strong>查询重点</strong></td><td>rate()、increase()</td><td>直接使用、预测函数</td><td>histogram_quantile()</td><td>直接读取分位数</td></tr><tr><td><strong>分布式聚合</strong></td><td>可以（sum、rate）</td><td>可以（avg、max、min）</td><td>可以（百分位也可聚合）</td><td>有限（分位数不可聚合）</td></tr><tr><td><strong>资源消耗</strong></td><td>低</td><td>低</td><td>中（依赖桶数量）</td><td>中（客户端计算）</td></tr></tbody></table>
+<h2 id="一prometheus-核心数据类型详解"><a href="#一prometheus-核心数据类型详解" node="[object Object]">一、Prometheus 核心数据类型详解</a></h2>
+<h3 id="1-counter计数器持续增长的累积值"><a href="#1-counter计数器持续增长的累积值" node="[object Object]">1. Counter（计数器）：持续增长的累积值</a></h3>
+<p>Counter 是最简单但也最常用的指标类型，代表一个只增不减的累积数值。每当事件发生，计数器增加；当监控目标重启时，计数器归零。</p>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>API 请求总数</li>
+<li>错误发生次数</li>
+<li>处理任务的数量</li>
+<li>网络流量字节数</li>
+</ul>
+<p><strong>正确的代码实现</strong>：</p>
+<pre data-language="GO"><code class="hljs language-go"><span class="hljs-comment">// 声明带标签的计数器</span>
+requestCounter := prometheus.NewCounterVec(
+    prometheus.CounterOpts{
+        Name: <span class="hljs-string">&quot;http_requests_total&quot;</span>,
+        Help: <span class="hljs-string">&quot;Total number of HTTP requests&quot;</span>,
+    },
+    []<span class="hljs-type">string</span>{<span class="hljs-string">&quot;method&quot;</span>, <span class="hljs-string">&quot;path&quot;</span>, <span class="hljs-string">&quot;status&quot;</span>}, <span class="hljs-comment">// 定义标签维度</span>
+)
+prometheus.MustRegister(requestCounter)
+
+<span class="hljs-comment">// 使用标签记录请求</span>
+requestCounter.WithLabelValues(<span class="hljs-string">&quot;GET&quot;</span>, <span class="hljs-string">&quot;/api/users&quot;</span>, <span class="hljs-string">&quot;200&quot;</span>).Inc()
+</code></pre>
+<p><strong>PromQL 查询技巧</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 每秒请求率（5分钟窗口）
+rate(http_requests_total{status=&quot;200&quot;}[5m])
+
+# 错误率计算
+sum(rate(http_requests_total{status=~&quot;5..&quot;}[5m])) / sum(rate(http_requests_total[5m]))
+
+# 1小时内的请求增量
+increase(http_requests_total[1h])
+</code></pre>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>永远不要直接使用 Counter 的原始值，总是使用 <code>rate()</code> 或 <code>increase()</code></li>
+<li>使用有意义的标签进行多维度分析，但避免高基数标签</li>
+<li>Counter 重置（如服务重启）会被 <code>rate()</code> 函数自动处理</li>
+</ul>
+<h3 id="2-gauge仪表盘可变的瞬时值"><a href="#2-gauge仪表盘可变的瞬时值" node="[object Object]">2. Gauge（仪表盘）：可变的瞬时值</a></h3>
+<p>Gauge 表示一个可增可减的瞬时测量值，反映系统的当前状态。</p>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>内存使用量</li>
+<li>CPU 使用率</li>
+<li>当前活跃连接数</li>
+<li>队列深度</li>
+<li>温度等物理量</li>
+</ul>
+<p><strong>正确的代码实现</strong>：</p>
+<pre data-language="GO"><code class="hljs language-go"><span class="hljs-comment">// 声明带标签的仪表盘</span>
+memoryGauge := prometheus.NewGaugeVec(
+    prometheus.GaugeOpts{
+        Name: <span class="hljs-string">&quot;app_memory_usage_bytes&quot;</span>,
+        Help: <span class="hljs-string">&quot;Current memory usage in bytes&quot;</span>,
+    },
+    []<span class="hljs-type">string</span>{<span class="hljs-string">&quot;component&quot;</span>, <span class="hljs-string">&quot;instance&quot;</span>},
+)
+prometheus.MustRegister(memoryGauge)
+
+<span class="hljs-comment">// 设置当前值</span>
+memoryGauge.WithLabelValues(<span class="hljs-string">&quot;api-server&quot;</span>, <span class="hljs-string">&quot;instance-1&quot;</span>).Set(<span class="hljs-type">float64</span>(getCurrentMemoryUsage()))
+</code></pre>
+<p><strong>PromQL 查询技巧</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 直接使用当前值
+app_memory_usage_bytes{component=&quot;api-server&quot;}
+
+# 统计聚合
+avg_over_time(app_memory_usage_bytes[1h])
+max_over_time(app_memory_usage_bytes[24h])
+
+# 趋势预测（线性回归）
+predict_linear(app_memory_usage_bytes[6h], 4 * 3600)
+
+# 计算变化率
+(app_memory_usage_bytes - app_memory_usage_bytes offset 1h) / app_memory_usage_bytes offset 1h
+</code></pre>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>Gauge 可以直接使用其瞬时值，不需要像 Counter 那样使用 rate</li>
+<li>对于容易波动的指标，考虑使用 <code>avg_over_time</code> 平滑数据</li>
+<li>利用 <code>predict_linear</code> 进行容量规划和趋势预测</li>
+</ul>
+<h3 id="3-histogram直方图观测值分布的分桶统计"><a href="#3-histogram直方图观测值分布的分桶统计" node="[object Object]">3. Histogram（直方图）：观测值分布的分桶统计</a></h3>
+<p>Histogram 允许对观测值（如请求延迟）进行分布式统计，将数据分散到预定义的桶中，是分析性能分布的理想工具。</p>
+<p><strong>自动生成的指标</strong>：</p>
+<ul>
+<li><code>&lt;metric&gt;_bucket{le=&quot;&lt;upper bound&gt;&quot;}</code>: 小于等于特定阈值的观测值计数</li>
+<li><code>&lt;metric&gt;_sum</code>: 所有观测值的总和</li>
+<li><code>&lt;metric&gt;_count</code>: 观测值总数</li>
+</ul>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>请求延迟分布</li>
+<li>响应大小分布</li>
+<li>批处理任务执行时间</li>
+<li>任何需要百分位数分析的场景</li>
+</ul>
+<p><strong>正确的代码实现</strong>：</p>
+<pre data-language="GO"><code class="hljs language-go"><span class="hljs-comment">// 声明带标签的直方图</span>
+durationHistogram := prometheus.NewHistogramVec(
+    prometheus.HistogramOpts{
+        Name:    <span class="hljs-string">&quot;http_request_duration_seconds&quot;</span>,
+        Help:    <span class="hljs-string">&quot;HTTP request duration in seconds&quot;</span>,
+        Buckets: prometheus.ExponentialBuckets(<span class="hljs-number">0.001</span>, <span class="hljs-number">2</span>, <span class="hljs-number">10</span>), <span class="hljs-comment">// 从1ms开始指数增长</span>
+    },
+    []<span class="hljs-type">string</span>{<span class="hljs-string">&quot;method&quot;</span>, <span class="hljs-string">&quot;path&quot;</span>},
+)
+prometheus.MustRegister(durationHistogram)
+
+<span class="hljs-comment">// 记录请求延迟</span>
+durationHistogram.WithLabelValues(<span class="hljs-string">&quot;GET&quot;</span>, <span class="hljs-string">&quot;/api/users&quot;</span>).Observe(responseTime)
+</code></pre>
+<p><strong>PromQL 查询技巧</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 计算平均响应时间
+rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])
+
+# 计算P90延迟
+histogram_quantile(0.9, rate(http_request_duration_seconds_bucket[5m]))
+
+# 按API路径分析P95延迟
+histogram_quantile(0.95, sum by(path, le) (rate(http_request_duration_seconds_bucket[5m])))
+
+# 计算SLO：延迟小于100ms的请求比例
+sum(rate(http_request_duration_seconds_bucket{le=&quot;0.1&quot;}[5m])) / sum(rate(http_request_duration_seconds_count[5m]))
+</code></pre>
+<p><strong>最佳实践</strong>：</p>
+<ul>
+<li>仔细设计桶边界，覆盖关键分位数区域</li>
+<li>对于延迟指标，通常使用指数桶比线性桶更合理</li>
+<li>利用 <code>histogram_quantile</code> 计算任意分位数</li>
+<li>桶的数量会影响存储和性能，权衡精度和开销</li>
+</ul>
+<h3 id="4-summary摘要客户端计算的分位数统计"><a href="#4-summary摘要客户端计算的分位数统计" node="[object Object]">4. Summary（摘要）：客户端计算的分位数统计</a></h3>
+<p>Summary 与 Histogram 类似，但在客户端直接计算并存储分位数，无需服务器端计算。</p>
+<p><strong>自动生成的指标</strong>：</p>
+<ul>
+<li><code>&lt;metric&gt;{quantile=&quot;&lt;φ&gt;&quot;}</code>: φ 分位数的值</li>
+<li><code>&lt;metric&gt;_sum</code>: 所有观测值的总和</li>
+<li><code>&lt;metric&gt;_count</code>: 观测值总数</li>
+</ul>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>需要高精度分位数的场景</li>
+<li>客户端计算分位数更高效的情况</li>
+<li>对服务器端聚合要求不高的场景</li>
+</ul>
+<p><strong>正确的代码实现</strong>：</p>
+<pre data-language="GO"><code class="hljs language-go"><span class="hljs-comment">// 声明带标签的摘要</span>
+durationSummary := prometheus.NewSummaryVec(
+    prometheus.SummaryOpts{
+        Name:       <span class="hljs-string">&quot;http_request_duration_seconds_summary&quot;</span>,
+        Help:       <span class="hljs-string">&quot;HTTP request duration in seconds&quot;</span>,
+        Objectives: <span class="hljs-keyword">map</span>[<span class="hljs-type">float64</span>]<span class="hljs-type">float64</span>{<span class="hljs-number">0.5</span>: <span class="hljs-number">0.05</span>, <span class="hljs-number">0.9</span>: <span class="hljs-number">0.01</span>, <span class="hljs-number">0.99</span>: <span class="hljs-number">0.001</span>},
+    },
+    []<span class="hljs-type">string</span>{<span class="hljs-string">&quot;method&quot;</span>, <span class="hljs-string">&quot;path&quot;</span>},
+)
+prometheus.MustRegister(durationSummary)
+
+<span class="hljs-comment">// 记录请求延迟</span>
+durationSummary.WithLabelValues(<span class="hljs-string">&quot;POST&quot;</span>, <span class="hljs-string">&quot;/api/login&quot;</span>).Observe(responseTime)
+</code></pre>
+<p><strong>PromQL 查询技巧</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 直接读取P99延迟
+http_request_duration_seconds_summary{quantile=&quot;0.99&quot;, method=&quot;GET&quot;, path=&quot;/api/users&quot;}
+
+# 计算平均响应时间
+rate(http_request_duration_seconds_summary_sum[5m]) / rate(http_request_duration_seconds_summary_count[5m])
+
+# 每个服务的中位数延迟
+max by(service) (http_request_duration_seconds_summary{quantile=&quot;0.5&quot;})
+</code></pre>
+<p><strong>最佳实践与限制</strong>：</p>
+<ul>
+<li>Summary 预计算的分位数不能跨实例聚合（这是关键限制）</li>
+<li>适用于分位数精度要求高且实例相对独立的场景</li>
+<li>客户端计算分位数会增加应用资源消耗</li>
+<li>分位数设置后不可更改，需提前规划好监控需求</li>
+</ul>
+<h2 id="二promql-查询语言精通"><a href="#二promql-查询语言精通" node="[object Object]">二、PromQL 查询语言精通</a></h2>
+<p>PromQL 是 Prometheus 的强大武器，掌握它能让我们精确提取所需的监控数据。</p>
+<h3 id="1-基础查询与标签选择"><a href="#1-基础查询与标签选择" node="[object Object]">1. 基础查询与标签选择</a></h3>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 基本查询与精确匹配
+http_requests_total{status=&quot;200&quot;, method=&quot;GET&quot;}
+
+# 正则表达式匹配
+http_requests_total{path=~&quot;/api/v1/.+&quot;, method!=&quot;OPTIONS&quot;}
+
+# 范围查询（返回时间序列）
+http_requests_total{status=&quot;500&quot;}[5m]
+</code></pre>
+<h3 id="2-操作符与函数"><a href="#2-操作符与函数" node="[object Object]">2. 操作符与函数</a></h3>
+<p><strong>算术运算符</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 计算内存使用率百分比
+100 * (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes
+</code></pre>
+<p><strong>聚合函数</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 按服务和路径分组求和
+sum by(service, path) (rate(http_requests_total[5m]))
+
+# 丢弃instance标签求最大值
+max without(instance) (node_cpu_seconds_total)
+</code></pre>
+<p><strong>瞬时向量函数</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 标签替换
+label_replace(up, &quot;host&quot;, &quot;$1&quot;, &quot;instance&quot;, &quot;(.*):.*&quot;)
+
+# 按标签分组取topk
+topk by(path) (5, http_request_duration_seconds_sum / http_request_duration_seconds_count)
+</code></pre>
+<h3 id="3-复杂查询模式"><a href="#3-复杂查询模式" node="[object Object]">3. 复杂查询模式</a></h3>
+<p><strong>SLI/SLO 监控</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 服务可用性SLI
+sum(rate(http_requests_total{status=~&quot;2..|3..&quot;}[5m])) / sum(rate(http_requests_total[5m]))
+
+# 延迟SLO
+histogram_quantile(0.99, sum by(le) (rate(http_request_duration_seconds_bucket[5m]))) &lt; 0.3
+</code></pre>
+<p><strong>异常检测</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 相对于历史同期的异常增长
+rate(http_requests_total[5m])
+  &gt; 2 * avg_over_time(rate(http_requests_total[5m])[1d:5m] offset 1d)
+</code></pre>
+<p><strong>预测分析</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 磁盘空间预测
+predict_linear(node_filesystem_free_bytes{mountpoint=&quot;/&quot;}[6h], 7 * 24 * 3600) &lt; 10 * 1024 * 1024 * 1024
+</code></pre>
+<h2 id="三实战应用场景"><a href="#三实战应用场景" node="[object Object]">三、实战应用场景</a></h2>
+<h3 id="1-服务健康度监控"><a href="#1-服务健康度监控" node="[object Object]">1. 服务健康度监控</a></h3>
+<p><strong>RED 方法实现</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># Rate - 请求率
+sum by(service) (rate(http_requests_total[5m]))
+
+# Error - 错误率
+sum by(service) (rate(http_requests_total{status=~&quot;5..&quot;}[5m])) / sum by(service) (rate(http_requests_total[5m]))
+
+# Duration - P95延迟
+histogram_quantile(0.95, sum by(service, le) (rate(http_request_duration_seconds_bucket[5m])))
+</code></pre>
+<p><strong>服务依赖健康度</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 数据库查询错误率
+sum(rate(database_query_errors_total[5m])) / sum(rate(database_queries_total[5m]))
+
+# 第三方API调用延迟
+histogram_quantile(0.99, sum by(api_name, le) (rate(api_request_duration_seconds_bucket[5m])))
+</code></pre>
+<h3 id="2-性能瓶颈分析"><a href="#2-性能瓶颈分析" node="[object Object]">2. 性能瓶颈分析</a></h3>
+<p><strong>热点 API 发现</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 延迟最高的10个接口
+topk(10,
+  histogram_quantile(0.95, sum by(method, path, le) (rate(http_request_duration_seconds_bucket[5m])))
+)
+
+# 请求量最大的接口
+topk(10, sum by(method, path) (rate(http_requests_total[5m])))
+</code></pre>
+<p><strong>数据库性能分析</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 平均查询时间趋势
+rate(db_query_duration_seconds_sum[5m]) / rate(db_query_duration_seconds_count[5m])
+
+# 慢查询比例
+sum(rate(db_query_duration_seconds_bucket{le=&quot;+Inf&quot;}[5m])) - sum(rate(db_query_duration_seconds_bucket{le=&quot;0.1&quot;}[5m])) / sum(rate(db_query_duration_seconds_bucket{le=&quot;+Inf&quot;}[5m]))
+</code></pre>
+<h3 id="3-容量规划与告警"><a href="#3-容量规划与告警" node="[object Object]">3. 容量规划与告警</a></h3>
+<p><strong>资源预测</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># CPU使用率预测
+predict_linear(avg by(instance) (rate(node_cpu_seconds_total{mode!=&quot;idle&quot;}[6h])) [3d:], 7 * 24 * 3600) &gt; 0.85
+
+# 内存压力告警
+(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes &gt; 0.9
+</code></pre>
+<p><strong>流量容量规划</strong>：</p>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 带宽使用预测
+predict_linear(rate(node_network_transmit_bytes_total[12h])[7d:], 30 * 24 * 3600)
+</code></pre>
+<h2 id="四最佳实践与性能优化"><a href="#四最佳实践与性能优化" node="[object Object]">四、最佳实践与性能优化</a></h2>
+<h3 id="1-指标命名与标签设计"><a href="#1-指标命名与标签设计" node="[object Object]">1. 指标命名与标签设计</a></h3>
+<p><strong>命名规范</strong>：</p>
+<ul>
+<li>使用 snake_case</li>
+<li>包含单位后缀（_bytes, _seconds, _total）</li>
+<li>保持风格一致性</li>
+</ul>
+<p><strong>标签最佳实践</strong>：</p>
+<pre data-language="GO"><code class="hljs language-go"><span class="hljs-comment">// 合理设计标签维度</span>
+apiLatency := prometheus.NewHistogramVec(
+    prometheus.HistogramOpts{
+        Name:    <span class="hljs-string">&quot;api_request_duration_seconds&quot;</span>,
+        Help:    <span class="hljs-string">&quot;API request duration in seconds&quot;</span>,
+        Buckets: prometheus.ExponentialBuckets(<span class="hljs-number">0.001</span>, <span class="hljs-number">2</span>, <span class="hljs-number">10</span>),
+    },
+    []<span class="hljs-type">string</span>{<span class="hljs-string">&quot;service&quot;</span>, <span class="hljs-string">&quot;endpoint&quot;</span>, <span class="hljs-string">&quot;status_code&quot;</span>}, <span class="hljs-comment">// 合理的低基数标签</span>
+)
+
+<span class="hljs-comment">// 不可变标签使用ConstLabels</span>
+prometheus.NewGaugeVec(
+    prometheus.GaugeOpts{
+        Name:        <span class="hljs-string">&quot;service_info&quot;</span>,
+        Help:        <span class="hljs-string">&quot;Service information&quot;</span>,
+        ConstLabels: prometheus.Labels{<span class="hljs-string">&quot;version&quot;</span>: <span class="hljs-string">&quot;v2.1.3&quot;</span>, <span class="hljs-string">&quot;environment&quot;</span>: <span class="hljs-string">&quot;production&quot;</span>},
+    },
+    []<span class="hljs-type">string</span>{<span class="hljs-string">&quot;instance&quot;</span>},
+)
+</code></pre>
+<h3 id="2-客户端性能优化"><a href="#2-客户端性能优化" node="[object Object]">2. 客户端性能优化</a></h3>
+<pre data-language="GO"><code class="hljs language-go"><span class="hljs-comment">// 缓存常用标签组合以提高性能</span>
+getCounter := requestCounter.WithLabelValues(<span class="hljs-string">&quot;GET&quot;</span>, <span class="hljs-string">&quot;/api/users&quot;</span>, <span class="hljs-string">&quot;200&quot;</span>)
+<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">100</span>; i++ {
+    getCounter.Inc() <span class="hljs-comment">// 重用标签组合，避免重复创建</span>
+}
+
+<span class="hljs-comment">// 批量更新方式</span>
+<span class="hljs-keyword">var</span> rpcDurations = prometheus.NewSummaryVec(
+    prometheus.SummaryOpts{
+        Name:       <span class="hljs-string">&quot;rpc_durations_seconds&quot;</span>,
+        Help:       <span class="hljs-string">&quot;RPC latency distributions.&quot;</span>,
+        Objectives: <span class="hljs-keyword">map</span>[<span class="hljs-type">float64</span>]<span class="hljs-type">float64</span>{<span class="hljs-number">0.5</span>: <span class="hljs-number">0.05</span>, <span class="hljs-number">0.9</span>: <span class="hljs-number">0.01</span>, <span class="hljs-number">0.99</span>: <span class="hljs-number">0.001</span>},
+    },
+    []<span class="hljs-type">string</span>{<span class="hljs-string">&quot;service&quot;</span>},
+)
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">ObserveBatch</span><span class="hljs-params">(durations <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">float64</span>)</span></span> {
+    <span class="hljs-keyword">for</span> service, duration := <span class="hljs-keyword">range</span> durations {
+        rpcDurations.WithLabelValues(service).Observe(duration)
+    }
+}
+</code></pre>
+<h3 id="3-查询优化"><a href="#3-查询优化" node="[object Object]">3. 查询优化</a></h3>
+<pre data-language="PROMQL"><code class="hljs language-promql"># 优化前：高基数查询
+sum(rate(http_requests_total{path=~&quot;/api/.*&quot;}[5m])) by (path, method, status)
+
+# 优化后：降低基数，按需聚合
+sum(rate(http_requests_total{path=~&quot;/api/.*&quot;}[5m])) by (method, status)
+
+# 优化聚合顺序（先聚合再求和）
+sum(
+  avg by(instance) (rate(node_cpu_seconds_total{mode!=&quot;idle&quot;}[5m]))
+)
+</code></pre>
+<h2 id="五常见陷阱与解决方案"><a href="#五常见陷阱与解决方案" node="[object Object]">五、常见陷阱与解决方案</a></h2>
+<h3 id="1-高基数问题"><a href="#1-高基数问题" node="[object Object]">1. 高基数问题</a></h3>
+<p><strong>问题</strong>：标签组合过多导致时间序列爆炸<br/>
+<strong>解决方案</strong>：</p>
+<ul>
+<li>限制标签基数，避免使用 UserID、SessionID 等作为标签</li>
+<li>使用<code>label_replace</code>和正则表达式转换高基数标签</li>
+<li>考虑使用 Exemplars 而非标签存储高基数数据</li>
+</ul>
+<h3 id="2-数据类型选择误区"><a href="#2-数据类型选择误区" node="[object Object]">2. 数据类型选择误区</a></h3>
+<p><strong>Counter vs Gauge</strong>：请求数应使用 Counter 而非 Gauge<br/>
+<strong>Histogram vs Summary</strong>：需要聚合分析请使用 Histogram，精确分位数可选 Summary</p>
+<h3 id="3-查询性能问题"><a href="#3-查询性能问题" node="[object Object]">3. 查询性能问题</a></h3>
+<p><strong>问题</strong>：复杂查询导致 Prometheus 高负载<br/>
+<strong>解决方案</strong>：</p>
+<ul>
+<li>使用记录规则预计算常用查询</li>
+<li>合理设置 scrape 间隔，避免过度采集</li>
+<li>对高请求量接口使用客户端聚合</li>
+</ul>
+<h2 id="总结与展望"><a href="#总结与展望" node="[object Object]">总结与展望</a></h2>
+<p>Prometheus 的四种数据类型各有所长：Counter 适合累积事件计数，Gauge 适合瞬时状态测量，Histogram 适合分布统计和百分位分析，Summary 适合客户端精确分位数计算。与之配合的 PromQL 提供了强大的数据查询和分析能力，共同构成了完整的监控解决方案。</p>
+<p>随着云原生技术的发展，Prometheus 生态也在不断壮大，与 Grafana、Alertmanager、Thanos 等工具集成，能够构建更完善的监控告警平台。在微服务架构中，结合 RED（Rate、Error、Duration）和 USE（Utilization、Saturation、Errors）方法论，可以构建全面的可观测性系统。</p>
+<p>无论你是刚开始使用 Prometheus 的新手，还是寻求优化监控系统的资深工程师，希望本文对你理解和应用 Prometheus 有所帮助。记住，好的监控不仅能及时发现问题，更能预测和防范问题，最终服务于业务可靠性和用户体验的提升。</p>
+<hr/>
+<p><em>参考资源:</em></p>
+<ul>
+<li>Prometheus 官方文档: <a href="https://prometheus.io/docs/" node="[object Object]" target="_blank" rel="noopener noreferrer">https://prometheus.io/docs/</a></li>
+<li>Google SRE 书籍: <a href="https://sre.google/sre-book/monitoring-distributed-systems/" node="[object Object]" target="_blank" rel="noopener noreferrer">https://sre.google/sre-book/monitoring-distributed-systems/</a></li>
+<li>Prometheus 实战: <a href="https://prometheusbook.com/" node="[object Object]" target="_blank" rel="noopener noreferrer">https://prometheusbook.com/</a></li>
+</ul></div></div><div class="article-tags"><span class="p-category">#<!-- -->prometheus</span><span class="p-category">#<!-- -->服务监控</span></div><section class="webmentions" aria-labelledby="webmentions-heading"><div class="webmention-title"><svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="currentColor" viewBox="0 0 256 256"><path d="M165.66,90.34a8,8,0,0,1,0,11.32l-64,64a8,8,0,0,1-11.32-11.32l64-64A8,8,0,0,1,165.66,90.34ZM215.6,40.4a56,56,0,0,0-79.2,0L106.34,70.45a8,8,0,0,0,11.32,11.32l30.06-30a40,40,0,0,1,56.57,56.56l-30.07,30.06a8,8,0,0,0,11.31,11.32L215.6,119.6a56,56,0,0,0,0-79.2ZM138.34,174.22l-30.06,30.06a40,40,0,1,1-56.56-56.57l30.05-30.05a8,8,0,0,0-11.32-11.32L40.4,136.4a56,56,0,0,0,79.2,79.2l30.06-30.07a8,8,0,0,0-11.32-11.31Z"></path></svg><div><h2 id="webmentions-heading">来自开放网络的回应</h2><p>引用、喜欢、转发和站外回复会通过 Webmention 回到这里。</p></div></div><div class="integration-notice"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"><path d="M116,72v88a48.05,48.05,0,0,1-48,48,8,8,0,0,1,0-16,32,32,0,0,0,32-32v-8H40a16,16,0,0,1-16-16V72A16,16,0,0,1,40,56h60A16,16,0,0,1,116,72ZM216,56H156a16,16,0,0,0-16,16v64a16,16,0,0,0,16,16h60v8a32,32,0,0,1-32,32,8,8,0,0,0,0,16,48.05,48.05,0,0,0,48-48V72A16,16,0,0,0,216,56Z"></path></svg><p>接收与展示代码已经就绪，注册正式域名后即可开始收集回应。</p></div></section><section class="comments" aria-labelledby="comments-heading-prometheus-data-type"><div class="comments-heading"><svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" viewBox="0 0 256 256"><path d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"></path></svg><div><h2 id="comments-heading-prometheus-data-type">评论</h2><p>评论由 GitHub Discussions 保存和管理。</p></div></div><div class="giscus-container"></div></section></div><button class="toc-mobile-trigger" type="button" aria-controls="_R_2ml6_" aria-expanded="false" aria-label="打开本篇目录，当前章节：前言" tabindex="0" data-mobile-open="false"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true"><path d="M228,128a12,12,0,0,1-12,12H40a12,12,0,0,1,0-24H216A12,12,0,0,1,228,128ZM40,76H216a12,12,0,0,0,0-24H40a12,12,0,0,0,0,24ZM216,180H40a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24Z"></path></svg><span>目录</span></button><button class="toc-mobile-backdrop" type="button" aria-label="关闭本篇目录" tabindex="-1" data-mobile-open="false"></button><aside class="toc" id="_R_2ml6_" aria-label="本篇目录" data-mobile-open="false"><div class="toc-header"><p>本篇目录</p><button class="toc-mobile-close" type="button" aria-label="关闭本篇目录"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path></svg></button></div><ol id="_R_2ml6H1_" class="toc-list"><li class="toc-section toc-depth-2 active"><div class="toc-item-row"><a href="#前言" aria-current="location">前言</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#结论先行prometheus-四大数据类型速览">结论先行：Prometheus 四大数据类型速览</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#一prometheus-核心数据类型详解">一、Prometheus 核心数据类型详解</a><button class="toc-section-toggle" type="button" aria-controls="_R_2ml6H1_-2" aria-expanded="true" aria-label="收起「一、Prometheus 核心数据类型详解」的子目录"><span aria-hidden="true">−</span></button></div><ol id="_R_2ml6H1_-2" class="toc-sublist"><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#1-counter计数器持续增长的累积值">1. Counter（计数器）：持续增长的累积值</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#2-gauge仪表盘可变的瞬时值">2. Gauge（仪表盘）：可变的瞬时值</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#3-histogram直方图观测值分布的分桶统计">3. Histogram（直方图）：观测值分布的分桶统计</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#4-summary摘要客户端计算的分位数统计">4. Summary（摘要）：客户端计算的分位数统计</a></div></li></ol></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#二promql-查询语言精通">二、PromQL 查询语言精通</a><button class="toc-section-toggle" type="button" aria-controls="_R_2ml6H1_-3" aria-expanded="true" aria-label="收起「二、PromQL 查询语言精通」的子目录"><span aria-hidden="true">−</span></button></div><ol id="_R_2ml6H1_-3" class="toc-sublist"><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#1-基础查询与标签选择">1. 基础查询与标签选择</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#2-操作符与函数">2. 操作符与函数</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#3-复杂查询模式">3. 复杂查询模式</a></div></li></ol></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#三实战应用场景">三、实战应用场景</a><button class="toc-section-toggle" type="button" aria-controls="_R_2ml6H1_-4" aria-expanded="true" aria-label="收起「三、实战应用场景」的子目录"><span aria-hidden="true">−</span></button></div><ol id="_R_2ml6H1_-4" class="toc-sublist"><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#1-服务健康度监控">1. 服务健康度监控</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#2-性能瓶颈分析">2. 性能瓶颈分析</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#3-容量规划与告警">3. 容量规划与告警</a></div></li></ol></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#四最佳实践与性能优化">四、最佳实践与性能优化</a><button class="toc-section-toggle" type="button" aria-controls="_R_2ml6H1_-5" aria-expanded="true" aria-label="收起「四、最佳实践与性能优化」的子目录"><span aria-hidden="true">−</span></button></div><ol id="_R_2ml6H1_-5" class="toc-sublist"><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#1-指标命名与标签设计">1. 指标命名与标签设计</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#2-客户端性能优化">2. 客户端性能优化</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#3-查询优化">3. 查询优化</a></div></li></ol></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#五常见陷阱与解决方案">五、常见陷阱与解决方案</a><button class="toc-section-toggle" type="button" aria-controls="_R_2ml6H1_-6" aria-expanded="true" aria-label="收起「五、常见陷阱与解决方案」的子目录"><span aria-hidden="true">−</span></button></div><ol id="_R_2ml6H1_-6" class="toc-sublist"><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#1-高基数问题">1. 高基数问题</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#2-数据类型选择误区">2. 数据类型选择误区</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#3-查询性能问题">3. 查询性能问题</a></div></li></ol></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#总结与展望">总结与展望</a></div></li></ol></aside></div></article></main></div><footer class="site-footer"><div class="footer-inner"><p>© <!-- -->2026<!-- --> <!-- -->Hedon<!-- --> · <!-- -->保持独立，持续写作。<span class="footer-framework"> · 基于 <a href="https://github.com/hedon954/garden" target="_blank" rel="noreferrer">Garden</a> 构建</span></p><div><a href="https://github.com/hedon954" aria-label="GitHub" rel="me"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" viewBox="0 0 256 256"><path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68ZM200,112a40,40,0,0,1-40,40H112a40,40,0,0,1-40-40v-8a41.74,41.74,0,0,1,6.9-22.48A8,8,0,0,0,80,73.83a43.81,43.81,0,0,1,.79-33.58,43.88,43.88,0,0,1,32.32,20.06A8,8,0,0,0,119.82,64h32.35a8,8,0,0,0,6.74-3.69,43.87,43.87,0,0,1,32.32-20.06A43.81,43.81,0,0,1,192,73.83a8.09,8.09,0,0,0,1,7.65A41.72,41.72,0,0,1,200,104Z"></path></svg>GitHub</a><a href="/rss.xml" aria-label="RSS 订阅"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256"><path d="M106.91,149.09A71.53,71.53,0,0,1,128,200a8,8,0,0,1-16,0,56,56,0,0,0-56-56,8,8,0,0,1,0-16A71.53,71.53,0,0,1,106.91,149.09ZM56,80a8,8,0,0,0,0,16A104,104,0,0,1,160,200a8,8,0,0,0,16,0A120,120,0,0,0,56,80Zm118.79,1.21A166.9,166.9,0,0,0,56,32a8,8,0,0,0,0,16A151,151,0,0,1,163.48,92.52,151,151,0,0,1,208,200a8,8,0,0,0,16,0A166.9,166.9,0,0,0,174.79,81.21ZM60,184a12,12,0,1,0,12,12A12,12,0,0,0,60,184Z"></path></svg>RSS</a></div></div></footer><script id="_R_">import("/assets/index-iWWMjvPF.js")</script></body></html><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("2:I[\"04dff15fd24a\",[],\"SiteChrome\",1]\n3:I[\"8c0f216c4604\",[],\"Children\",1]\n4:I[\"15c18cfaeeff\",[],\"LayoutSegmentProvider\",1]\n5:I[\"8c0f216c4604\",[],\"Slot\",1]\n6:I[\"593f344dc510\",[],\"RedirectBoundary\",1]\n:HL[\"/assets/index-BlvdgL5Z.css\",\"style\"]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("0:{\"__route\":\"route:/blog/prometheus-data-type/\",\"__interceptionContext\":null,\"__layoutIds\":[\"layout:/\"],\"__rootLayout\":\"/\",\"page:/blog/prometheus-data-type/\":\"$L1\",\"layout:/\":[[[[\"$\",\"link\",\"css:/assets/index-BlvdgL5Z.css\",{\"rel\":\"stylesheet\",\"precedence\":\"vite-rsc/importer-resources\",\"href\":\"/assets/index-BlvdgL5Z.css\",\"data-rsc-css-href\":\"/assets/index-BlvdgL5Z.css\"}],\"$undefined\"],[\"$\",\"html\",null,{\"lang\":\"zh-CN\",\"suppressHydrationWarning\":true,\"children\":[[\"$\",\"head\",null,{\"children\":[\"$undefined\",\"$undefined\"]}],[\"$\",\"body\",null,{\"className\":\"__variable_geist_mono_1diim1n\",\"children\":[[\"$\",\"a\",null,{\"className\":\"skip-link\",\"href\":\"#main-content\",\"children\":\"跳到正文\"}],[\"$\",\"$L2\",null,{\"children\":[\"$\",\"$L3\",null,{}]}]]}]]}]],null],\"route:/blog/prometheus-data-type/\":[[[\"$\",\"meta\",null,{\"charSet\":\"utf-8\"}],[[\"$\",\"title\",\"0\",{\"children\":\"服务监控丨Prometheus 四大数据类型详解 · Hedon Garden\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"本文介绍了 Prometheus 的四大数据类型及其 PromQL 查询语言，帮助开发团队构建强大的可观测性系统。\"}],[\"$\",\"meta\",\"2\",{\"name\":\"author\",\"content\":\"Hedon\"}],[\"$\",\"link\",\"3\",{\"rel\":\"author\",\"href\":\"https://github.com/hedon954\"}],[\"$\",\"meta\",\"4\",{\"name\":\"robots\",\"content\":\"index, follow\"}],[\"$\",\"meta\",\"5\",{\"name\":\"googlebot\",\"content\":\"index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:title\",\"content\":\"服务监控丨Prometheus 四大数据类型详解\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:description\",\"content\":\"本文介绍了 Prometheus 的四大数据类型及其 PromQL 查询语言，帮助开发团队构建强大的可观测性系统。\"}],[\"$\",\"meta\",\"8\",{\"property\":\"og:url\",\"content\":\"https://hedon.top/blog/prometheus-data-type\"}],[\"$\",\"meta\",\"9\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"10\",{\"property\":\"article:published_time\",\"content\":\"2025-02-26T15:52:10.000Z\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"12\",{\"name\":\"twitter:title\",\"content\":\"服务监控丨Prometheus 四大数据类型详解\"}],[\"$\",\"meta\",\"13\",{\"name\":\"twitter:description\",\"content\":\"本文介绍了 Prometheus 的四大数据类型及其 PromQL 查询语言，帮助开发团队构建强大的可观测性系统。\"}],[\"$\",\"meta\",\"14\",{\"name\":\"twitter:image\",\"content\":\"https://hedon.top/og.png\"}],[\"$\",\"link\",\"15\",{\"rel\":\"icon\",\"href\":\"https://hedon.top/favicon.svg\"}],[\"$\",\"link\",\"16\",{\"rel\":\"canonical\",\"href\":\"https://hedon.top/blog/prometheus-data-type\"}]],[[\"$\",\"meta\",\"0\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]],[\"$\",\"$L4\",null,{\"segmentMap\":{\"children\":[\"blog\",\"prometheus-data-type\"]},\"children\":[\"$\",\"$L5\",null,{\"id\":\"layout:/\",\"parallelSlots\":\"$undefined\",\"children\":[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$L4\",null,{\"segmentMap\":{\"children\":[]},\"children\":[\"$\",\"$L5\",null,{\"id\":\"page:/blog/prometheus-data-type/\"}]}]}]}]}]],\"__layoutFlags\":{\"layout:/\":\"s\"},\"__artifactCompatibility\":{\"schemaVersion\":1,\"graphVersion\":\"app-route-graph:1url7xrgffgzg\",\"deploymentVersion\":\"42ea885b-ba92-4c44-8068-a1dcfe71a16b\",\"appElementsSchemaVersion\":1,\"rscPayloadSchemaVersion\":1,\"rootBoundaryId\":\"/\",\"renderEpoch\":null}}\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("7:I[\"c2747888630f\",[],\"default\",1]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("1:[\"$\",\"main\",null,{\"className\":\"reading-page post-reading-page\",\"children\":[\"$\",\"article\",null,{\"className\":\"post-article h-entry\",\"children\":[[\"$\",\"$L7\",null,{\"className\":\"u-url sr-only\",\"href\":\"/blog/prometheus-data-type\",\"children\":[\"服务监控丨Prometheus 四大数据类型详解\",\" 永久链接\"]}],[\"$\",\"a\",null,{\"className\":\"p-author h-card sr-only\",\"href\":\"https://github.com/hedon954\",\"rel\":\"author\",\"children\":\"Hedon\"}],\"$undefined\",[\"$\",\"header\",null,{\"className\":\"article-header article-summary-row\",\"children\":[[\"$\",\"p\",null,{\"className\":\"eyebrow\",\"children\":\"服务监控\"}],[\"$\",\"h1\",null,{\"className\":\"p-name\",\"children\":\"服务监控丨Prometheus 四大数据类型详解\"}],[\"$\",\"p\",null,{\"className\":\"article-deck p-summary\",\"children\":\"本文介绍了 Prometheus 的四大数据类型及其 PromQL 查询语言，帮助开发团队构建强大的可观测性系统。\"}],[\"$\",\"div\",null,{\"className\":\"article-meta\",\"children\":[[\"$\",\"time\",null,{\"className\":\"dt-published\",\"dateTime\":\"2025-02-26T15:52:10.000Z\",\"children\":[\"发布于 \",\"2025/02/26\"]}],\"$undefined\",[\"$\",\"span\",null,{\"children\":\"$undefined\"}],[\"$\",\"span\",null,{\"children\":[\"约 \",\"2,677\",\" 字\"]}]]}]]}],[\"$\",\"div\",null,{\"className\":\"article-reading-layout\",\"children\":[[\"$\",\"div\",null,{\"className\":\"article-reading-column\",\"children\":[[\"$\",\"div\",null,{\"className\":\"e-content\",\"children\":[\"$\",\"div\",null,{\"className\":\"markdown-body\",\"children\":[[\"$\",\"h2\",\"h2-0\",{\"id\":\"前言\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#前言\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#前言\"},\"children\":[{\"type\":\"text\",\"value\":\"前言\",\"position\":{\"start\":{\"line\":1,\"column\":4,\"offset\":3},\"end\":{\"line\":1,\"column\":6,\"offset\":5}}}]},\"children\":\"前言\"}]}],\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"在微服务和云原生架构的世界中，一套强大的监控系统是保障服务稳定性的基石。Prometheus 作为 CNCF 的明星项目，凭借其简单高效的特性，已成为事实上的云原生监控标准。本文将深入剖析 Prometheus 的四大数据类型及其 PromQL 查询语言，帮助开发团队构建强大的可观测性系统。\"}],\"\\n\",[\"$\",\"h2\",\"h2-1\",{\"id\":\"结论先行prometheus-四大数据类型速览\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#结论先行prometheus-四大数据类型速览\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#结论先行prometheus-四大数据类型速览\"},\"children\":[{\"type\":\"text\",\"value\":\"结论先行：Prometheus 四大数据类型速览\",\"position\":{\"start\":{\"line\":5,\"column\":4,\"offset\":158},\"end\":{\"line\":5,\"column\":28,\"offset\":182}}}]},\"children\":\"结论先行：Prometheus 四大数据类型速览\"}]}],\"\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\",[\"$\",\"table\",\"table-0\",{\"children\":[[\"$\",\"thead\",\"thead-0\",{\"children\":[\"$\",\"tr\",\"tr-0\",{\"children\":[[\"$\",\"th\",\"th-0\",{\"children\":\"特性\"}],[\"$\",\"th\",\"th-1\",{\"children\":\"Counter\"}],[\"$\",\"th\",\"th-2\",{\"children\":\"Gauge\"}],[\"$\",\"th\",\"th-3\",{\"children\":\"Histogram\"}],[\"$\",\"th\",\"th-4\",{\"children\":\"Summary\"}]]}]}],[\"$\",\"tbody\",\"tbody-0\",{\"children\":[[\"$\",\"tr\",\"tr-0\",{\"children\":[[\"$\",\"td\",\"td-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"定义\"}]}],[\"$\",\"td\",\"td-1\",{\"children\":\"只增不减的累积计数器\"}],[\"$\",\"td\",\"td-2\",{\"children\":\"可增可减的瞬时值\"}],[\"$\",\"td\",\"td-3\",{\"children\":\"观测值分布的分桶统计\"}],[\"$\",\"td\",\"td-4\",{\"children\":\"客户端计算的分位数统计\"}]]}],[\"$\",\"tr\",\"tr-1\",{\"children\":[[\"$\",\"td\",\"td-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"重置行为\"}]}],[\"$\",\"td\",\"td-1\",{\"children\":\"服务重启时归零\"}],[\"$\",\"td\",\"td-2\",{\"children\":\"保持当前值\"}],[\"$\",\"td\",\"td-3\",{\"children\":\"桶计数归零\"}],[\"$\",\"td\",\"td-4\",{\"children\":\"计数归零\"}]]}],[\"$\",\"tr\",\"tr-2\",{\"children\":[[\"$\",\"td\",\"td-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"典型应用\"}]}],[\"$\",\"td\",\"td-1\",{\"children\":\"请求计数、错误数、流量统计\"}],[\"$\",\"td\",\"td-2\",{\"children\":\"温度、内存使用、连接数\"}],[\"$\",\"td\",\"td-3\",{\"children\":\"请求延迟、响应大小\"}],[\"$\",\"td\",\"td-4\",{\"children\":\"请求延迟、队列等待时间\"}]]}],[\"$\",\"tr\",\"tr-3\",{\"children\":[[\"$\",\"td\",\"td-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"数据点\"}]}],[\"$\",\"td\",\"td-1\",{\"children\":\"单一值\"}],[\"$\",\"td\",\"td-2\",{\"children\":\"单一值\"}],[\"$\",\"td\",\"td-3\",{\"children\":\"_bucket、_sum、count\"}],[\"$\",\"td\",\"td-4\",{\"children\":\"{quantile=\\\"x\\\"}、_sum、_count\"}]]}],[\"$\",\"tr\",\"tr-4\",{\"children\":[[\"$\",\"td\",\"td-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"查询重点\"}]}],[\"$\",\"td\",\"td-1\",{\"children\":\"rate()、increase()\"}],[\"$\",\"td\",\"td-2\",{\"children\":\"直接使用、预测函数\"}],[\"$\",\"td\",\"td-3\",{\"children\":\"histogram_quantile()\"}],[\"$\",\"td\",\"td-4\",{\"children\":\"直接读取分位数\"}]]}],[\"$\",\"tr\",\"tr-5\",{\"children\":[[\"$\",\"td\",\"td-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"分布式聚合\"}]}],[\"$\",\"td\",\"td-1\",{\"children\":\"可以（sum、rate）\"}],[\"$\",\"td\",\"td-2\",{\"children\":\"可以（avg、max、min）\"}],[\"$\",\"td\",\"td-3\",{\"children\":\"可以（百分位也可聚合）\"}],[\"$\",\"td\",\"td-4\",{\"children\":\"有限（分位数不可聚合）\"}]]}],[\"$\",\"tr\",\"tr-6\",{\"children\":[[\"$\",\"td\",\"td-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"资源消耗\"}]}],[\"$\",\"td\",\"td-1\",{\"children\":\"低\"}],[\"$\",\"td\",\"td-2\",{\"children\":\"低\"}],[\"$\",\"td\",\"td-3\",{\"children\":\"中（依赖桶数量）\"}],[\"$\",\"td\",\"td-4\",{\"children\":\"中（客户端计算）\"}]]}]]}]]}],\"\\n\",[\"$\",\"h2\",\"h2-2\",{\"id\":\"一prometheus-核心数据类型详解\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#一prometheus-核心数据类型详解\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#一prometheus-核心数据类型详解\"},\"children\":[{\"type\":\"text\",\"value\":\"一、Prometheus 核心数据类型详解\",\"position\":{\"start\":{\"line\":17,\"column\":4,\"offset\":1157},\"end\":{\"line\":17,\"column\":25,\"offset\":1178}}}]},\"children\":\"一、Prometheus 核心数据类型详解\"}]}],\"\\n\",\"$L8\",\"\\n\",\"$L9\",\"\\n\",\"$La\",\"\\n\",\"$Lb\",\"\\n\",\"$Lc\",\"\\n\",\"$Ld\",\"\\n\",\"$Le\",\"\\n\",\"$Lf\",\"\\n\",\"$L10\",\"\\n\",\"$L11\",\"\\n\",\"$L12\",\"\\n\",\"$L13\",\"\\n\",\"$L14\",\"\\n\",\"$L15\",\"\\n\",\"$L16\",\"\\n\",\"$L17\",\"\\n\",\"$L18\",\"\\n\",\"$L19\",\"\\n\",\"$L1a\",\"\\n\",\"$L1b\",\"\\n\",\"$L1c\",\"\\n\",\"$L1d\",\"\\n\",\"$L1e\",\"\\n\",\"$L1f\",\"\\n\",\"$L20\",\"\\n\",\"$L21\",\"\\n\",\"$L22\",\"\\n\",\"$L23\",\"\\n\",\"$L24\",\"\\n\",\"$L25\",\"\\n\",\"$L26\",\"\\n\",\"$L27\",\"\\n\",\"$L28\",\"\\n\",\"$L29\",\"\\n\",\"$L2a\",\"\\n\",\"$L2b\",\"\\n\",\"$L2c\",\"\\n\",\"$L2d\",\"\\n\",\"$L2e\",\"\\n\",\"$L2f\",\"\\n\",\"$L30\",\"\\n\",\"$L31\",\"\\n\",\"$L32\",\"\\n\",\"$L33\",\"\\n\",\"$L34\",\"\\n\",\"$L35\",\"\\n\",\"$L36\",\"\\n\",\"$L37\",\"\\n\",\"$L38\",\"\\n\",\"$L39\",\"\\n\",\"$L3a\",\"\\n\",\"$L3b\",\"\\n\",\"$L3c\",\"\\n\",\"$L3d\",\"\\n\",\"$L3e\",\"\\n\",\"$L3f\",\"\\n\",\"$L40\",\"\\n\",\"$L41\",\"\\n\",\"$L42\",\"\\n\",\"$L43\",\"\\n\",\"$L44\",\"\\n\",\"$L45\",\"\\n\",\"$L46\",\"\\n\",\"$L47\",\"\\n\",\"$L48\",\"\\n\",\"$L49\",\"\\n\",\"$L4a\",\"\\n\",\"$L4b\",\"\\n\",\"$L4c\",\"\\n\",\"$L4d\",\"\\n\",\"$L4e\",\"\\n\",\"$L4f\",\"\\n\",\"$L50\",\"\\n\",\"$L51\",\"\\n\",\"$L52\",\"\\n\",\"$L53\",\"\\n\",\"$L54\",\"\\n\",\"$L55\",\"\\n\",\"$L56\",\"\\n\",\"$L57\",\"\\n\",\"$L58\",\"\\n\",\"$L59\",\"\\n\",\"$L5a\",\"\\n\",\"$L5b\",\"\\n\",\"$L5c\",\"\\n\",\"$L5d\",\"\\n\",\"$L5e\",\"\\n\",\"$L5f\",\"\\n\",\"$L60\",\"\\n\",\"$L61\",\"\\n\",\"$L62\",\"\\n\",\"$L63\",\"\\n\",\"$L64\",\"\\n\",\"$L65\",\"\\n\",\"$L66\",\"\\n\",\"$L67\",\"\\n\",\"$L68\",\"\\n\",\"$L69\",\"\\n\",\"$L6a\",\"\\n\",\"$L6b\",\"\\n\",\"$L6c\",\"\\n\",\"$L6d\",\"\\n\",\"$L6e\",\"\\n\",\"$L6f\"]}]}],\"$L70\",\"$L71\",\"$L72\"]}],\"$L73\"]}]]}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("74:I[\"201d37663261\",[],\"Webmentions\",1]\n75:I[\"35e6595fba52\",[],\"GiscusComments\",1]\n76:I[\"47831e8e6cd4\",[],\"TableOfContents\",1]\n8:[\"$\",\"h3\",\"h3-0\",{\"id\":\"1-counter计数器持续增长的累积值\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#1-counter计数器持续增长的累积值\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#1-counter计数器持续增长的累积值\"},\"children\":[{\"type\":\"text\",\"value\":\"1. Counter（计数器）：持续增长的累积值\",\"position\":{\"start\":{\"line\":19,\"column\":5,\"offset\":1184},\"end\":{\"line\":19,\"column\":29,\"offset\":1208}}}]},\"children\":\"1. Counter（计数器）：持续增长的累积值\"}]}]\n9:[\"$\",\"p\",\"p-1\",{\"children\":\"Counter 是最简单但也最常用的指标类型，代表一个只增不减的累积数值。每当事件发生，计数器增加；当监控目标重启时，计数器归零。\"}]\na:[\"$\",\"p\",\"p-2\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"适用场景\"}],\"：\"]}]\nb:[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"API 请求总数\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"错误发生次数\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"处理任务的数量\"}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":\"网络流量字节数\"}],\"\\n\"]}]\nc:[\"$\",\"p\",\"p-3\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"正确的代码实现\"}],\"：\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("d:[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"GO\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-go\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-comment\",\"children\":\"// 声明带标签的计数器\"}],\"\\nrequestCounter := prometheus.NewCounterVec(\\n    prometheus.CounterOpts{\\n        Name: \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-string\",\"children\":\"\\\"http_requests_total\\\"\"}],\",\\n        Help: \",[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-string\",\"children\":\"\\\"Total number of HTTP requests\\\"\"}],\",\\n    },\\n    []\",[\"$\",\"span\",\"span-3\",{\"className\":\"hljs-type\",\"children\":\"string\"}],\"{\",[\"$\",\"span\",\"span-4\",{\"className\":\"hljs-string\",\"children\":\"\\\"method\\\"\"}],\", \",[\"$\",\"span\",\"span-5\",{\"className\":\"hljs-string\",\"children\":\"\\\"path\\\"\"}],\", \",[\"$\",\"span\",\"span-6\",{\"className\":\"hljs-string\",\"children\":\"\\\"status\\\"\"}],\"}, \",[\"$\",\"span\",\"span-7\",{\"className\":\"hljs-comment\",\"children\":\"// 定义标签维度\"}],\"\\n)\\nprometheus.MustRegister(requestCounter)\\n\\n\",[\"$\",\"span\",\"span-8\",{\"className\":\"hljs-comment\",\"children\":\"// 使用标签记录请求\"}],\"\\nrequestCounter.WithLabelValues(\",[\"$\",\"span\",\"span-9\",{\"className\":\"hljs-string\",\"children\":\"\\\"GET\\\"\"}],\", \",[\"$\",\"span\",\"span-10\",{\"className\":\"hljs-string\",\"children\":\"\\\"/api/users\\\"\"}],\", \",[\"$\",\"span\",\"span-11\",{\"className\":\"hljs-string\",\"children\":\"\\\"200\\\"\"}],\").Inc()\\n\"]}]}]\ne:[\"$\",\"p\",\"p-4\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"PromQL 查询技巧\"}],\"：\"]}]\nf:[\"$\",\"pre\",\"pre-1\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 每秒请求率（5分钟窗口）\\nrate(http_requests_total{status=\\\"200\\\"}[5m])\\n\\n# 错误率计算\\nsum(rate(http_requests_total{status=~\\\"5..\\\"}[5m])) / sum(rate(http_requests_total[5m]))\\n\\n# 1小时内的请求增量\\nincrease(http_requests_total[1h])\\n\"}]}]\n10:[\"$\",\"p\",\"p-5\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"最佳实践\"}],\"：\"]}]\n11:[\"$\",\"ul\",\"ul-1\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"永远不要直接使用 Counter 的原始值，总是使用 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"rate()\"}],\" 或 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"increase()\"}]]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"使用有意义的标签进行多维度分析，但避免高基数标签\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"Counter 重置（如服务重启）会被 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"rate()\"}],\" 函数自动处理\"]}],\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("12:[\"$\",\"h3\",\"h3-1\",{\"id\":\"2-gauge仪表盘可变的瞬时值\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#2-gauge仪表盘可变的瞬时值\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#2-gauge仪表盘可变的瞬时值\"},\"children\":[{\"type\":\"text\",\"value\":\"2. Gauge（仪表盘）：可变的瞬时值\",\"position\":{\"start\":{\"line\":66,\"column\":5,\"offset\":2071},\"end\":{\"line\":66,\"column\":25,\"offset\":2091}}}]},\"children\":\"2. Gauge（仪表盘）：可变的瞬时值\"}]}]\n13:[\"$\",\"p\",\"p-6\",{\"children\":\"Gauge 表示一个可增可减的瞬时测量值，反映系统的当前状态。\"}]\n14:[\"$\",\"p\",\"p-7\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"适用场景\"}],\"：\"]}]\n15:[\"$\",\"ul\",\"ul-2\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"内存使用量\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"CPU 使用率\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"当前活跃连接数\"}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":\"队列深度\"}],\"\\n\",[\"$\",\"li\",\"li-4\",{\"children\":\"温度等物理量\"}],\"\\n\"]}]\n16:[\"$\",\"p\",\"p-8\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"正确的代码实现\"}],\"：\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("17:[\"$\",\"pre\",\"pre-2\",{\"data-language\":\"GO\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-go\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-comment\",\"children\":\"// 声明带标签的仪表盘\"}],\"\\nmemoryGauge := prometheus.NewGaugeVec(\\n    prometheus.GaugeOpts{\\n        Name: \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-string\",\"children\":\"\\\"app_memory_usage_bytes\\\"\"}],\",\\n        Help: \",[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-string\",\"children\":\"\\\"Current memory usage in bytes\\\"\"}],\",\\n    },\\n    []\",[\"$\",\"span\",\"span-3\",{\"className\":\"hljs-type\",\"children\":\"string\"}],\"{\",[\"$\",\"span\",\"span-4\",{\"className\":\"hljs-string\",\"children\":\"\\\"component\\\"\"}],\", \",[\"$\",\"span\",\"span-5\",{\"className\":\"hljs-string\",\"children\":\"\\\"instance\\\"\"}],\"},\\n)\\nprometheus.MustRegister(memoryGauge)\\n\\n\",[\"$\",\"span\",\"span-6\",{\"className\":\"hljs-comment\",\"children\":\"// 设置当前值\"}],\"\\nmemoryGauge.WithLabelValues(\",[\"$\",\"span\",\"span-7\",{\"className\":\"hljs-string\",\"children\":\"\\\"api-server\\\"\"}],\", \",[\"$\",\"span\",\"span-8\",{\"className\":\"hljs-string\",\"children\":\"\\\"instance-1\\\"\"}],\").Set(\",[\"$\",\"span\",\"span-9\",{\"className\":\"hljs-type\",\"children\":\"float64\"}],\"(getCurrentMemoryUsage()))\\n\"]}]}]\n18:[\"$\",\"p\",\"p-9\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"PromQL 查询技巧\"}],\"：\"]}]\n19:[\"$\",\"pre\",\"pre-3\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 直接使用当前值\\napp_memory_usage_bytes{component=\\\"api-server\\\"}\\n\\n# 统计聚合\\navg_over_time(app_memory_usage_bytes[1h])\\nmax_over_time(app_memory_usage_bytes[24h])\\n\\n# 趋势预测（线性回归）\\npredict_linear(app_memory_usage_bytes[6h], 4 * 3600)\\n\\n# 计算变化率\\n(app_memory_usage_bytes - app_memory_usage_bytes offset 1h) / app_memory_usage_bytes offset 1h\\n\"}]}]\n1a:[\"$\",\"p\",\"p-10\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"最佳实践\"}],\"：\"]}]\n1b:[\"$\",\"ul\",\"ul-3\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"Gauge 可以直接使用其瞬时值，不需要像 Counter 那样使用 rate\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"对于容易波动的指标，考虑使用 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"avg_over_time\"}],\" 平滑数据\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"利用 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"predict_linear\"}],\" 进行容量规划和趋势预测\"]}],\"\\n\"]}]\n1c:[\"$\",\"h3\",\"h3-2\",{\"id\":\"3-histogram直方图观测值分布的分桶统计\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#3-histogram直方图观测值分布的分桶统计\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#3-histogram直方图观测值分布的分桶统计\"},\"children\":[{\"type\":\"text\",\"value\":\"3. Histogram（直方图）：观测值分布的分桶统计\",\"position\":{\"start\":{\"line\":118,\"column\":5,\"offset\":3045},\"end\":{\"line\":118,\"column\":33,\"offset\":3073}}}]},\"children\":\"3. Histogram（直方图）：观测值分布的分桶统计\"}]}]\n1d:[\"$\",\"p\",\"p-11\",{\"children\":\"Histogram 允许对观测值（如请求延迟）进行分布式统计，将数据分散到预定义的桶中，是分析性能分布的理想工具。\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("1e:[\"$\",\"p\",\"p-12\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"自动生成的指标\"}],\"：\"]}]\n1f:[\"$\",\"ul\",\"ul-4\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"\u003cmetric\u003e_bucket{le=\\\"\u003cupper bound\u003e\\\"}\"}],\": 小于等于特定阈值的观测值计数\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"\u003cmetric\u003e_sum\"}],\": 所有观测值的总和\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"\u003cmetric\u003e_count\"}],\": 观测值总数\"]}],\"\\n\"]}]\n20:[\"$\",\"p\",\"p-13\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"适用场景\"}],\"：\"]}]\n21:[\"$\",\"ul\",\"ul-5\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"请求延迟分布\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"响应大小分布\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"批处理任务执行时间\"}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":\"任何需要百分位数分析的场景\"}],\"\\n\"]}]\n22:[\"$\",\"p\",\"p-14\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"正确的代码实现\"}],\"：\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("23:[\"$\",\"pre\",\"pre-4\",{\"data-language\":\"GO\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-go\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-comment\",\"children\":\"// 声明带标签的直方图\"}],\"\\ndurationHistogram := prometheus.NewHistogramVec(\\n    prometheus.HistogramOpts{\\n        Name:    \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-string\",\"children\":\"\\\"http_request_duration_seconds\\\"\"}],\",\\n        Help:    \",[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-string\",\"children\":\"\\\"HTTP request duration in seconds\\\"\"}],\",\\n        Buckets: prometheus.ExponentialBuckets(\",[\"$\",\"span\",\"span-3\",{\"className\":\"hljs-number\",\"children\":\"0.001\"}],\", \",[\"$\",\"span\",\"span-4\",{\"className\":\"hljs-number\",\"children\":\"2\"}],\", \",[\"$\",\"span\",\"span-5\",{\"className\":\"hljs-number\",\"children\":\"10\"}],\"), \",[\"$\",\"span\",\"span-6\",{\"className\":\"hljs-comment\",\"children\":\"// 从1ms开始指数增长\"}],\"\\n    },\\n    []\",[\"$\",\"span\",\"span-7\",{\"className\":\"hljs-type\",\"children\":\"string\"}],\"{\",[\"$\",\"span\",\"span-8\",{\"className\":\"hljs-string\",\"children\":\"\\\"method\\\"\"}],\", \",[\"$\",\"span\",\"span-9\",{\"className\":\"hljs-string\",\"children\":\"\\\"path\\\"\"}],\"},\\n)\\nprometheus.MustRegister(durationHistogram)\\n\\n\",[\"$\",\"span\",\"span-10\",{\"className\":\"hljs-comment\",\"children\":\"// 记录请求延迟\"}],\"\\ndurationHistogram.WithLabelValues(\",[\"$\",\"span\",\"span-11\",{\"className\":\"hljs-string\",\"children\":\"\\\"GET\\\"\"}],\", \",[\"$\",\"span\",\"span-12\",{\"className\":\"hljs-string\",\"children\":\"\\\"/api/users\\\"\"}],\").Observe(responseTime)\\n\"]}]}]\n24:[\"$\",\"p\",\"p-15\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"PromQL 查询技巧\"}],\"：\"]}]\n25:[\"$\",\"pre\",\"pre-5\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 计算平均响应时间\\nrate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])\\n\\n# 计算P90延迟\\nhistogram_quantile(0.9, rate(http_request_duration_seconds_bucket[5m]))\\n\\n# 按API路径分析P95延迟\\nhistogram_quantile(0.95, sum by(path, le) (rate(http_request_duration_seconds_bucket[5m])))\\n\\n# 计算SLO：延迟小于100ms的请求比例\\nsum(rate(http_request_duration_seconds_bucket{le=\\\"0.1\\\"}[5m])) / sum(rate(http_request_duration_seconds_count[5m]))\\n\"}]}]\n26:[\"$\",\"p\",\"p-16\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"最佳实践\"}],\"：\"]}]\n27:[\"$\",\"ul\",\"ul-6\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"仔细设计桶边界，覆盖关键分位数区域\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"对于延迟指标，通常使用指数桶比线性桶更合理\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"利用 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"histogram_quantile\"}],\" 计算任意分位数\"]}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":\"桶的数量会影响存储和性能，权衡精度和开销\"}],\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("28:[\"$\",\"h3\",\"h3-3\",{\"id\":\"4-summary摘要客户端计算的分位数统计\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#4-summary摘要客户端计算的分位数统计\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#4-summary摘要客户端计算的分位数统计\"},\"children\":[{\"type\":\"text\",\"value\":\"4. Summary（摘要）：客户端计算的分位数统计\",\"position\":{\"start\":{\"line\":176,\"column\":5,\"offset\":4368},\"end\":{\"line\":176,\"column\":31,\"offset\":4394}}}]},\"children\":\"4. Summary（摘要）：客户端计算的分位数统计\"}]}]\n29:[\"$\",\"p\",\"p-17\",{\"children\":\"Summary 与 Histogram 类似，但在客户端直接计算并存储分位数，无需服务器端计算。\"}]\n2a:[\"$\",\"p\",\"p-18\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"自动生成的指标\"}],\"：\"]}]\n2b:[\"$\",\"ul\",\"ul-7\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"\u003cmetric\u003e{quantile=\\\"\u003cφ\u003e\\\"}\"}],\": φ 分位数的值\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"\u003cmetric\u003e_sum\"}],\": 所有观测值的总和\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"\u003cmetric\u003e_count\"}],\": 观测值总数\"]}],\"\\n\"]}]\n2c:[\"$\",\"p\",\"p-19\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"适用场景\"}],\"：\"]}]\n2d:[\"$\",\"ul\",\"ul-8\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"需要高精度分位数的场景\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"客户端计算分位数更高效的情况\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"对服务器端聚合要求不高的场景\"}],\"\\n\"]}]\n2e:[\"$\",\"p\",\"p-20\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"正确的代码实现\"}],\"：\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("2f:[\"$\",\"pre\",\"pre-6\",{\"data-language\":\"GO\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-go\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-comment\",\"children\":\"// 声明带标签的摘要\"}],\"\\ndurationSummary := prometheus.NewSummaryVec(\\n    prometheus.SummaryOpts{\\n        Name:       \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-string\",\"children\":\"\\\"http_request_duration_seconds_summary\\\"\"}],\",\\n        Help:       \",[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-string\",\"children\":\"\\\"HTTP request duration in seconds\\\"\"}],\",\\n        Objectives: \",[\"$\",\"span\",\"span-3\",{\"className\":\"hljs-keyword\",\"children\":\"map\"}],\"[\",[\"$\",\"span\",\"span-4\",{\"className\":\"hljs-type\",\"children\":\"float64\"}],\"]\",[\"$\",\"span\",\"span-5\",{\"className\":\"hljs-type\",\"children\":\"float64\"}],\"{\",[\"$\",\"span\",\"span-6\",{\"className\":\"hljs-number\",\"children\":\"0.5\"}],\": \",[\"$\",\"span\",\"span-7\",{\"className\":\"hljs-number\",\"children\":\"0.05\"}],\", \",[\"$\",\"span\",\"span-8\",{\"className\":\"hljs-number\",\"children\":\"0.9\"}],\": \",[\"$\",\"span\",\"span-9\",{\"className\":\"hljs-number\",\"children\":\"0.01\"}],\", \",[\"$\",\"span\",\"span-10\",{\"className\":\"hljs-number\",\"children\":\"0.99\"}],\": \",[\"$\",\"span\",\"span-11\",{\"className\":\"hljs-number\",\"children\":\"0.001\"}],\"},\\n    },\\n    []\",[\"$\",\"span\",\"span-12\",{\"className\":\"hljs-type\",\"children\":\"string\"}],\"{\",[\"$\",\"span\",\"span-13\",{\"className\":\"hljs-string\",\"children\":\"\\\"method\\\"\"}],\", \",[\"$\",\"span\",\"span-14\",{\"className\":\"hljs-string\",\"children\":\"\\\"path\\\"\"}],\"},\\n)\\nprometheus.MustRegister(durationSummary)\\n\\n\",[\"$\",\"span\",\"span-15\",{\"className\":\"hljs-comment\",\"children\":\"// 记录请求延迟\"}],\"\\ndurationSummary.WithLabelValues(\",[\"$\",\"span\",\"span-16\",{\"className\":\"hljs-string\",\"children\":\"\\\"POST\\\"\"}],\", \",[\"$\",\"span\",\"span-17\",{\"className\":\"hljs-string\",\"children\":\"\\\"/api/login\\\"\"}],\").Observe(responseTime)\\n\"]}]}]\n30:[\"$\",\"p\",\"p-21\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"PromQL 查询技巧\"}],\"：\"]}]\n31:[\"$\",\"pre\",\"pre-7\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 直接读取P99延迟\\nhttp_request_duration_seconds_summary{quantile=\\\"0.99\\\", method=\\\"GET\\\", path=\\\"/api/users\\\"}\\n\\n# 计算平均响应时间\\nrate(http_request_duration_seconds_summary_sum[5m]) / rate(http_request_duration_seconds_summary_count[5m])\\n\\n# 每个服务的中位数延迟\\nmax by(service) (http_request_duration_seconds_summary{quantile=\\\"0.5\\\"})\\n\"}]}]\n32:[\"$\",\"p\",\"p-22\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"最佳实践与限制\"}],\"：\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("33:[\"$\",\"ul\",\"ul-9\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"Summary 预计算的分位数不能跨实例聚合（这是关键限制）\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"适用于分位数精度要求高且实例相对独立的场景\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"客户端计算分位数会增加应用资源消耗\"}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":\"分位数设置后不可更改，需提前规划好监控需求\"}],\"\\n\"]}]\n34:[\"$\",\"h2\",\"h2-3\",{\"id\":\"二promql-查询语言精通\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#二promql-查询语言精通\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#二promql-查询语言精通\"},\"children\":[{\"type\":\"text\",\"value\":\"二、PromQL 查询语言精通\",\"position\":{\"start\":{\"line\":230,\"column\":4,\"offset\":5542},\"end\":{\"line\":230,\"column\":19,\"offset\":5557}}}]},\"children\":\"二、PromQL 查询语言精通\"}]}]\n35:[\"$\",\"p\",\"p-23\",{\"children\":\"PromQL 是 Prometheus 的强大武器，掌握它能让我们精确提取所需的监控数据。\"}]\n36:[\"$\",\"h3\",\"h3-4\",{\"id\":\"1-基础查询与标签选择\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#1-基础查询与标签选择\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#1-基础查询与标签选择\"},\"children\":[{\"type\":\"text\",\"value\":\"1. 基础查询与标签选择\",\"position\":{\"start\":{\"line\":234,\"column\":5,\"offset\":5610},\"end\":{\"line\":234,\"column\":17,\"offset\":5622}}}]},\"children\":\"1. 基础查询与标签选择\"}]}]\n37:[\"$\",\"pre\",\"pre-8\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 基本查询与精确匹配\\nhttp_requests_total{status=\\\"200\\\", method=\\\"GET\\\"}\\n\\n# 正则表达式匹配\\nhttp_requests_total{path=~\\\"/api/v1/.+\\\", method!=\\\"OPTIONS\\\"}\\n\\n# 范围查询（返回时间序列）\\nhttp_requests_total{status=\\\"500\\\"}[5m]\\n\"}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("38:[\"$\",\"h3\",\"h3-5\",{\"id\":\"2-操作符与函数\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#2-操作符与函数\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#2-操作符与函数\"},\"children\":[{\"type\":\"text\",\"value\":\"2. 操作符与函数\",\"position\":{\"start\":{\"line\":247,\"column\":5,\"offset\":5827},\"end\":{\"line\":247,\"column\":14,\"offset\":5836}}}]},\"children\":\"2. 操作符与函数\"}]}]\n39:[\"$\",\"p\",\"p-24\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"算术运算符\"}],\"：\"]}]\n3a:[\"$\",\"pre\",\"pre-9\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 计算内存使用率百分比\\n100 * (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes\\n\"}]}]\n3b:[\"$\",\"p\",\"p-25\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"聚合函数\"}],\"：\"]}]\n3c:[\"$\",\"pre\",\"pre-10\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 按服务和路径分组求和\\nsum by(service, path) (rate(http_requests_total[5m]))\\n\\n# 丢弃instance标签求最大值\\nmax without(instance) (node_cpu_seconds_total)\\n\"}]}]\n3d:[\"$\",\"p\",\"p-26\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"瞬时向量函数\"}],\"：\"]}]\n3e:[\"$\",\"pre\",\"pre-11\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 标签替换\\nlabel_replace(up, \\\"host\\\", \\\"$1\\\", \\\"instance\\\", \\\"(.*):.*\\\")\\n\\n# 按标签分组取topk\\ntopk by(path) (5, http_request_duration_seconds_sum / http_request_duration_seconds_count)\\n\"}]}]\n3f:[\"$\",\"h3\",\"h3-6\",{\"id\":\"3-复杂查询模式\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#3-复杂查询模式\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#3-复杂查询模式\"},\"children\":[{\"type\":\"text\",\"value\":\"3. 复杂查询模式\",\"position\":{\"start\":{\"line\":276,\"column\":5,\"offset\":6334},\"end\":{\"line\":276,\"column\":14,\"offset\":6343}}}]},\"children\":\"3. 复杂查询模式\"}]}]\n40:[\"$\",\"p\",\"p-27\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"SLI/SLO 监控\"}],\"：\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("41:[\"$\",\"pre\",\"pre-12\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 服务可用性SLI\\nsum(rate(http_requests_total{status=~\\\"2..|3..\\\"}[5m])) / sum(rate(http_requests_total[5m]))\\n\\n# 延迟SLO\\nhistogram_quantile(0.99, sum by(le) (rate(http_request_duration_seconds_bucket[5m]))) \u003c 0.3\\n\"}]}]\n42:[\"$\",\"p\",\"p-28\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"异常检测\"}],\"：\"]}]\n43:[\"$\",\"pre\",\"pre-13\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 相对于历史同期的异常增长\\nrate(http_requests_total[5m])\\n  \u003e 2 * avg_over_time(rate(http_requests_total[5m])[1d:5m] offset 1d)\\n\"}]}]\n44:[\"$\",\"p\",\"p-29\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"预测分析\"}],\"：\"]}]\n45:[\"$\",\"pre\",\"pre-14\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 磁盘空间预测\\npredict_linear(node_filesystem_free_bytes{mountpoint=\\\"/\\\"}[6h], 7 * 24 * 3600) \u003c 10 * 1024 * 1024 * 1024\\n\"}]}]\n46:[\"$\",\"h2\",\"h2-4\",{\"id\":\"三实战应用场景\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#三实战应用场景\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#三实战应用场景\"},\"children\":[{\"type\":\"text\",\"value\":\"三、实战应用场景\",\"position\":{\"start\":{\"line\":303,\"column\":4,\"offset\":6863},\"end\":{\"line\":303,\"column\":12,\"offset\":6871}}}]},\"children\":\"三、实战应用场景\"}]}]\n47:[\"$\",\"h3\",\"h3-7\",{\"id\":\"1-服务健康度监控\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#1-服务健康度监控\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#1-服务健康度监控\"},\"children\":[{\"type\":\"text\",\"value\":\"1. 服务健康度监控\",\"position\":{\"start\":{\"line\":305,\"column\":5,\"offset\":6877},\"end\":{\"line\":305,\"column\":15,\"offset\":6887}}}]},\"children\":\"1. 服务健康度监控\"}]}]\n48:[\"$\",\"p\",\"p-30\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"RED 方法实现\"}],\"：\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("49:[\"$\",\"pre\",\"pre-15\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# Rate - 请求率\\nsum by(service) (rate(http_requests_total[5m]))\\n\\n# Error - 错误率\\nsum by(service) (rate(http_requests_total{status=~\\\"5..\\\"}[5m])) / sum by(service) (rate(http_requests_total[5m]))\\n\\n# Duration - P95延迟\\nhistogram_quantile(0.95, sum by(service, le) (rate(http_request_duration_seconds_bucket[5m])))\\n\"}]}]\n4a:[\"$\",\"p\",\"p-31\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"服务依赖健康度\"}],\"：\"]}]\n4b:[\"$\",\"pre\",\"pre-16\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 数据库查询错误率\\nsum(rate(database_query_errors_total[5m])) / sum(rate(database_queries_total[5m]))\\n\\n# 第三方API调用延迟\\nhistogram_quantile(0.99, sum by(api_name, le) (rate(api_request_duration_seconds_bucket[5m])))\\n\"}]}]\n4c:[\"$\",\"h3\",\"h3-8\",{\"id\":\"2-性能瓶颈分析\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#2-性能瓶颈分析\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#2-性能瓶颈分析\"},\"children\":[{\"type\":\"text\",\"value\":\"2. 性能瓶颈分析\",\"position\":{\"start\":{\"line\":330,\"column\":5,\"offset\":7459},\"end\":{\"line\":330,\"column\":14,\"offset\":7468}}}]},\"children\":\"2. 性能瓶颈分析\"}]}]\n4d:[\"$\",\"p\",\"p-32\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"热点 API 发现\"}],\"：\"]}]\n4e:[\"$\",\"pre\",\"pre-17\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 延迟最高的10个接口\\ntopk(10,\\n  histogram_quantile(0.95, sum by(method, path, le) (rate(http_request_duration_seconds_bucket[5m])))\\n)\\n\\n# 请求量最大的接口\\ntopk(10, sum by(method, path) (rate(http_requests_total[5m])))\\n\"}]}]\n4f:[\"$\",\"p\",\"p-33\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"数据库性能分析\"}],\"：\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("50:[\"$\",\"pre\",\"pre-18\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 平均查询时间趋势\\nrate(db_query_duration_seconds_sum[5m]) / rate(db_query_duration_seconds_count[5m])\\n\\n# 慢查询比例\\nsum(rate(db_query_duration_seconds_bucket{le=\\\"+Inf\\\"}[5m])) - sum(rate(db_query_duration_seconds_bucket{le=\\\"0.1\\\"}[5m])) / sum(rate(db_query_duration_seconds_bucket{le=\\\"+Inf\\\"}[5m]))\\n\"}]}]\n51:[\"$\",\"h3\",\"h3-9\",{\"id\":\"3-容量规划与告警\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#3-容量规划与告警\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#3-容量规划与告警\"},\"children\":[{\"type\":\"text\",\"value\":\"3. 容量规划与告警\",\"position\":{\"start\":{\"line\":354,\"column\":5,\"offset\":8019},\"end\":{\"line\":354,\"column\":15,\"offset\":8029}}}]},\"children\":\"3. 容量规划与告警\"}]}]\n52:[\"$\",\"p\",\"p-34\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"资源预测\"}],\"：\"]}]\n53:[\"$\",\"pre\",\"pre-19\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# CPU使用率预测\\npredict_linear(avg by(instance) (rate(node_cpu_seconds_total{mode!=\\\"idle\\\"}[6h])) [3d:], 7 * 24 * 3600) \u003e 0.85\\n\\n# 内存压力告警\\n(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes \u003e 0.9\\n\"}]}]\n54:[\"$\",\"p\",\"p-35\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"流量容量规划\"}],\"：\"]}]\n55:[\"$\",\"pre\",\"pre-20\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 带宽使用预测\\npredict_linear(rate(node_network_transmit_bytes_total[12h])[7d:], 30 * 24 * 3600)\\n\"}]}]\n56:[\"$\",\"h2\",\"h2-5\",{\"id\":\"四最佳实践与性能优化\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#四最佳实践与性能优化\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#四最佳实践与性能优化\"},\"children\":[{\"type\":\"text\",\"value\":\"四、最佳实践与性能优化\",\"position\":{\"start\":{\"line\":373,\"column\":4,\"offset\":8407},\"end\":{\"line\":373,\"column\":15,\"offset\":8418}}}]},\"children\":\"四、最佳实践与性能优化\"}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("57:[\"$\",\"h3\",\"h3-10\",{\"id\":\"1-指标命名与标签设计\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#1-指标命名与标签设计\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#1-指标命名与标签设计\"},\"children\":[{\"type\":\"text\",\"value\":\"1. 指标命名与标签设计\",\"position\":{\"start\":{\"line\":375,\"column\":5,\"offset\":8424},\"end\":{\"line\":375,\"column\":17,\"offset\":8436}}}]},\"children\":\"1. 指标命名与标签设计\"}]}]\n58:[\"$\",\"p\",\"p-36\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"命名规范\"}],\"：\"]}]\n59:[\"$\",\"ul\",\"ul-10\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"使用 snake_case\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"包含单位后缀（_bytes, _seconds, _total）\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"保持风格一致性\"}],\"\\n\"]}]\n5a:[\"$\",\"p\",\"p-37\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"标签最佳实践\"}],\"：\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("5b:[\"$\",\"pre\",\"pre-21\",{\"data-language\":\"GO\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-go\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-comment\",\"children\":\"// 合理设计标签维度\"}],\"\\napiLatency := prometheus.NewHistogramVec(\\n    prometheus.HistogramOpts{\\n        Name:    \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-string\",\"children\":\"\\\"api_request_duration_seconds\\\"\"}],\",\\n        Help:    \",[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-string\",\"children\":\"\\\"API request duration in seconds\\\"\"}],\",\\n        Buckets: prometheus.ExponentialBuckets(\",[\"$\",\"span\",\"span-3\",{\"className\":\"hljs-number\",\"children\":\"0.001\"}],\", \",[\"$\",\"span\",\"span-4\",{\"className\":\"hljs-number\",\"children\":\"2\"}],\", \",[\"$\",\"span\",\"span-5\",{\"className\":\"hljs-number\",\"children\":\"10\"}],\"),\\n    },\\n    []\",[\"$\",\"span\",\"span-6\",{\"className\":\"hljs-type\",\"children\":\"string\"}],\"{\",[\"$\",\"span\",\"span-7\",{\"className\":\"hljs-string\",\"children\":\"\\\"service\\\"\"}],\", \",[\"$\",\"span\",\"span-8\",{\"className\":\"hljs-string\",\"children\":\"\\\"endpoint\\\"\"}],\", \",[\"$\",\"span\",\"span-9\",{\"className\":\"hljs-string\",\"children\":\"\\\"status_code\\\"\"}],\"}, \",[\"$\",\"span\",\"span-10\",{\"className\":\"hljs-comment\",\"children\":\"// 合理的低基数标签\"}],\"\\n)\\n\\n\",[\"$\",\"span\",\"span-11\",{\"className\":\"hljs-comment\",\"children\":\"// 不可变标签使用ConstLabels\"}],\"\\nprometheus.NewGaugeVec(\\n    prometheus.GaugeOpts{\\n        Name:        \",[\"$\",\"span\",\"span-12\",{\"className\":\"hljs-string\",\"children\":\"\\\"service_info\\\"\"}],\",\\n        Help:        \",[\"$\",\"span\",\"span-13\",{\"className\":\"hljs-string\",\"children\":\"\\\"Service information\\\"\"}],\",\\n        ConstLabels: prometheus.Labels{\",[\"$\",\"span\",\"span-14\",{\"className\":\"hljs-string\",\"children\":\"\\\"version\\\"\"}],\": \",[\"$\",\"span\",\"span-15\",{\"className\":\"hljs-string\",\"children\":\"\\\"v2.1.3\\\"\"}],\", \",[\"$\",\"span\",\"span-16\",{\"className\":\"hljs-string\",\"children\":\"\\\"environment\\\"\"}],\": \",[\"$\",\"span\",\"span-17\",{\"className\":\"hljs-string\",\"children\":\"\\\"production\\\"\"}],\"},\\n    },\\n    []\",[\"$\",\"span\",\"span-18\",{\"className\":\"hljs-type\",\"children\":\"string\"}],\"{\",[\"$\",\"span\",\"span-19\",{\"className\":\"hljs-string\",\"children\":\"\\\"instance\\\"\"}],\"},\\n)\\n\"]}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("5c:[\"$\",\"h3\",\"h3-11\",{\"id\":\"2-客户端性能优化\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#2-客户端性能优化\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#2-客户端性能优化\"},\"children\":[{\"type\":\"text\",\"value\":\"2. 客户端性能优化\",\"position\":{\"start\":{\"line\":407,\"column\":5,\"offset\":9141},\"end\":{\"line\":407,\"column\":15,\"offset\":9151}}}]},\"children\":\"2. 客户端性能优化\"}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("5d:[\"$\",\"pre\",\"pre-22\",{\"data-language\":\"GO\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-go\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-comment\",\"children\":\"// 缓存常用标签组合以提高性能\"}],\"\\ngetCounter := requestCounter.WithLabelValues(\",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-string\",\"children\":\"\\\"GET\\\"\"}],\", \",[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-string\",\"children\":\"\\\"/api/users\\\"\"}],\", \",[\"$\",\"span\",\"span-3\",{\"className\":\"hljs-string\",\"children\":\"\\\"200\\\"\"}],\")\\n\",[\"$\",\"span\",\"span-4\",{\"className\":\"hljs-keyword\",\"children\":\"for\"}],\" i := \",[\"$\",\"span\",\"span-5\",{\"className\":\"hljs-number\",\"children\":\"0\"}],\"; i \u003c \",[\"$\",\"span\",\"span-6\",{\"className\":\"hljs-number\",\"children\":\"100\"}],\"; i++ {\\n    getCounter.Inc() \",[\"$\",\"span\",\"span-7\",{\"className\":\"hljs-comment\",\"children\":\"// 重用标签组合，避免重复创建\"}],\"\\n}\\n\\n\",[\"$\",\"span\",\"span-8\",{\"className\":\"hljs-comment\",\"children\":\"// 批量更新方式\"}],\"\\n\",[\"$\",\"span\",\"span-9\",{\"className\":\"hljs-keyword\",\"children\":\"var\"}],\" rpcDurations = prometheus.NewSummaryVec(\\n    prometheus.SummaryOpts{\\n        Name:       \",[\"$\",\"span\",\"span-10\",{\"className\":\"hljs-string\",\"children\":\"\\\"rpc_durations_seconds\\\"\"}],\",\\n        Help:       \",[\"$\",\"span\",\"span-11\",{\"className\":\"hljs-string\",\"children\":\"\\\"RPC latency distributions.\\\"\"}],\",\\n        Objectives: \",[\"$\",\"span\",\"span-12\",{\"className\":\"hljs-keyword\",\"children\":\"map\"}],\"[\",[\"$\",\"span\",\"span-13\",{\"className\":\"hljs-type\",\"children\":\"float64\"}],\"]\",[\"$\",\"span\",\"span-14\",{\"className\":\"hljs-type\",\"children\":\"float64\"}],\"{\",[\"$\",\"span\",\"span-15\",{\"className\":\"hljs-number\",\"children\":\"0.5\"}],\": \",[\"$\",\"span\",\"span-16\",{\"className\":\"hljs-number\",\"children\":\"0.05\"}],\", \",[\"$\",\"span\",\"span-17\",{\"className\":\"hljs-number\",\"children\":\"0.9\"}],\": \",[\"$\",\"span\",\"span-18\",{\"className\":\"hljs-number\",\"children\":\"0.01\"}],\", \",[\"$\",\"span\",\"span-19\",{\"className\":\"hljs-number\",\"children\":\"0.99\"}],\": \",[\"$\",\"span\",\"span-20\",{\"className\":\"hljs-number\",\"children\":\"0.001\"}],\"},\\n    },\\n    []\",[\"$\",\"span\",\"span-21\",{\"className\":\"hljs-type\",\"children\":\"string\"}],\"{\",[\"$\",\"span\",\"span-22\",{\"className\":\"hljs-string\",\"children\":\"\\\"service\\\"\"}],\"},\\n)\\n\\n\",[\"$\",\"span\",\"span-23\",{\"className\":\"hljs-function\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-keyword\",\"children\":\"func\"}],\" \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-title\",\"children\":\"ObserveBatch\"}],[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-params\",\"children\":[\"(durations \",[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-keyword\",\"children\":\"map\"}],\"[\",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-type\",\"children\":\"string\"}],\"]\",[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-type\",\"children\":\"float64\"}],\")\"]}]]}],\" {\\n    \",[\"$\",\"span\",\"span-24\",{\"className\":\"hljs-keyword\",\"children\":\"for\"}],\" service, duration := \",[\"$\",\"span\",\"span-25\",{\"className\":\"hljs-keyword\",\"children\":\"range\"}],\" durations {\\n        rpcDurations.WithLabelValues(service).Observe(duration)\\n    }\\n}\\n\"]}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("5e:[\"$\",\"h3\",\"h3-12\",{\"id\":\"3-查询优化\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#3-查询优化\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#3-查询优化\"},\"children\":[{\"type\":\"text\",\"value\":\"3. 查询优化\",\"position\":{\"start\":{\"line\":433,\"column\":5,\"offset\":9784},\"end\":{\"line\":433,\"column\":12,\"offset\":9791}}}]},\"children\":\"3. 查询优化\"}]}]\n5f:[\"$\",\"pre\",\"pre-23\",{\"data-language\":\"PROMQL\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-promql\",\"children\":\"# 优化前：高基数查询\\nsum(rate(http_requests_total{path=~\\\"/api/.*\\\"}[5m])) by (path, method, status)\\n\\n# 优化后：降低基数，按需聚合\\nsum(rate(http_requests_total{path=~\\\"/api/.*\\\"}[5m])) by (method, status)\\n\\n# 优化聚合顺序（先聚合再求和）\\nsum(\\n  avg by(instance) (rate(node_cpu_seconds_total{mode!=\\\"idle\\\"}[5m]))\\n)\\n\"}]}]\n60:[\"$\",\"h2\",\"h2-6\",{\"id\":\"五常见陷阱与解决方案\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#五常见陷阱与解决方案\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#五常见陷阱与解决方案\"},\"children\":[{\"type\":\"text\",\"value\":\"五、常见陷阱与解决方案\",\"position\":{\"start\":{\"line\":448,\"column\":4,\"offset\":10083},\"end\":{\"line\":448,\"column\":15,\"offset\":10094}}}]},\"children\":\"五、常见陷阱与解决方案\"}]}]\n61:[\"$\",\"h3\",\"h3-13\",{\"id\":\"1-高基数问题\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#1-高基数问题\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#1-高基数问题\"},\"children\":[{\"type\":\"text\",\"value\":\"1. 高基数问题\",\"position\":{\"start\":{\"line\":450,\"column\":5,\"offset\":10100},\"end\":{\"line\":450,\"column\":13,\"offset\":10108}}}]},\"children\":\"1. 高基数问题\"}]}]\n62:[\"$\",\"p\",\"p-38\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题\"}],\"：标签组合过多导致时间序列爆炸\",[\"$\",\"br\",\"br-0\",{}],\"\\n\",[\"$\",\"strong\",\"strong-1\",{\"children\":\"解决方案\"}],\"：\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("63:[\"$\",\"ul\",\"ul-11\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"限制标签基数，避免使用 UserID、SessionID 等作为标签\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"使用\",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"label_replace\"}],\"和正则表达式转换高基数标签\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"考虑使用 Exemplars 而非标签存储高基数数据\"}],\"\\n\"]}]\n64:[\"$\",\"h3\",\"h3-14\",{\"id\":\"2-数据类型选择误区\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#2-数据类型选择误区\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#2-数据类型选择误区\"},\"children\":[{\"type\":\"text\",\"value\":\"2. 数据类型选择误区\",\"position\":{\"start\":{\"line\":459,\"column\":5,\"offset\":10247},\"end\":{\"line\":459,\"column\":16,\"offset\":10258}}}]},\"children\":\"2. 数据类型选择误区\"}]}]\n65:[\"$\",\"p\",\"p-39\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"Counter vs Gauge\"}],\"：请求数应使用 Counter 而非 Gauge\",[\"$\",\"br\",\"br-0\",{}],\"\\n\",[\"$\",\"strong\",\"strong-1\",{\"children\":\"Histogram vs Summary\"}],\"：需要聚合分析请使用 Histogram，精确分位数可选 Summary\"]}]\n66:[\"$\",\"h3\",\"h3-15\",{\"id\":\"3-查询性能问题\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#3-查询性能问题\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#3-查询性能问题\"},\"children\":[{\"type\":\"text\",\"value\":\"3. 查询性能问题\",\"position\":{\"start\":{\"line\":464,\"column\":5,\"offset\":10371},\"end\":{\"line\":464,\"column\":14,\"offset\":10380}}}]},\"children\":\"3. 查询性能问题\"}]}]\n67:[\"$\",\"p\",\"p-40\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题\"}],\"：复杂查询导致 Prometheus 高负载\",[\"$\",\"br\",\"br-0\",{}],\"\\n\",[\"$\",\"strong\",\"strong-1\",{\"children\":\"解决方案\"}],\"：\"]}]\n68:[\"$\",\"ul\",\"ul-12\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"使用记录规则预计算常用查询\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"合理设置 scrape 间隔，避免过度采集\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"对高请求量接口使用客户端聚合\"}],\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("69:[\"$\",\"h2\",\"h2-7\",{\"id\":\"总结与展望\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#总结与展望\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#总结与展望\"},\"children\":[{\"type\":\"text\",\"value\":\"总结与展望\",\"position\":{\"start\":{\"line\":473,\"column\":4,\"offset\":10483},\"end\":{\"line\":473,\"column\":9,\"offset\":10488}}}]},\"children\":\"总结与展望\"}]}]\n6a:[\"$\",\"p\",\"p-41\",{\"children\":\"Prometheus 的四种数据类型各有所长：Counter 适合累积事件计数，Gauge 适合瞬时状态测量，Histogram 适合分布统计和百分位分析，Summary 适合客户端精确分位数计算。与之配合的 PromQL 提供了强大的数据查询和分析能力，共同构成了完整的监控解决方案。\"}]\n6b:[\"$\",\"p\",\"p-42\",{\"children\":\"随着云原生技术的发展，Prometheus 生态也在不断壮大，与 Grafana、Alertmanager、Thanos 等工具集成，能够构建更完善的监控告警平台。在微服务架构中，结合 RED（Rate、Error、Duration）和 USE（Utilization、Saturation、Errors）方法论，可以构建全面的可观测性系统。\"}]\n6c:[\"$\",\"p\",\"p-43\",{\"children\":\"无论你是刚开始使用 Prometheus 的新手，还是寻求优化监控系统的资深工程师，希望本文对你理解和应用 Prometheus 有所帮助。记住，好的监控不仅能及时发现问题，更能预测和防范问题，最终服务于业务可靠性和用户体验的提升。\"}]\n6d:[\"$\",\"hr\",\"hr-0\",{}]\n6e:[\"$\",\"p\",\"p-44\",{\"children\":[\"$\",\"em\",\"em-0\",{\"children\":\"参考资源:\"}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("6f:[\"$\",\"ul\",\"ul-13\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"Prometheus 官方文档: \",[\"$\",\"a\",\"a-0\",{\"href\":\"https://prometheus.io/docs/\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"https://prometheus.io/docs/\"},\"children\":[{\"type\":\"text\",\"value\":\"https://prometheus.io/docs/\",\"position\":{\"start\":{\"line\":485,\"column\":20,\"offset\":10959},\"end\":{\"line\":485,\"column\":47,\"offset\":10986}}}],\"position\":{\"start\":{\"line\":485,\"column\":20,\"offset\":10959},\"end\":{\"line\":485,\"column\":47,\"offset\":10986}}},\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":\"https://prometheus.io/docs/\"}]]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"Google SRE 书籍: \",[\"$\",\"a\",\"a-0\",{\"href\":\"https://sre.google/sre-book/monitoring-distributed-systems/\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"https://sre.google/sre-book/monitoring-distributed-systems/\"},\"children\":[{\"type\":\"text\",\"value\":\"https://sre.google/sre-book/monitoring-distributed-systems/\",\"position\":{\"start\":{\"line\":486,\"column\":18,\"offset\":11004},\"end\":{\"line\":486,\"column\":77,\"offset\":11063}}}],\"position\":{\"start\":{\"line\":486,\"column\":18,\"offset\":11004},\"end\":{\"line\":486,\"column\":77,\"offset\":11063}}},\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":\"https://sre.google/sre-book/monitoring-distributed-systems/\"}]]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"Prometheus 实战: \",[\"$\",\"a\",\"a-0\",{\"href\":\"https://prometheusbook.com/\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"https://prometheusbook.com/\"},\"children\":[{\"type\":\"text\",\"value\":\"https://prometheusbook.com/\",\"position\":{\"start\":{\"line\":487,\"column\":18,\"offset\":11081},\"end\":{\"line\":487,\"column\":45,\"offset\":11108}}}],\"position\":{\"start\":{\"line\":487,\"column\":18,\"offset\":11081},\"end\":{\"line\":487,\"column\":45,\"offset\":11108}}},\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":\"https://prometheusbook.com/\"}]]}],\"\\n\"]}]\n70:[\"$\",\"div\",null,{\"className\":\"article-tags\",\"children\":[[\"$\",\"span\",\"prometheus\",{\"className\":\"p-category\",\"children\":[\"#\",\"prometheus\"]}],[\"$\",\"span\",\"服务监控\",{\"className\":\"p-category\",\"children\":[\"#\",\"服务监控\"]}]]}]\n71:[\"$\",\"$L74\",null,{\"target\":\"https://hedon.top/blog/prometheus-data-type\",\"endpoint\":\"$undefined\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("72:[\"$\",\"section\",null,{\"className\":\"comments\",\"aria-labelledby\":\"comments-heading-prometheus-data-type\",\"children\":[[\"$\",\"div\",null,{\"className\":\"comments-heading\",\"children\":[[\"$\",\"svg\",null,{\"ref\":\"$undefined\",\"xmlns\":\"http://www.w3.org/2000/svg\",\"width\":23,\"height\":23,\"fill\":\"currentColor\",\"viewBox\":\"0 0 256 256\",\"transform\":\"$undefined\",\"children\":[false,\"$undefined\",[\"$\",\"path\",null,{\"d\":\"M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z\"}]]}],[\"$\",\"div\",null,{\"children\":[[\"$\",\"h2\",null,{\"id\":\"comments-heading-prometheus-data-type\",\"children\":\"评论\"}],[\"$\",\"p\",null,{\"children\":\"评论由 GitHub Discussions 保存和管理。\"}]]}]]}],[\"$\",\"$L75\",null,{\"slug\":\"prometheus-data-type\",\"config\":{\"repo\":\"hedon954/blog-comments\",\"repoId\":\"R_kgDOTjDfbQ\",\"category\":\"General\",\"categoryId\":\"DIC_kwDOTjDfbc4DB7pG\"}}]]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("73:[\"$\",\"$L76\",null,{\"headings\":[{\"depth\":2,\"text\":\"前言\",\"id\":\"前言\"},{\"depth\":2,\"text\":\"结论先行：Prometheus 四大数据类型速览\",\"id\":\"结论先行prometheus-四大数据类型速览\"},{\"depth\":2,\"text\":\"一、Prometheus 核心数据类型详解\",\"id\":\"一prometheus-核心数据类型详解\"},{\"depth\":3,\"text\":\"1. Counter（计数器）：持续增长的累积值\",\"id\":\"1-counter计数器持续增长的累积值\"},{\"depth\":3,\"text\":\"2. Gauge（仪表盘）：可变的瞬时值\",\"id\":\"2-gauge仪表盘可变的瞬时值\"},{\"depth\":3,\"text\":\"3. Histogram（直方图）：观测值分布的分桶统计\",\"id\":\"3-histogram直方图观测值分布的分桶统计\"},{\"depth\":3,\"text\":\"4. Summary（摘要）：客户端计算的分位数统计\",\"id\":\"4-summary摘要客户端计算的分位数统计\"},{\"depth\":2,\"text\":\"二、PromQL 查询语言精通\",\"id\":\"二promql-查询语言精通\"},{\"depth\":3,\"text\":\"1. 基础查询与标签选择\",\"id\":\"1-基础查询与标签选择\"},{\"depth\":3,\"text\":\"2. 操作符与函数\",\"id\":\"2-操作符与函数\"},{\"depth\":3,\"text\":\"3. 复杂查询模式\",\"id\":\"3-复杂查询模式\"},{\"depth\":2,\"text\":\"三、实战应用场景\",\"id\":\"三实战应用场景\"},{\"depth\":3,\"text\":\"1. 服务健康度监控\",\"id\":\"1-服务健康度监控\"},{\"depth\":3,\"text\":\"2. 性能瓶颈分析\",\"id\":\"2-性能瓶颈分析\"},{\"depth\":3,\"text\":\"3. 容量规划与告警\",\"id\":\"3-容量规划与告警\"},{\"depth\":2,\"text\":\"四、最佳实践与性能优化\",\"id\":\"四最佳实践与性能优化\"},{\"depth\":3,\"text\":\"1. 指标命名与标签设计\",\"id\":\"1-指标命名与标签设计\"},{\"depth\":3,\"text\":\"2. 客户端性能优化\",\"id\":\"2-客户端性能优化\"},{\"depth\":3,\"text\":\"3. 查询优化\",\"id\":\"3-查询优化\"},{\"depth\":2,\"text\":\"五、常见陷阱与解决方案\",\"id\":\"五常见陷阱与解决方案\"},{\"depth\":3,\"text\":\"1. 高基数问题\",\"id\":\"1-高基数问题\"},{\"depth\":3,\"text\":\"2. 数据类型选择误区\",\"id\":\"2-数据类型选择误区\"},{\"depth\":3,\"text\":\"3. 查询性能问题\",\"id\":\"3-查询性能问题\"},{\"depth\":2,\"text\":\"总结与展望\",\"id\":\"总结与展望\"}]}]\n")</script><script>self.__VINEXT_RSC_DONE__=true</script>

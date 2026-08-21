@@ -1,0 +1,412 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/assets/index-BlvdgL5Z.css" data-rsc-css-href="/assets/index-BlvdgL5Z.css" data-precedence="vite-rsc/importer-resources"/><link rel="modulepreload" href="/assets/layout-segment-context-D05hAiNS.js" crossorigin=""/><link rel="modulepreload" href="/assets/rolldown-runtime-S-ySWqyJ.js" crossorigin=""/><link rel="modulepreload" href="/assets/index-iWWMjvPF.js" crossorigin=""/><link rel="modulepreload" href="/assets/framework-lj9SIvjL.js" crossorigin=""/><link rel="modulepreload" href="/assets/SiteChrome-fw3-nA9J.js" crossorigin=""/><link rel="modulepreload" href="/assets/site.config-9xFcKv1R.js" crossorigin=""/><link rel="modulepreload" href="/assets/X.es-CE2QbOE6.js" crossorigin=""/><link rel="modulepreload" href="/assets/IconBase.es-BcuMBetk.js" crossorigin=""/><link rel="modulepreload" href="/assets/GithubLogo.es-CzPW7yFN.js" crossorigin=""/><link rel="modulepreload" href="/assets/link-DNRhlV_g.js" crossorigin=""/><link rel="modulepreload" href="/assets/MarkdownImage-B5SQPuf9.js" crossorigin=""/><link rel="modulepreload" href="/assets/Webmentions-Boui1ZtL.js" crossorigin=""/><link rel="modulepreload" href="/assets/LinkSimple.es-BqfusCPX.js" crossorigin=""/><link rel="modulepreload" href="/assets/Quotes.es-Cs5Y7all.js" crossorigin=""/><link rel="modulepreload" href="/assets/GiscusComments-N0fYqhTC.js" crossorigin=""/><link rel="modulepreload" href="/assets/TableOfContents-CBBw91S5.js" crossorigin=""/><title>网络数据包的完整旅程：从发送到接收的全过程 · Hedon Garden</title><meta name="description" content="通过一个 HTTP 请求与响应，深入探索背后的网络通信机制，从 DNS 解析、TCP 连接到数据封装与传输，全面解析数据包如何穿越局域网与公网到达目标服务器。"/><meta name="author" content="Hedon"/><link rel="author" href="https://github.com/hedon954"/><meta name="robots" content="index, follow"/><meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/><meta property="og:title" content="网络数据包的完整旅程：从发送到接收的全过程"/><meta property="og:description" content="通过一个 HTTP 请求与响应，深入探索背后的网络通信机制，从 DNS 解析、TCP 连接到数据封装与传输，全面解析数据包如何穿越局域网与公网到达目标服务器。"/><meta property="og:url" content="https://hedon.top/blog/computer-net/net-data-journey"/><meta property="og:type" content="article"/><meta property="article:published_time" content="2025-03-01T12:58:37.000Z"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="网络数据包的完整旅程：从发送到接收的全过程"/><meta name="twitter:description" content="通过一个 HTTP 请求与响应，深入探索背后的网络通信机制，从 DNS 解析、TCP 连接到数据封装与传输，全面解析数据包如何穿越局域网与公网到达目标服务器。"/><meta name="twitter:image" content="https://hedon.top/og.png"/><link rel="icon" href="https://hedon.top/favicon.svg"/><link rel="canonical" href="https://hedon.top/blog/computer-net/net-data-journey"/><script>self.__VINEXT_RSC_PARAMS__={"path":["computer-net","net-data-journey"]}</script><script>self.__VINEXT_RSC_NAV__={"pathname":"/blog/computer-net/net-data-journey/","searchParams":[]}</script><link rel="modulepreload" href="/assets/index-iWWMjvPF.js" />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-f6b33328.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44e03052.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-0638449e.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-971fb274.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44745446.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-013b2f2f.woff2" as="font" type="font/woff2" crossorigin />
+<style data-vinext-fonts>/* cyrillic-ext */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-f6b33328.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44e03052.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* symbols2 */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-0638449e.woff2) format('woff2');
+  unicode-range: U+2000-2001, U+2004-2008, U+200A, U+23B8-23BD, U+2500-259F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-971fb274.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-44745446.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(/assets/_vinext_fonts/geist-mono-00e989178794/geist-mono-013b2f2f.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+.__font_geist_mono_1diim1n { font-family: 'Geist Mono', sans-serif; }
+
+.__variable_geist_mono_1diim1n { --font-geist-mono: 'Geist Mono', sans-serif; }
+</style>
+</head><body class="__variable_geist_mono_1diim1n"><a class="skip-link" href="#main-content">跳到正文</a><header class="site-header"><div class="header-inner"><a href="/" class="brand" aria-label="Hedon Garden 首页"><span class="brand-mark"><svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true"><path d="M216,212H164V180h8a64.07,64.07,0,0,0,64-64,24,24,0,0,0-48,0,16,16,0,0,1-16,16h-8V56a36,36,0,0,0-72,0V92H84A16,16,0,0,1,68,76a24,24,0,0,0-48,0,64.07,64.07,0,0,0,64,64h8v72H40a4,4,0,0,0,0,8H216a4,4,0,0,0,0-8ZM96,132H84A56.06,56.06,0,0,1,28,76a16,16,0,0,1,32,0,24,24,0,0,0,24,24H96a4,4,0,0,0,4-4V56a28,28,0,0,1,56,0v80a4,4,0,0,0,4,4h12a24,24,0,0,0,24-24,16,16,0,0,1,32,0,56.06,56.06,0,0,1-56,56H160a4,4,0,0,0-4,4v36H100V136A4,4,0,0,0,96,132Z"></path></svg></span><span><strong>Hedon Garden</strong><small>写作 · 构建 · 保持好奇</small></span></a><nav class="main-nav" aria-label="主导航"><a href="/">首页</a><a href="/blog">博文</a><a href="/thoughts">随想</a><a href="/columns">专栏</a><a href="/about">关于</a></nav><div class="header-actions"><button class="icon-button search-trigger" aria-label="搜索文章" aria-expanded="false" aria-controls="site-search-dialog"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 256 256"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg><span class="key-hint">⌘K</span></button><button class="icon-button" aria-label="切换到深色模式"><svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" viewBox="0 0 256 256"><path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"></path></svg></button></div></div></header><div id="main-content"><main class="reading-page post-reading-page"><article class="post-article h-entry"><a href="/blog/computer-net/net-data-journey" class="u-url sr-only">网络数据包的完整旅程：从发送到接收的全过程<!-- --> 永久链接</a><a class="p-author h-card sr-only" href="https://github.com/hedon954" rel="author">Hedon</a><header class="article-header article-summary-row"><p class="eyebrow">计算机基础</p><h1 class="p-name">网络数据包的完整旅程：从发送到接收的全过程</h1><p class="article-deck p-summary">通过一个 HTTP 请求与响应，深入探索背后的网络通信机制，从 DNS 解析、TCP 连接到数据封装与传输，全面解析数据包如何穿越局域网与公网到达目标服务器。</p><div class="article-meta"><time class="dt-published" dateTime="2025-03-01T12:58:37.000Z">发布于 <!-- -->2025/03/01</time><span></span><span>约 <!-- -->3,650<!-- --> 字</span></div></header><div class="article-reading-layout"><div class="article-reading-column"><div class="e-content"><div class="markdown-body"><p>不知道你是否曾经好奇你发出的一个网络请求，最终是怎么到达对端，并将你想要的信息返回给你的。本文将通过一个 HTTP 请求与响应，从一个比较宏观的角度来梳理下一个数据包在网络中的旅途，旨在帮助笔者和各位读者建立起对计算机网络模型一个比较全面的认知。</p>
+<blockquote>
+<p>本文参考极客时间《网络架构实战课（谢友鹏）》，再根据笔者的知识面、按照个人理解，补充更多丰富具体的内容。</p>
+</blockquote>
+<h2 id="实战"><a href="#实战" node="[object Object]">实战</a></h2>
+<p>好，那我们直接开始，我们先使用 <code>curl</code> 来发起一个 HTTP 请求，看看这过程中发生了什么：</p>
+<pre data-language="SH"><code class="hljs language-sh">curl -o /dev/null -v https://example.com
+</code></pre>
+<p>在笔者的 mac 机器上，这行命令的输出如下：</p>
+<button type="button" class="markdown-image-trigger" aria-label="放大查看：curl https//example.com 结果分析"><img loading="lazy" alt="curl https//example.com 结果分析" src="https://hedonspace.oss-cn-beijing.aliyuncs.com/img/image-20250301131247066.png" data-fancybox="true" style="width:100%;height:auto" node="[object Object]"/></button>
+<p>当我们发起请求时，首先会对 <code>example.com</code> 进行域名解析，分别尝试解析到它的 <code>IPv6</code> 和 <code>IPv4</code>。</p>
+<pre data-language="BASH"><code class="hljs language-bash">* IPv6: (none)
+* IPv4: 23.215.0.138, 96.7.128.198, 23.192.228.80, 23.192.228.84, 23.215.0.136, 96.7.128.175
+</code></pre>
+<p>因为我们使用的是 <code>https</code> 协议，所以会尝试跟这些地址的 <code>443</code> 端口建立 <code>TCP</code> 连接，（如果是 <code>https</code> 则跟 <code>80</code> 端口），并进行 <code>TLS 握手验证</code>，如果成功了，则会建立 <code>TCP</code> 连接。</p>
+<pre data-language="GO"><code class="hljs language-go">*   Trying <span class="hljs-number">23.215</span><span class="hljs-number">.0</span><span class="hljs-number">.138</span>:<span class="hljs-number">443.</span>..
+...[TLS handshake]
+* Connected to example.com (<span class="hljs-number">23.215</span><span class="hljs-number">.0</span><span class="hljs-number">.138</span>) port <span class="hljs-number">443</span>
+</code></pre>
+<p>建立连接后，就开始发送 <code>HTTP</code> 请求，这里使用的是 HTTP2 协议。</p>
+<pre data-language="BASH"><code class="hljs language-bash">* using HTTP/2
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* [HTTP/2] [1] OPENED stream <span class="hljs-keyword">for</span> https://example.com/
+* [HTTP/2] [1] [:method: GET]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: example.com]
+* [HTTP/2] [1] [:path: /]
+* [HTTP/2] [1] [user-agent: curl/8.10.1]
+* [HTTP/2] [1] [accept: */*]
+} [5 bytes data]
+&gt; GET / HTTP/2
+&gt; Host: example.com
+&gt; User-Agent: curl/8.10.1
+&gt; Accept: */*
+&gt;
+* Request completely sent off
+</code></pre>
+<p>最后，服务器返回了 HTTP 200 OK 的响应。</p>
+<pre data-language="BASH"><code class="hljs language-bash">{ [5 bytes data]
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+{ [265 bytes data]
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+{ [265 bytes data]
+&lt; HTTP/2 200
+&lt; content-type: text/html
+&lt; etag: <span class="hljs-string">&quot;84238dfc8092e5d9c0dac8ef93371a07:1736799080.121134&quot;</span>
+&lt; last-modified: Mon, 13 Jan 2025 20:11:20 GMT
+&lt; cache-control: max-age=1374
+&lt; <span class="hljs-built_in">date</span>: Sat, 01 Mar 2025 05:01:03 GMT
+&lt; alt-svc: h3=<span class="hljs-string">&quot;:443&quot;</span>; ma=93600,h3-29=<span class="hljs-string">&quot;:443&quot;</span>; ma=93600,quic=<span class="hljs-string">&quot;:443&quot;</span>; ma=93600; v=<span class="hljs-string">&quot;43&quot;</span>
+&lt; content-length: 1256
+&lt;
+} [5 bytes data]
+100  1256  100  1256    0     0   1172      0  0:00:01  0:00:01 --:--:--  1172
+* Connection <span class="hljs-comment">#0 to host example.com left intact</span>
+</code></pre>
+<p>要进一步了解网络数据包的细节，我们可以通过抓包工具进行分析。你可以使用 <code>tcpdump</code> 抓取与 example.com 的通信数据包。</p>
+<p>运行如下命令：</p>
+<pre data-language="BASH"><code class="hljs language-bash"><span class="hljs-built_in">sudo</span> tcpdump host example.com -w example.com.pcap
+</code></pre>
+<p>然后再另外一个命令行窗口再次发送请求：</p>
+<pre data-language="BASH"><code class="hljs language-bash">curl -o /dev/null -v https://example.com
+</code></pre>
+<p>回到 <code>tcpdump</code> 的窗口并结束监听，我们就会得到 <code>example.com.pcap</code> 的抓包文件，可以通过 <code>Wireshark</code> 软件打开该文件：</p>
+<p><button type="button" class="markdown-image-trigger" aria-label="放大查看：tcpdump 分析结果"><img loading="lazy" alt="tcpdump 分析结果" src="https://hedonspace.oss-cn-beijing.aliyuncs.com/img/image-20250301133015523.png" node="[object Object]"/></button></p>
+<h2 id="网络分层"><a href="#网络分层" node="[object Object]">网络分层</a></h2>
+<p>通过上述实验，我们可以清晰看到网络是分层的，主流的分层模型有 OSI 七层模型和 TCP/IP 四层模型，它们的对应关系及常见的协议如下图所示：</p>
+<p><button type="button" class="markdown-image-trigger" aria-label="放大查看：OSI-vs-TCP/IP"><img loading="lazy" alt="OSI-vs-TCP/IP" src="https://hedonspace.oss-cn-beijing.aliyuncs.com/img/OSI-vs-TCP.png" node="[object Object]"/></button></p>
+<p>我们在 Wireshark 上方随便选择一个数据包，使用鼠标点击下方左侧的每一层，可以在右侧看到对应的层级数据。从链路层到应用层，每一层的数据都是对下一层的进一步封装。</p>
+<p><button type="button" class="markdown-image-trigger" aria-label="放大查看：数据包封装"><img loading="lazy" alt="数据包封装" src="https://hedonspace.oss-cn-beijing.aliyuncs.com/img/image-20250301134103404.png" node="[object Object]"/></button></p>
+<p>在发送方，用户程序需要传输的数据会经过逐层封装。首先添加应用层的 HTTP Header，然后是传输层的 TCP Header，接着是网络层的 IP Header，最后在链路层添加以太网帧的帧头和帧尾，包括源 MAC 地址、目的 MAC 地址等链路层信息，最终形成网络中传输的完整数据包。</p>
+<p>在接收方，数据包会按相反的顺序逐层解封装。接收设备从链路层开始解析数据，依次解读网络层、传输层和应用层的信息，最后将数据传递给接收方的应用程序。</p>
+<p>如下图所示：</p>
+<p><button type="button" class="markdown-image-trigger" aria-label="放大查看：数据包封装 &amp; 解析"><img loading="lazy" alt="数据包封装 &amp; 解析" src="https://hedonspace.oss-cn-beijing.aliyuncs.com/img/cn1.png" node="[object Object]"/></button></p>
+<p>我们在 Wireshark 中点开下面的每一层，可以看到如下信息，我在图标注了最重要的几个信息：<button type="button" class="markdown-image-trigger" aria-label="放大查看：网络数据包关键信息"><img loading="lazy" alt="网络数据包关键信息" src="https://hedonspace.oss-cn-beijing.aliyuncs.com/img/image-20250301135433547.png" node="[object Object]"/></button></p>
+<h2 id="网络之旅"><a href="#网络之旅" node="[object Object]">网络之旅</a></h2>
+<p>经过上述实验，我们可以做个小总结：</p>
+<p>通过上述实验，我们可以清晰理解数据包的传输过程：</p>
+<ul>
+<li>HTTP 请求是网络通信的应用层内容，它需要通过各层网络协议的封装才能实现端到端传输。</li>
+<li>从发送方角度，数据传输遵循一个明确的逻辑顺序：首先将域名（example.com）解析为 IP 地址，然后基于该 IP 地址和目标端口（443）建立 TCP 连接，接着找到目标 IP 的 MAC 地址，最终由网卡将完整封装的数据包发送到网络中。</li>
+<li>从接收方角度，服务器处理数据包的过程是一个自下而上的解封装过程：数据链路层接收到的帧包含源 MAC 地址，网络层解析出 IPv4 地址和协议类型，传输层识别出 TCP 协议和源端口号，最终在应用层获取并处理 HTTP 请求数据。服务器根据这些信息构建响应，并按相反顺序封装返回给客户端。</li>
+</ul>
+<p>这种分层处理机制确保了网络通信的灵活性和可靠性，每层只需关注自己的职责，共同完成端到端的数据传输任务。</p>
+<p>好，那么这里就有 2 个最关键的问题：</p>
+<ol>
+<li>如何通过域名获得 IP 地址？</li>
+<li>如何通过 IP 地址获取 MAC 地址？</li>
+</ol>
+<h3 id="dns-解析"><a href="#dns-解析" node="[object Object]">DNS 解析</a></h3>
+<p>DNS（Domain Name System，域名系统）是互联网的一项核心服务，它允许我们使用易记的域名（如 <code>example.com</code>）而不是数字 IP 地址（如 <code>93.184.216.34</code>）来访问网站。</p>
+<p>当你在浏览器中输入一个域名时，DNS 解析按以下步骤进行：</p>
+<ol>
+<li>
+<p><strong>浏览器缓存检查</strong>：浏览器首先检查自己的缓存，看是否已经存储了该域名对应的 IP 地址。</p>
+</li>
+<li>
+<p><strong>操作系统缓存检查</strong>：如果浏览器缓存中没有，系统会检查操作系统的 DNS 缓存（如 Windows 的 DNS Client 服务）。</p>
+</li>
+<li>
+<p><strong>路由器缓存检查</strong>：若系统缓存中也没有，请求会被发送到你的路由器，它也维护着一个 DNS 缓存。</p>
+</li>
+<li>
+<p><strong>ISP DNS 服务器查询</strong>：如果以上缓存都未命中，请求会被发送到你的 ISP（互联网服务提供商）的 DNS 服务器。</p>
+</li>
+<li>
+<p><strong>递归查询</strong>：ISP 的 DNS 服务器会执行递归查询：</p>
+<ul>
+<li>首先查询根域名服务器（Root DNS Server）</li>
+<li>根服务器会引导到顶级域名服务器（TLD DNS Server，如 .com, .net, .org 等）</li>
+<li>顶级域名服务器会引导到权威域名服务器（Authoritative DNS Server）</li>
+<li>权威服务器会返回该域名的 IP 地址</li>
+</ul>
+</li>
+<li>
+<p><strong>结果返回与缓存</strong>：一旦获取到 IP 地址，它会被沿着查询路径返回，并在各个层级上缓存一段时间（由 TTL 值决定）。</p>
+</li>
+</ol>
+<p>你可以使用以下工具查询 DNS 信息：</p>
+<ul>
+<li><strong>nslookup</strong>：<code>nslookup example.com</code></li>
+<li><strong>dig</strong>：<code>dig example.com</code></li>
+<li><strong>host</strong>：<code>host example.com</code></li>
+</ul>
+<p>这些工具可以帮助你了解域名的解析过程和结果。</p>
+<pre data-language="BASH"><code class="hljs language-bash">➜  ~ host example.com
+example.com has address 23.215.0.138
+example.com has address 23.192.228.84
+example.com has address 23.215.0.136
+example.com has address 23.192.228.80
+example.com has address 96.7.128.175
+example.com has address 96.7.128.198
+example.com has IPv6 address 2600:1408:ec00:36::1736:7f31
+example.com has IPv6 address 2600:1406:3a00:21::173e:2e65
+example.com has IPv6 address 2600:1406:3a00:21::173e:2e66
+example.com has IPv6 address 2600:1406:bc00:53::b81e:94c8
+example.com has IPv6 address 2600:1406:bc00:53::b81e:94ce
+example.com has IPv6 address 2600:1408:ec00:36::1736:7f24
+example.com mail is handled by 0 .
+</code></pre>
+<p>通过 DNS 解析将域名转换为 IP 地址后，网络通信的下一步就是确定如何将数据包发送到目标 IP 地址，这就需要用到 ARP 协议来获取目标设备的 MAC 地址。</p>
+<h3 id="穿越客户端局域网"><a href="#穿越客户端局域网" node="[object Object]">穿越客户端局域网</a></h3>
+<p><strong>当我们发送一个网络请求时，数据包如何找到离开家庭/办公网络的&quot;出口&quot;？</strong></p>
+<p>数据包首先需要解决的是&quot;该往哪走&quot;的问题：</p>
+<ol>
+<li>
+<p><strong>问题：我需要直接联系目标设备还是找个&quot;中介&quot;？</strong></p>
+<p>解决方案：子网判断</p>
+<ul>
+<li>设备会比较目标 IP 与自己的 IP 和子网掩码</li>
+<li>就像判断收件人是不是住在同一个小区</li>
+</ul>
+</li>
+<li>
+<p><strong>问题：如何找到同一网络中的设备？</strong></p>
+<p>解决方案：ARP 协议</p>
+<ul>
+<li>类似于小区广播：&quot;谁是 202 号房的？请告诉我你的门牌号！&quot;</li>
+<li>目标设备回应自己的 MAC 地址（设备的&quot;身份证号&quot;）</li>
+</ul>
+</li>
+<li>
+<p><strong>问题：目标在远方，如何离开本地网络？</strong></p>
+<p>解决方案：默认网关</p>
+<ul>
+<li>就像不认识远方收件人的地址，先交给小区门卫（路由器）</li>
+<li>数据包头上标注最终目的地 IP，但先送到网关的 MAC 地址</li>
+</ul>
+</li>
+<li>
+<p><strong>问题：数据如何在本地网络中转发？</strong></p>
+<p>解决方案：交换机的 MAC 地址表</p>
+<ul>
+<li>交换机就像小区内的快递员，记住了每家每户的门牌号</li>
+<li>它查表后将包裹精确送到对应的门口，不会打扰其他住户</li>
+</ul>
+</li>
+</ol>
+<p>简单来说，数据包在本地网络中的旅程就像是快递先确认收件人是否在同一小区，如果是，直接送达；如果不是，则交给小区出口的保安，由他负责进一步转发。</p>
+<h3 id="穿越公网"><a href="#穿越公网" node="[object Object]">穿越公网</a></h3>
+<p><strong>数据包离开了本地网络，如何在茫茫互联网中找到遥远的目标服务器？</strong></p>
+<p>数据包在互联网上的旅程就像一次跨国旅行：</p>
+<ol>
+<li>
+<p><strong>问题：如何从私人区域进入公共世界？</strong></p>
+<p>解决方案：NAT（网络地址转换）</p>
+<ul>
+<li>
+<p>就像多人共用一个护照出国，本地设备共享一个公网 IP</p>
+</li>
+<li>
+<p>路由器会记住谁发了什么请求，回程时能送回正确的设备</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>问题：互联网如此庞大复杂，谁来管理这些网络？</strong></p>
+<p>解决方案：自治系统（Autonomous System, AS）</p>
+<ul>
+<li>
+<p>AS 就像互联网世界的&quot;国家&quot;或&quot;独立王国&quot;</p>
+</li>
+<li>
+<p>每个 AS 由单一技术管理机构控制（如 ISP、大企业或教育机构）</p>
+</li>
+<li>
+<p>你的数据包首先进入你的 ISP 所在的 AS，然后可能穿越多个 AS</p>
+</li>
+<li>
+<p>每个 AS 有唯一的 AS 号（ASN），如 AS7018(AT&amp;T) 或 AS8075(Microsoft)</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>问题：这些&quot;网络王国&quot;如何相互通信和合作？</strong></p>
+<p>解决方案：BGP 协议(边界网关协议)</p>
+<ul>
+<li>
+<p>BGP 是 AS 之间的&quot;外交语言&quot;，用于宣告路由信息</p>
+</li>
+<li>
+<p>它告诉其他 AS：&quot;通过我可以到达这些网络&quot;</p>
+</li>
+<li>
+<p>路由器根据 BGP 信息，决定数据包应该经过哪些 AS</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>问题：如何决定数据包在 AS 内部该走哪条路？</strong></p>
+<p>解决方案：内部路由协议</p>
+<ul>
+<li>
+<p>AS 内部使用 OSPF 或 IS-IS 等协议来找到最佳路径</p>
+</li>
+<li>
+<p>路由器像城市中的交通指挥，根据&quot;路况&quot;决定下一个方向</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>问题：不同运营商之间如何连接？</strong></p>
+<p>解决方案：互联网交换中心（IXP）</p>
+<ul>
+<li>
+<p>就像不同航空公司在大型枢纽机场交换乘客</p>
+</li>
+<li>
+<p>数据包在 IXP 从一个 AS “转机”到另一个 AS</p>
+</li>
+<li>
+<p>这减少了路径长度，提高了传输效率</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>问题：我能知道我的数据经过了哪些地方吗？</strong></p>
+<p>解决方案：路径追踪工具</p>
+<ul>
+<li>
+<p>traceroute/tracert 就像给数据包装上 GPS</p>
+</li>
+<li>
+<p>你可以看到数据包穿越的不同 AS 和路由器</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>互联网就像一个巨大的全球快递网络，你的数据包可能穿越多个国家、经过海底电缆，由不同的运营商接力传递，最终到达目的地的网络。</p>
+<h3 id="穿越服务端局域网"><a href="#穿越服务端局域网" node="[object Object]">穿越服务端局域网</a></h3>
+<p><strong>数据包到达目标所在网络后，如何找到并到达最终的服务器？</strong></p>
+<p>数据包抵达目的地网络，就像国际快递到达目标城市，还需要最后一段&quot;本地配送&quot;：</p>
+<ol>
+<li>
+<p><strong>问题：如何确保只有合法请求能进入网络？</strong></p>
+<p>解决方案：防火墙和安全策略</p>
+<ul>
+<li>就像机场海关，检查入境者是否符合入境条件</li>
+<li>只有合法的数据包才能通过安全检查</li>
+</ul>
+</li>
+<li>
+<p><strong>问题：大型网站如何处理海量请求？</strong></p>
+<p>解决方案：负载均衡</p>
+<ul>
+<li>像大型医院的分诊台，将病人分配到不同的医生处</li>
+<li>根据服务器负载、用户位置等因素智能分发请求</li>
+</ul>
+</li>
+<li>
+<p><strong>问题：如何在数据中心复杂环境中找到目标服务器？</strong></p>
+<p>解决方案：内部路由与最后一跳 ARP</p>
+<ul>
+<li>数据中心内部有自己的&quot;地图&quot;和&quot;道路系统&quot;</li>
+<li>最后一个路由器会通过 ARP 找到服务器的具体位置</li>
+</ul>
+</li>
+<li>
+<p><strong>问题：现代云环境中，服务器可能是虚拟的，怎么处理？</strong></p>
+<p>解决方案：虚拟网络</p>
+<ul>
+<li>物理服务器上可能运行多个虚拟机或容器</li>
+<li>虚拟交换机将数据包准确送达虚拟环境中的目标应用</li>
+</ul>
+</li>
+</ol>
+<p>这就像国际快递最后的“最后一公里”配送 - 从目的地城市的分拣中心，经过层层筛选，最终送到收件人手中。</p>
+<h3 id="总结"><a href="#总结" node="[object Object]">总结</a></h3>
+<p>网络请求就像一封国际信件的旅程：</p>
+<ol>
+<li>
+<p>本地投递：从你家出发，判断收件人是否在同小区。如不在，交给小区出口的门卫（网关）。</p>
+</li>
+<li>
+<p>国际运输：</p>
+<ul>
+<li>先经过你所在“国家”（你 ISP 的 AS）的海关（NAT）</li>
+<li>然后可能穿越多个“国家”（不同的 AS）</li>
+<li>各国海关（路由器）通过“国际条约”（BGP）决定包裹走向</li>
+<li>有时通过“国际中转站”（IXP）快速转运到其他“国家”</li>
+</ul>
+</li>
+<li>
+<p>目的地配送：</p>
+<ul>
+<li>
+<p>通过目的地“海关”（防火墙）入境检查</p>
+</li>
+<li>
+<p>经过“分拣中心”（负载均衡器）分配处理人员</p>
+</li>
+<li>
+<p>最终通过“本地快递员”（内部路由和交换）送达收件人手中</p>
+</li>
+</ul>
+</li>
+</ol>
+<p>数据包就这样完成了客户端设备到服务器的全程旅行，然后服务器的响应再沿着类似的路径返回到客户端设备，完成整个请求-响应循环。</p>
+<h2 id="参考"><a href="#参考" node="[object Object]">参考</a></h2>
+<ul>
+<li>
+<p><a href="https://time.geekbang.org/column/article/846257" node="[object Object]" target="_blank" rel="noopener noreferrer">极客时间《网络架构实战课》</a></p>
+</li>
+<li>
+<p><a href="https://www.geeksforgeeks.org/difference-between-osi-model-and-tcp-ip-model/" node="[object Object]" target="_blank" rel="noopener noreferrer">Difference Between OSI Model and TCP/IP Model</a></p>
+</li>
+</ul></div></div><div class="article-tags"><span class="p-category">#<!-- -->计算机网络</span><span class="p-category">#<!-- -->计算机基础</span></div><section class="webmentions" aria-labelledby="webmentions-heading"><div class="webmention-title"><svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="currentColor" viewBox="0 0 256 256"><path d="M165.66,90.34a8,8,0,0,1,0,11.32l-64,64a8,8,0,0,1-11.32-11.32l64-64A8,8,0,0,1,165.66,90.34ZM215.6,40.4a56,56,0,0,0-79.2,0L106.34,70.45a8,8,0,0,0,11.32,11.32l30.06-30a40,40,0,0,1,56.57,56.56l-30.07,30.06a8,8,0,0,0,11.31,11.32L215.6,119.6a56,56,0,0,0,0-79.2ZM138.34,174.22l-30.06,30.06a40,40,0,1,1-56.56-56.57l30.05-30.05a8,8,0,0,0-11.32-11.32L40.4,136.4a56,56,0,0,0,79.2,79.2l30.06-30.07a8,8,0,0,0-11.32-11.31Z"></path></svg><div><h2 id="webmentions-heading">来自开放网络的回应</h2><p>引用、喜欢、转发和站外回复会通过 Webmention 回到这里。</p></div></div><div class="integration-notice"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"><path d="M116,72v88a48.05,48.05,0,0,1-48,48,8,8,0,0,1,0-16,32,32,0,0,0,32-32v-8H40a16,16,0,0,1-16-16V72A16,16,0,0,1,40,56h60A16,16,0,0,1,116,72ZM216,56H156a16,16,0,0,0-16,16v64a16,16,0,0,0,16,16h60v8a32,32,0,0,1-32,32,8,8,0,0,0,0,16,48.05,48.05,0,0,0,48-48V72A16,16,0,0,0,216,56Z"></path></svg><p>接收与展示代码已经就绪，注册正式域名后即可开始收集回应。</p></div></section><section class="comments" aria-labelledby="comments-heading-computer-net/net-data-journey"><div class="comments-heading"><svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" viewBox="0 0 256 256"><path d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"></path></svg><div><h2 id="comments-heading-computer-net/net-data-journey">评论</h2><p>评论由 GitHub Discussions 保存和管理。</p></div></div><div class="giscus-container"></div></section></div><button class="toc-mobile-trigger" type="button" aria-controls="_R_2ml6_" aria-expanded="false" aria-label="打开本篇目录，当前章节：实战" tabindex="0" data-mobile-open="false"><svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true"><path d="M228,128a12,12,0,0,1-12,12H40a12,12,0,0,1,0-24H216A12,12,0,0,1,228,128ZM40,76H216a12,12,0,0,0,0-24H40a12,12,0,0,0,0,24ZM216,180H40a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24Z"></path></svg><span>目录</span></button><button class="toc-mobile-backdrop" type="button" aria-label="关闭本篇目录" tabindex="-1" data-mobile-open="false"></button><aside class="toc" id="_R_2ml6_" aria-label="本篇目录" data-mobile-open="false"><div class="toc-header"><p>本篇目录</p><button class="toc-mobile-close" type="button" aria-label="关闭本篇目录"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path></svg></button></div><ol id="_R_2ml6H1_" class="toc-list"><li class="toc-section toc-depth-2 active"><div class="toc-item-row"><a href="#实战" aria-current="location">实战</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#网络分层">网络分层</a></div></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#网络之旅">网络之旅</a><button class="toc-section-toggle" type="button" aria-controls="_R_2ml6H1_-2" aria-expanded="true" aria-label="收起「网络之旅」的子目录"><span aria-hidden="true">−</span></button></div><ol id="_R_2ml6H1_-2" class="toc-sublist"><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#dns-解析">DNS 解析</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#穿越客户端局域网">穿越客户端局域网</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#穿越公网">穿越公网</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#穿越服务端局域网">穿越服务端局域网</a></div></li><li class="toc-section toc-depth-3"><div class="toc-item-row"><a href="#总结">总结</a></div></li></ol></li><li class="toc-section toc-depth-2"><div class="toc-item-row"><a href="#参考">参考</a></div></li></ol></aside></div></article></main></div><footer class="site-footer"><div class="footer-inner"><p>© <!-- -->2026<!-- --> <!-- -->Hedon<!-- --> · <!-- -->保持独立，持续写作。<span class="footer-framework"> · 基于 <a href="https://github.com/hedon954/garden" target="_blank" rel="noreferrer">Garden</a> 构建</span></p><div><a href="https://github.com/hedon954" aria-label="GitHub" rel="me"><svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" fill="currentColor" viewBox="0 0 256 256"><path d="M208.31,75.68A59.78,59.78,0,0,0,202.93,28,8,8,0,0,0,196,24a59.75,59.75,0,0,0-48,24H124A59.75,59.75,0,0,0,76,24a8,8,0,0,0-6.93,4,59.78,59.78,0,0,0-5.38,47.68A58.14,58.14,0,0,0,56,104v8a56.06,56.06,0,0,0,48.44,55.47A39.8,39.8,0,0,0,96,192v8H72a24,24,0,0,1-24-24A40,40,0,0,0,8,136a8,8,0,0,0,0,16,24,24,0,0,1,24,24,40,40,0,0,0,40,40H96v16a8,8,0,0,0,16,0V192a24,24,0,0,1,48,0v40a8,8,0,0,0,16,0V192a39.8,39.8,0,0,0-8.44-24.53A56.06,56.06,0,0,0,216,112v-8A58.14,58.14,0,0,0,208.31,75.68ZM200,112a40,40,0,0,1-40,40H112a40,40,0,0,1-40-40v-8a41.74,41.74,0,0,1,6.9-22.48A8,8,0,0,0,80,73.83a43.81,43.81,0,0,1,.79-33.58,43.88,43.88,0,0,1,32.32,20.06A8,8,0,0,0,119.82,64h32.35a8,8,0,0,0,6.74-3.69,43.87,43.87,0,0,1,32.32-20.06A43.81,43.81,0,0,1,192,73.83a8.09,8.09,0,0,0,1,7.65A41.72,41.72,0,0,1,200,104Z"></path></svg>GitHub</a><a href="/rss.xml" aria-label="RSS 订阅"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256"><path d="M106.91,149.09A71.53,71.53,0,0,1,128,200a8,8,0,0,1-16,0,56,56,0,0,0-56-56,8,8,0,0,1,0-16A71.53,71.53,0,0,1,106.91,149.09ZM56,80a8,8,0,0,0,0,16A104,104,0,0,1,160,200a8,8,0,0,0,16,0A120,120,0,0,0,56,80Zm118.79,1.21A166.9,166.9,0,0,0,56,32a8,8,0,0,0,0,16A151,151,0,0,1,163.48,92.52,151,151,0,0,1,208,200a8,8,0,0,0,16,0A166.9,166.9,0,0,0,174.79,81.21ZM60,184a12,12,0,1,0,12,12A12,12,0,0,0,60,184Z"></path></svg>RSS</a></div></div></footer><script id="_R_">import("/assets/index-iWWMjvPF.js")</script></body></html><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("2:I[\"04dff15fd24a\",[],\"SiteChrome\",1]\n3:I[\"8c0f216c4604\",[],\"Children\",1]\n4:I[\"15c18cfaeeff\",[],\"LayoutSegmentProvider\",1]\n5:I[\"8c0f216c4604\",[],\"Slot\",1]\n6:I[\"593f344dc510\",[],\"RedirectBoundary\",1]\n:HL[\"/assets/index-BlvdgL5Z.css\",\"style\"]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("0:{\"__route\":\"route:/blog/computer-net/net-data-journey/\",\"__interceptionContext\":null,\"__layoutIds\":[\"layout:/\"],\"__rootLayout\":\"/\",\"page:/blog/computer-net/net-data-journey/\":\"$L1\",\"layout:/\":[[[[\"$\",\"link\",\"css:/assets/index-BlvdgL5Z.css\",{\"rel\":\"stylesheet\",\"precedence\":\"vite-rsc/importer-resources\",\"href\":\"/assets/index-BlvdgL5Z.css\",\"data-rsc-css-href\":\"/assets/index-BlvdgL5Z.css\"}],\"$undefined\"],[\"$\",\"html\",null,{\"lang\":\"zh-CN\",\"suppressHydrationWarning\":true,\"children\":[[\"$\",\"head\",null,{\"children\":[\"$undefined\",\"$undefined\"]}],[\"$\",\"body\",null,{\"className\":\"__variable_geist_mono_1diim1n\",\"children\":[[\"$\",\"a\",null,{\"className\":\"skip-link\",\"href\":\"#main-content\",\"children\":\"跳到正文\"}],[\"$\",\"$L2\",null,{\"children\":[\"$\",\"$L3\",null,{}]}]]}]]}]],null],\"route:/blog/computer-net/net-data-journey/\":[[[\"$\",\"meta\",null,{\"charSet\":\"utf-8\"}],[[\"$\",\"title\",\"0\",{\"children\":\"网络数据包的完整旅程：从发送到接收的全过程 · Hedon Garden\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"通过一个 HTTP 请求与响应，深入探索背后的网络通信机制，从 DNS 解析、TCP 连接到数据封装与传输，全面解析数据包如何穿越局域网与公网到达目标服务器。\"}],[\"$\",\"meta\",\"2\",{\"name\":\"author\",\"content\":\"Hedon\"}],[\"$\",\"link\",\"3\",{\"rel\":\"author\",\"href\":\"https://github.com/hedon954\"}],[\"$\",\"meta\",\"4\",{\"name\":\"robots\",\"content\":\"index, follow\"}],[\"$\",\"meta\",\"5\",{\"name\":\"googlebot\",\"content\":\"index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1\"}],[\"$\",\"meta\",\"6\",{\"property\":\"og:title\",\"content\":\"网络数据包的完整旅程：从发送到接收的全过程\"}],[\"$\",\"meta\",\"7\",{\"property\":\"og:description\",\"content\":\"通过一个 HTTP 请求与响应，深入探索背后的网络通信机制，从 DNS 解析、TCP 连接到数据封装与传输，全面解析数据包如何穿越局域网与公网到达目标服务器。\"}],[\"$\",\"meta\",\"8\",{\"property\":\"og:url\",\"content\":\"https://hedon.top/blog/computer-net/net-data-journey\"}],[\"$\",\"meta\",\"9\",{\"property\":\"og:type\",\"content\":\"article\"}],[\"$\",\"meta\",\"10\",{\"property\":\"article:published_time\",\"content\":\"2025-03-01T12:58:37.000Z\"}],[\"$\",\"meta\",\"11\",{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",\"12\",{\"name\":\"twitter:title\",\"content\":\"网络数据包的完整旅程：从发送到接收的全过程\"}],[\"$\",\"meta\",\"13\",{\"name\":\"twitter:description\",\"content\":\"通过一个 HTTP 请求与响应，深入探索背后的网络通信机制，从 DNS 解析、TCP 连接到数据封装与传输，全面解析数据包如何穿越局域网与公网到达目标服务器。\"}],[\"$\",\"meta\",\"14\",{\"name\":\"twitter:image\",\"content\":\"https://hedon.top/og.png\"}],[\"$\",\"link\",\"15\",{\"rel\":\"icon\",\"href\":\"https://hedon.top/favicon.svg\"}],[\"$\",\"link\",\"16\",{\"rel\":\"canonical\",\"href\":\"https://hedon.top/blog/computer-net/net-data-journey\"}]],[[\"$\",\"meta\",\"0\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]],[\"$\",\"$L4\",null,{\"segmentMap\":{\"children\":[\"blog\",\"computer-net/net-data-journey\"]},\"children\":[\"$\",\"$L5\",null,{\"id\":\"layout:/\",\"parallelSlots\":\"$undefined\",\"children\":[\"$\",\"$L6\",null,{\"children\":[\"$\",\"$L4\",null,{\"segmentMap\":{\"children\":[]},\"children\":[\"$\",\"$L5\",null,{\"id\":\"page:/blog/computer-net/net-data-journey/\"}]}]}]}]}]],\"__layoutFlags\":{\"layout:/\":\"s\"},\"__artifactCompatibility\":{\"schemaVersion\":1,\"graphVersion\":\"app-route-graph:1url7xrgffgzg\",\"deploymentVersion\":\"42ea885b-ba92-4c44-8068-a1dcfe71a16b\",\"appElementsSchemaVersion\":1,\"rscPayloadSchemaVersion\":1,\"rootBoundaryId\":\"/\",\"renderEpoch\":null}}\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("7:I[\"c2747888630f\",[],\"default\",1]\n8:I[\"3c10efde56c2\",[],\"MarkdownImage\",1]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("1:[\"$\",\"main\",null,{\"className\":\"reading-page post-reading-page\",\"children\":[\"$\",\"article\",null,{\"className\":\"post-article h-entry\",\"children\":[[\"$\",\"$L7\",null,{\"className\":\"u-url sr-only\",\"href\":\"/blog/computer-net/net-data-journey\",\"children\":[\"网络数据包的完整旅程：从发送到接收的全过程\",\" 永久链接\"]}],[\"$\",\"a\",null,{\"className\":\"p-author h-card sr-only\",\"href\":\"https://github.com/hedon954\",\"rel\":\"author\",\"children\":\"Hedon\"}],\"$undefined\",[\"$\",\"header\",null,{\"className\":\"article-header article-summary-row\",\"children\":[[\"$\",\"p\",null,{\"className\":\"eyebrow\",\"children\":\"计算机基础\"}],[\"$\",\"h1\",null,{\"className\":\"p-name\",\"children\":\"网络数据包的完整旅程：从发送到接收的全过程\"}],[\"$\",\"p\",null,{\"className\":\"article-deck p-summary\",\"children\":\"通过一个 HTTP 请求与响应，深入探索背后的网络通信机制，从 DNS 解析、TCP 连接到数据封装与传输，全面解析数据包如何穿越局域网与公网到达目标服务器。\"}],[\"$\",\"div\",null,{\"className\":\"article-meta\",\"children\":[[\"$\",\"time\",null,{\"className\":\"dt-published\",\"dateTime\":\"2025-03-01T12:58:37.000Z\",\"children\":[\"发布于 \",\"2025/03/01\"]}],\"$undefined\",[\"$\",\"span\",null,{\"children\":\"$undefined\"}],[\"$\",\"span\",null,{\"children\":[\"约 \",\"3,650\",\" 字\"]}]]}]]}],[\"$\",\"div\",null,{\"className\":\"article-reading-layout\",\"children\":[[\"$\",\"div\",null,{\"className\":\"article-reading-column\",\"children\":[[\"$\",\"div\",null,{\"className\":\"e-content\",\"children\":[\"$\",\"div\",null,{\"className\":\"markdown-body\",\"children\":[[\"$\",\"p\",\"p-0\",{\"children\":\"不知道你是否曾经好奇你发出的一个网络请求，最终是怎么到达对端，并将你想要的信息返回给你的。本文将通过一个 HTTP 请求与响应，从一个比较宏观的角度来梳理下一个数据包在网络中的旅途，旨在帮助笔者和各位读者建立起对计算机网络模型一个比较全面的认知。\"}],\"\\n\",[\"$\",\"blockquote\",\"blockquote-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"本文参考极客时间《网络架构实战课（谢友鹏）》，再根据笔者的知识面、按照个人理解，补充更多丰富具体的内容。\"}],\"\\n\"]}],\"\\n\",[\"$\",\"h2\",\"h2-0\",{\"id\":\"实战\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#实战\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#实战\"},\"children\":[{\"type\":\"text\",\"value\":\"实战\",\"position\":{\"start\":{\"line\":5,\"column\":4,\"offset\":184},\"end\":{\"line\":5,\"column\":6,\"offset\":186}}}]},\"children\":\"实战\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":[\"好，那我们直接开始，我们先使用 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"curl\"}],\" 来发起一个 HTTP 请求，看看这过程中发生了什么：\"]}],\"\\n\",[\"$\",\"pre\",\"pre-0\",{\"data-language\":\"SH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-sh\",\"children\":\"curl -o /dev/null -v https://example.com\\n\"}]}],\"\\n\",[\"$\",\"p\",\"p-2\",{\"children\":\"在笔者的 mac 机器上，这行命令的输出如下：\"}],\"\\n\",[\"$\",\"$L8\",\"img-0\",{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/image-20250301131247066.png\",\"data-fancybox\":\"true\",\"alt\":\"curl https//example.com 结果分析\",\"style\":{\"width\":\"100%\",\"height\":\"auto\"},\"node\":{\"type\":\"element\",\"tagName\":\"img\",\"properties\":{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/image-20250301131247066.png\",\"dataFancybox\":\"true\",\"alt\":\"curl https//example.com 结果分析\",\"style\":\"width: 100%; height: auto;\"},\"children\":[],\"position\":{\"start\":{\"line\":15,\"column\":1,\"offset\":316},\"end\":{\"line\":15,\"column\":182,\"offset\":497}}}}],\"\\n\",[\"$\",\"p\",\"p-3\",{\"children\":[\"当我们发起请求时，首先会对 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"example.com\"}],\" 进行域名解析，分别尝试解析到它的 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"IPv6\"}],\" 和 \",[\"$\",\"code\",\"code-2\",{\"className\":\"$undefined\",\"children\":\"IPv4\"}],\"。\"]}],\"\\n\",[\"$\",\"pre\",\"pre-1\",{\"data-language\":\"BASH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-bash\",\"children\":\"* IPv6: (none)\\n* IPv4: 23.215.0.138, 96.7.128.198, 23.192.228.80, 23.192.228.84, 23.215.0.136, 96.7.128.175\\n\"}]}],\"\\n\",[\"$\",\"p\",\"p-4\",{\"children\":[\"因为我们使用的是 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"https\"}],\" 协议，所以会尝试跟这些地址的 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"443\"}],\" 端口建立 \",[\"$\",\"code\",\"code-2\",{\"className\":\"$undefined\",\"children\":\"TCP\"}],\" 连接，（如果是 \",[\"$\",\"code\",\"code-3\",{\"className\":\"$undefined\",\"children\":\"https\"}],\" 则跟 \",[\"$\",\"code\",\"code-4\",{\"className\":\"$undefined\",\"children\":\"80\"}],\" 端口），并进行 \",[\"$\",\"code\",\"code-5\",{\"className\":\"$undefined\",\"children\":\"TLS 握手验证\"}],\"，如果成功了，则会建立 \",[\"$\",\"code\",\"code-6\",{\"className\":\"$undefined\",\"children\":\"TCP\"}],\" 连接。\"]}],\"\\n\",[\"$\",\"pre\",\"pre-2\",{\"data-language\":\"GO\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-go\",\"children\":[\"*   Trying \",[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-number\",\"children\":\"23.215\"}],[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-number\",\"children\":\".0\"}],[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-number\",\"children\":\".138\"}],\":\",[\"$\",\"span\",\"span-3\",{\"className\":\"hljs-number\",\"children\":\"443.\"}],\"..\\n...[TLS handshake]\\n* Connected to example.com (\",[\"$\",\"span\",\"span-4\",{\"className\":\"hljs-number\",\"children\":\"23.215\"}],[\"$\",\"span\",\"span-5\",{\"className\":\"hljs-number\",\"children\":\".0\"}],[\"$\",\"span\",\"span-6\",{\"className\":\"hljs-number\",\"children\":\".138\"}],\") port \",\"$L9\",\"\\n\"]}]}],\"\\n\",\"$La\",\"\\n\",\"$Lb\",\"\\n\",\"$Lc\",\"\\n\",\"$Ld\",\"\\n\",\"$Le\",\"\\n\",\"$Lf\",\"\\n\",\"$L10\",\"\\n\",\"$L11\",\"\\n\",\"$L12\",\"\\n\",\"$L13\",\"\\n\",\"$L14\",\"\\n\",\"$L15\",\"\\n\",\"$L16\",\"\\n\",\"$L17\",\"\\n\",\"$L18\",\"\\n\",\"$L19\",\"\\n\",\"$L1a\",\"\\n\",\"$L1b\",\"\\n\",\"$L1c\",\"\\n\",\"$L1d\",\"\\n\",\"$L1e\",\"\\n\",\"$L1f\",\"\\n\",\"$L20\",\"\\n\",\"$L21\",\"\\n\",\"$L22\",\"\\n\",\"$L23\",\"\\n\",\"$L24\",\"\\n\",\"$L25\",\"\\n\",\"$L26\",\"\\n\",\"$L27\",\"\\n\",\"$L28\",\"\\n\",\"$L29\",\"\\n\",\"$L2a\",\"\\n\",\"$L2b\",\"\\n\",\"$L2c\",\"\\n\",\"$L2d\",\"\\n\",\"$L2e\",\"\\n\",\"$L2f\",\"\\n\",\"$L30\",\"\\n\",\"$L31\",\"\\n\",\"$L32\",\"\\n\",\"$L33\",\"\\n\",\"$L34\",\"\\n\",\"$L35\",\"\\n\",\"$L36\",\"\\n\",\"$L37\",\"\\n\",\"$L38\",\"\\n\",\"$L39\",\"\\n\",\"$L3a\",\"\\n\",\"$L3b\",\"\\n\",\"$L3c\",\"\\n\",\"$L3d\",\"\\n\",\"$L3e\",\"\\n\",\"$L3f\",\"\\n\",\"$L40\",\"\\n\",\"$L41\",\"\\n\",\"$L42\",\"\\n\",\"$L43\"]}]}],\"$L44\",\"$L45\",\"$L46\"]}],\"$L47\"]}]]}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("48:I[\"201d37663261\",[],\"Webmentions\",1]\n49:I[\"35e6595fba52\",[],\"GiscusComments\",1]\n4a:I[\"47831e8e6cd4\",[],\"TableOfContents\",1]\n9:[\"$\",\"span\",\"span-7\",{\"className\":\"hljs-number\",\"children\":\"443\"}]\na:[\"$\",\"p\",\"p-5\",{\"children\":[\"建立连接后，就开始发送 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"HTTP\"}],\" 请求，这里使用的是 HTTP2 协议。\"]}]\nb:[\"$\",\"pre\",\"pre-3\",{\"data-language\":\"BASH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-bash\",\"children\":[\"* using HTTP/2\\n  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* [HTTP/2] [1] OPENED stream \",[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-keyword\",\"children\":\"for\"}],\" https://example.com/\\n* [HTTP/2] [1] [:method: GET]\\n* [HTTP/2] [1] [:scheme: https]\\n* [HTTP/2] [1] [:authority: example.com]\\n* [HTTP/2] [1] [:path: /]\\n* [HTTP/2] [1] [user-agent: curl/8.10.1]\\n* [HTTP/2] [1] [accept: */*]\\n} [5 bytes data]\\n\u003e GET / HTTP/2\\n\u003e Host: example.com\\n\u003e User-Agent: curl/8.10.1\\n\u003e Accept: */*\\n\u003e\\n* Request completely sent off\\n\"]}]}]\nc:[\"$\",\"p\",\"p-6\",{\"children\":\"最后，服务器返回了 HTTP 200 OK 的响应。\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("d:[\"$\",\"pre\",\"pre-4\",{\"data-language\":\"BASH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-bash\",\"children\":[\"{ [5 bytes data]\\n* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):\\n{ [265 bytes data]\\n* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):\\n{ [265 bytes data]\\n\u003c HTTP/2 200\\n\u003c content-type: text/html\\n\u003c etag: \",[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-string\",\"children\":\"\\\"84238dfc8092e5d9c0dac8ef93371a07:1736799080.121134\\\"\"}],\"\\n\u003c last-modified: Mon, 13 Jan 2025 20:11:20 GMT\\n\u003c cache-control: max-age=1374\\n\u003c \",[\"$\",\"span\",\"span-1\",{\"className\":\"hljs-built_in\",\"children\":\"date\"}],\": Sat, 01 Mar 2025 05:01:03 GMT\\n\u003c alt-svc: h3=\",[\"$\",\"span\",\"span-2\",{\"className\":\"hljs-string\",\"children\":\"\\\":443\\\"\"}],\"; ma=93600,h3-29=\",[\"$\",\"span\",\"span-3\",{\"className\":\"hljs-string\",\"children\":\"\\\":443\\\"\"}],\"; ma=93600,quic=\",[\"$\",\"span\",\"span-4\",{\"className\":\"hljs-string\",\"children\":\"\\\":443\\\"\"}],\"; ma=93600; v=\",[\"$\",\"span\",\"span-5\",{\"className\":\"hljs-string\",\"children\":\"\\\"43\\\"\"}],\"\\n\u003c content-length: 1256\\n\u003c\\n} [5 bytes data]\\n100  1256  100  1256    0     0   1172      0  0:00:01  0:00:01 --:--:--  1172\\n* Connection \",[\"$\",\"span\",\"span-6\",{\"className\":\"hljs-comment\",\"children\":\"#0 to host example.com left intact\"}],\"\\n\"]}]}]\ne:[\"$\",\"p\",\"p-7\",{\"children\":[\"要进一步了解网络数据包的细节，我们可以通过抓包工具进行分析。你可以使用 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"tcpdump\"}],\" 抓取与 example.com 的通信数据包。\"]}]\nf:[\"$\",\"p\",\"p-8\",{\"children\":\"运行如下命令：\"}]\n10:[\"$\",\"pre\",\"pre-5\",{\"data-language\":\"BASH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-bash\",\"children\":[[\"$\",\"span\",\"span-0\",{\"className\":\"hljs-built_in\",\"children\":\"sudo\"}],\" tcpdump host example.com -w example.com.pcap\\n\"]}]}]\n11:[\"$\",\"p\",\"p-9\",{\"children\":\"然后再另外一个命令行窗口再次发送请求：\"}]\n12:[\"$\",\"pre\",\"pre-6\",{\"data-language\":\"BASH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-bash\",\"children\":\"curl -o /dev/null -v https://example.com\\n\"}]}]\n13:[\"$\",\"p\",\"p-10\",{\"children\":[\"回到 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"tcpdump\"}],\" 的窗口并结束监听，我们就会得到 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"example.com.pcap\"}],\" 的抓包文件，可以通过 \",[\"$\",\"code\",\"code-2\",{\"className\":\"$undefined\",\"children\":\"Wireshark\"}],\" 软件打开该文件：\"]}]\n14:[\"$\",\"p\",\"p-11\",{\"children\":[\"$\",\"$L8\",\"img-0\",{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/image-20250301133015523.png\",\"alt\":\"tcpdump 分析结果\",\"node\":{\"type\":\"element\",\"tagName\":\"img\",\"properties\":{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/image-20250301133015523.png\",\"alt\":\"tcpdump 分析结果\"},\"children\":[],\"position\":{\"start\":{\"line\":90,\"column\":1,\"offset\":2403},\"end\":{\"line\":90,\"column\":96,\"offset\":2498}}}}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("15:[\"$\",\"h2\",\"h2-1\",{\"id\":\"网络分层\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#网络分层\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#网络分层\"},\"children\":[{\"type\":\"text\",\"value\":\"网络分层\",\"position\":{\"start\":{\"line\":92,\"column\":4,\"offset\":2503},\"end\":{\"line\":92,\"column\":8,\"offset\":2507}}}]},\"children\":\"网络分层\"}]}]\n16:[\"$\",\"p\",\"p-12\",{\"children\":\"通过上述实验，我们可以清晰看到网络是分层的，主流的分层模型有 OSI 七层模型和 TCP/IP 四层模型，它们的对应关系及常见的协议如下图所示：\"}]\n17:[\"$\",\"p\",\"p-13\",{\"children\":[\"$\",\"$L8\",\"img-0\",{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/OSI-vs-TCP.png\",\"alt\":\"OSI-vs-TCP/IP\",\"node\":{\"type\":\"element\",\"tagName\":\"img\",\"properties\":{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/OSI-vs-TCP.png\",\"alt\":\"OSI-vs-TCP/IP\"},\"children\":[],\"position\":{\"start\":{\"line\":96,\"column\":1,\"offset\":2583},\"end\":{\"line\":96,\"column\":84,\"offset\":2666}}}}]}]\n18:[\"$\",\"p\",\"p-14\",{\"children\":\"我们在 Wireshark 上方随便选择一个数据包，使用鼠标点击下方左侧的每一层，可以在右侧看到对应的层级数据。从链路层到应用层，每一层的数据都是对下一层的进一步封装。\"}]\n19:[\"$\",\"p\",\"p-15\",{\"children\":[\"$\",\"$L8\",\"img-0\",{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/image-20250301134103404.png\",\"alt\":\"数据包封装\",\"node\":{\"type\":\"element\",\"tagName\":\"img\",\"properties\":{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/image-20250301134103404.png\",\"alt\":\"数据包封装\"},\"children\":[],\"position\":{\"start\":{\"line\":100,\"column\":1,\"offset\":2754},\"end\":{\"line\":100,\"column\":89,\"offset\":2842}}}}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("1a:[\"$\",\"p\",\"p-16\",{\"children\":\"在发送方，用户程序需要传输的数据会经过逐层封装。首先添加应用层的 HTTP Header，然后是传输层的 TCP Header，接着是网络层的 IP Header，最后在链路层添加以太网帧的帧头和帧尾，包括源 MAC 地址、目的 MAC 地址等链路层信息，最终形成网络中传输的完整数据包。\"}]\n1b:[\"$\",\"p\",\"p-17\",{\"children\":\"在接收方，数据包会按相反的顺序逐层解封装。接收设备从链路层开始解析数据，依次解读网络层、传输层和应用层的信息，最后将数据传递给接收方的应用程序。\"}]\n1c:[\"$\",\"p\",\"p-18\",{\"children\":\"如下图所示：\"}]\n1d:[\"$\",\"p\",\"p-19\",{\"children\":[\"$\",\"$L8\",\"img-0\",{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/cn1.png\",\"alt\":\"数据包封装 \u0026 解析\",\"node\":{\"type\":\"element\",\"tagName\":\"img\",\"properties\":{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/cn1.png\",\"alt\":\"数据包封装 \u0026 解析\"},\"children\":[],\"position\":{\"start\":{\"line\":108,\"column\":1,\"offset\":3072},\"end\":{\"line\":108,\"column\":74,\"offset\":3145}}}}]}]\n1e:[\"$\",\"p\",\"p-20\",{\"children\":[\"我们在 Wireshark 中点开下面的每一层，可以看到如下信息，我在图标注了最重要的几个信息：\",[\"$\",\"$L8\",\"img-0\",{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/image-20250301135433547.png\",\"alt\":\"网络数据包关键信息\",\"node\":{\"type\":\"element\",\"tagName\":\"img\",\"properties\":{\"src\":\"https://hedonspace.oss-cn-beijing.aliyuncs.com/img/image-20250301135433547.png\",\"alt\":\"网络数据包关键信息\"},\"children\":[],\"position\":{\"start\":{\"line\":110,\"column\":49,\"offset\":3195},\"end\":{\"line\":110,\"column\":141,\"offset\":3287}}}}]]}]\n1f:[\"$\",\"h2\",\"h2-2\",{\"id\":\"网络之旅\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#网络之旅\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#网络之旅\"},\"children\":[{\"type\":\"text\",\"value\":\"网络之旅\",\"position\":{\"start\":{\"line\":112,\"column\":4,\"offset\":3292},\"end\":{\"line\":112,\"column\":8,\"offset\":3296}}}]},\"children\":\"网络之旅\"}]}]\n20:[\"$\",\"p\",\"p-21\",{\"children\":\"经过上述实验，我们可以做个小总结：\"}]\n21:[\"$\",\"p\",\"p-22\",{\"children\":\"通过上述实验，我们可以清晰理解数据包的传输过程：\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("22:[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"HTTP 请求是网络通信的应用层内容，它需要通过各层网络协议的封装才能实现端到端传输。\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"从发送方角度，数据传输遵循一个明确的逻辑顺序：首先将域名（example.com）解析为 IP 地址，然后基于该 IP 地址和目标端口（443）建立 TCP 连接，接着找到目标 IP 的 MAC 地址，最终由网卡将完整封装的数据包发送到网络中。\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"从接收方角度，服务器处理数据包的过程是一个自下而上的解封装过程：数据链路层接收到的帧包含源 MAC 地址，网络层解析出 IPv4 地址和协议类型，传输层识别出 TCP 协议和源端口号，最终在应用层获取并处理 HTTP 请求数据。服务器根据这些信息构建响应，并按相反顺序封装返回给客户端。\"}],\"\\n\"]}]\n23:[\"$\",\"p\",\"p-23\",{\"children\":\"这种分层处理机制确保了网络通信的灵活性和可靠性，每层只需关注自己的职责，共同完成端到端的数据传输任务。\"}]\n24:[\"$\",\"p\",\"p-24\",{\"children\":\"好，那么这里就有 2 个最关键的问题：\"}]\n25:[\"$\",\"ol\",\"ol-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"如何通过域名获得 IP 地址？\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"如何通过 IP 地址获取 MAC 地址？\"}],\"\\n\"]}]\n26:[\"$\",\"h3\",\"h3-0\",{\"id\":\"dns-解析\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#dns-解析\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#dns-解析\"},\"children\":[{\"type\":\"text\",\"value\":\"DNS 解析\",\"position\":{\"start\":{\"line\":129,\"column\":5,\"offset\":3783},\"end\":{\"line\":129,\"column\":11,\"offset\":3789}}}]},\"children\":\"DNS 解析\"}]}]\n27:[\"$\",\"p\",\"p-25\",{\"children\":[\"DNS（Domain Name System，域名系统）是互联网的一项核心服务，它允许我们使用易记的域名（如 \",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"example.com\"}],\"）而不是数字 IP 地址（如 \",[\"$\",\"code\",\"code-1\",{\"className\":\"$undefined\",\"children\":\"93.184.216.34\"}],\"）来访问网站。\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("28:[\"$\",\"p\",\"p-26\",{\"children\":\"当你在浏览器中输入一个域名时，DNS 解析按以下步骤进行：\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("29:[\"$\",\"ol\",\"ol-1\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"浏览器缓存检查\"}],\"：浏览器首先检查自己的缓存，看是否已经存储了该域名对应的 IP 地址。\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"操作系统缓存检查\"}],\"：如果浏览器缓存中没有，系统会检查操作系统的 DNS 缓存（如 Windows 的 DNS Client 服务）。\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"路由器缓存检查\"}],\"：若系统缓存中也没有，请求会被发送到你的路由器，它也维护着一个 DNS 缓存。\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"ISP DNS 服务器查询\"}],\"：如果以上缓存都未命中，请求会被发送到你的 ISP（互联网服务提供商）的 DNS 服务器。\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-4\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"递归查询\"}],\"：ISP 的 DNS 服务器会执行递归查询：\"]}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"首先查询根域名服务器（Root DNS Server）\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"根服务器会引导到顶级域名服务器（TLD DNS Server，如 .com, .net, .org 等）\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"顶级域名服务器会引导到权威域名服务器（Authoritative DNS Server）\"}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":\"权威服务器会返回该域名的 IP 地址\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-5\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"结果返回与缓存\"}],\"：一旦获取到 IP 地址，它会被沿着查询路径返回，并在各个层级上缓存一段时间（由 TTL 值决定）。\"]}],\"\\n\"]}],\"\\n\"]}]\n2a:[\"$\",\"p\",\"p-27\",{\"children\":\"你可以使用以下工具查询 DNS 信息：\"}]\n2b:[\"$\",\"ul\",\"ul-1\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"nslookup\"}],\"：\",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"nslookup example.com\"}]]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"dig\"}],\"：\",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"dig example.com\"}]]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[[\"$\",\"strong\",\"strong-0\",{\"children\":\"host\"}],\"：\",[\"$\",\"code\",\"code-0\",{\"className\":\"$undefined\",\"children\":\"host example.com\"}]]}],\"\\n\"]}]\n2c:[\"$\",\"p\",\"p-28\",{\"children\":\"这些工具可以帮助你了解域名的解析过程和结果。\"}]\n2d:[\"$\",\"pre\",\"pre-7\",{\"data-language\":\"BASH\",\"children\":[\"$\",\"code\",\"code-0\",{\"className\":\"hljs language-bash\",\"children\":\"➜  ~ host example.com\\nexample.com has address 23.215.0.138\\nexample.com has address 23.192.228.84\\nexample.com has address 23.215.0.136\\nexample.com has address 23.192.228.80\\nexample.com has address 96.7.128.175\\nexample.com has address 96.7.128.198\\nexample.com has IPv6 address 2600:1408:ec00:36::1736:7f31\\nexample.com has IPv6 address 2600:1406:3a00:21::173e:2e65\\nexample.com has IPv6 address 2600:1406:3a00:21::173e:2e66\\nexample.com has IPv6 address 2600:1406:bc00:53::b81e:94c8\\nexample.com has IPv6 address 2600:1406:bc00:53::b81e:94ce\\nexample.com has IPv6 address 2600:1408:ec00:36::1736:7f24\\nexample.com mail is handled by 0 .\\n\"}]}]\n2e:[\"$\",\"p\",\"p-29\",{\"children\":\"通过 DNS 解析将域名转换为 IP 地址后，网络通信的下一步就是确定如何将数据包发送到目标 IP 地址，这就需要用到 ARP 协议来获取目标设备的 MAC 地址。\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("2f:[\"$\",\"h3\",\"h3-1\",{\"id\":\"穿越客户端局域网\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#穿越客户端局域网\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#穿越客户端局域网\"},\"children\":[{\"type\":\"text\",\"value\":\"穿越客户端局域网\",\"position\":{\"start\":{\"line\":179,\"column\":5,\"offset\":5315},\"end\":{\"line\":179,\"column\":13,\"offset\":5323}}}]},\"children\":\"穿越客户端局域网\"}]}]\n30:[\"$\",\"p\",\"p-30\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"当我们发送一个网络请求时，数据包如何找到离开家庭/办公网络的\\\"出口\\\"？\"}]}]\n31:[\"$\",\"p\",\"p-31\",{\"children\":\"数据包首先需要解决的是\\\"该往哪走\\\"的问题：\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("32:[\"$\",\"ol\",\"ol-2\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题：我需要直接联系目标设备还是找个\\\"中介\\\"？\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"解决方案：子网判断\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"设备会比较目标 IP 与自己的 IP 和子网掩码\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"就像判断收件人是不是住在同一个小区\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题：如何找到同一网络中的设备？\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"解决方案：ARP 协议\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"类似于小区广播：\\\"谁是 202 号房的？请告诉我你的门牌号！\\\"\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"目标设备回应自己的 MAC 地址（设备的\\\"身份证号\\\"）\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题：目标在远方，如何离开本地网络？\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"解决方案：默认网关\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"就像不认识远方收件人的地址，先交给小区门卫（路由器）\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"数据包头上标注最终目的地 IP，但先送到网关的 MAC 地址\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题：数据如何在本地网络中转发？\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"解决方案：交换机的 MAC 地址表\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"交换机就像小区内的快递员，记住了每家每户的门牌号\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"它查表后将包裹精确送到对应的门口，不会打扰其他住户\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\"]}]\n33:[\"$\",\"p\",\"p-32\",{\"children\":\"简单来说，数据包在本地网络中的旅程就像是快递先确认收件人是否在同一小区，如果是，直接送达；如果不是，则交给小区出口的保安，由他负责进一步转发。\"}]\n34:[\"$\",\"h3\",\"h3-2\",{\"id\":\"穿越公网\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#穿越公网\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#穿越公网\"},\"children\":[{\"type\":\"text\",\"value\":\"穿越公网\",\"position\":{\"start\":{\"line\":215,\"column\":5,\"offset\":5897},\"end\":{\"line\":215,\"column\":9,\"offset\":5901}}}]},\"children\":\"穿越公网\"}]}]\n35:[\"$\",\"p\",\"p-33\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"数据包离开了本地网络，如何在茫茫互联网中找到遥远的目标服务器？\"}]}]\n36:[\"$\",\"p\",\"p-34\",{\"children\":\"数据包在互联网上的旅程就像一次跨国旅行：\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("37:[\"$\",\"ol\",\"ol-3\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题：如何从私人区域进入公共世界？\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"解决方案：NAT（网络地址转换）\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"就像多人共用一个护照出国，本地设备共享一个公网 IP\"}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"路由器会记住谁发了什么请求，回程时能送回正确的设备\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题：互联网如此庞大复杂，谁来管理这些网络？\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"解决方案：自治系统（Autonomous System, AS）\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"AS 就像互联网世界的\\\"国家\\\"或\\\"独立王国\\\"\"}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"每个 AS 由单一技术管理机构控制（如 ISP、大企业或教育机构）\"}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"你的数据包首先进入你的 ISP 所在的 AS，然后可能穿越多个 AS\"}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"每个 AS 有唯一的 AS 号（ASN），如 AS7018(AT\u0026T) 或 AS8075(Microsoft)\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题：这些\\\"网络王国\\\"如何相互通信和合作？\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"解决方案：BGP 协议(边界网关协议)\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"BGP 是 AS 之间的\\\"外交语言\\\"，用于宣告路由信息\"}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"它告诉其他 AS：\\\"通过我可以到达这些网络\\\"\"}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"路由器根据 BGP 信息，决定数据包应该经过哪些 AS\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题：如何决定数据包在 AS 内部该走哪条路？\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"解决方案：内部路由协议\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"AS 内部使用 OSPF 或 IS-IS 等协议来找到最佳路径\"}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"路由器像城市中的交通指挥，根据\\\"路况\\\"决定下一个方向\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-4\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题：不同运营商之间如何连接？\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"解决方案：互联网交换中心（IXP）\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"就像不同航空公司在大型枢纽机场交换乘客\"}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"数据包在 IXP 从一个 AS “转机”到另一个 AS\"}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"这减少了路径长度，提高了传输效率\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-5\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题：我能知道我的数据经过了哪些地方吗？\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"解决方案：路径追踪工具\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"traceroute/tracert 就像给数据包装上 GPS\"}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"你可以看到数据包穿越的不同 AS 和路由器\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\"]}],\"\\n\"]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("38:[\"$\",\"p\",\"p-35\",{\"children\":\"互联网就像一个巨大的全球快递网络，你的数据包可能穿越多个国家、经过海底电缆，由不同的运营商接力传递，最终到达目的地的网络。\"}]\n39:[\"$\",\"h3\",\"h3-3\",{\"id\":\"穿越服务端局域网\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#穿越服务端局域网\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#穿越服务端局域网\"},\"children\":[{\"type\":\"text\",\"value\":\"穿越服务端局域网\",\"position\":{\"start\":{\"line\":279,\"column\":5,\"offset\":6891},\"end\":{\"line\":279,\"column\":13,\"offset\":6899}}}]},\"children\":\"穿越服务端局域网\"}]}]\n3a:[\"$\",\"p\",\"p-36\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"数据包到达目标所在网络后，如何找到并到达最终的服务器？\"}]}]\n3b:[\"$\",\"p\",\"p-37\",{\"children\":\"数据包抵达目的地网络，就像国际快递到达目标城市，还需要最后一段\\\"本地配送\\\"：\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("3c:[\"$\",\"ol\",\"ol-4\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题：如何确保只有合法请求能进入网络？\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"解决方案：防火墙和安全策略\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"就像机场海关，检查入境者是否符合入境条件\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"只有合法的数据包才能通过安全检查\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题：大型网站如何处理海量请求？\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"解决方案：负载均衡\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"像大型医院的分诊台，将病人分配到不同的医生处\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"根据服务器负载、用户位置等因素智能分发请求\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题：如何在数据中心复杂环境中找到目标服务器？\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"解决方案：内部路由与最后一跳 ARP\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"数据中心内部有自己的\\\"地图\\\"和\\\"道路系统\\\"\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"最后一个路由器会通过 ARP 找到服务器的具体位置\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"strong\",\"strong-0\",{\"children\":\"问题：现代云环境中，服务器可能是虚拟的，怎么处理？\"}]}],\"\\n\",[\"$\",\"p\",\"p-1\",{\"children\":\"解决方案：虚拟网络\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"物理服务器上可能运行多个虚拟机或容器\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"虚拟交换机将数据包准确送达虚拟环境中的目标应用\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\"]}]\n3d:[\"$\",\"p\",\"p-38\",{\"children\":\"这就像国际快递最后的“最后一公里”配送 - 从目的地城市的分拣中心，经过层层筛选，最终送到收件人手中。\"}]\n3e:[\"$\",\"h3\",\"h3-4\",{\"id\":\"总结\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#总结\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#总结\"},\"children\":[{\"type\":\"text\",\"value\":\"总结\",\"position\":{\"start\":{\"line\":315,\"column\":5,\"offset\":7437},\"end\":{\"line\":315,\"column\":7,\"offset\":7439}}}]},\"children\":\"总结\"}]}]\n3f:[\"$\",\"p\",\"p-39\",{\"children\":\"网络请求就像一封国际信件的旅程：\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("40:[\"$\",\"ol\",\"ol-5\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"本地投递：从你家出发，判断收件人是否在同小区。如不在，交给小区出口的门卫（网关）。\"}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"国际运输：\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":\"先经过你所在“国家”（你 ISP 的 AS）的海关（NAT）\"}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":\"然后可能穿越多个“国家”（不同的 AS）\"}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":\"各国海关（路由器）通过“国际条约”（BGP）决定包裹走向\"}],\"\\n\",[\"$\",\"li\",\"li-3\",{\"children\":\"有时通过“国际中转站”（IXP）快速转运到其他“国家”\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"目的地配送：\"}],\"\\n\",[\"$\",\"ul\",\"ul-0\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"通过目的地“海关”（防火墙）入境检查\"}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"经过“分拣中心”（负载均衡器）分配处理人员\"}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-2\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":\"最终通过“本地快递员”（内部路由和交换）送达收件人手中\"}],\"\\n\"]}],\"\\n\"]}],\"\\n\"]}],\"\\n\"]}]\n41:[\"$\",\"p\",\"p-40\",{\"children\":\"数据包就这样完成了客户端设备到服务器的全程旅行，然后服务器的响应再沿着类似的路径返回到客户端设备，完成整个请求-响应循环。\"}]\n42:[\"$\",\"h2\",\"h2-3\",{\"id\":\"参考\",\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"#参考\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"#参考\"},\"children\":[{\"type\":\"text\",\"value\":\"参考\",\"position\":{\"start\":{\"line\":337,\"column\":4,\"offset\":7808},\"end\":{\"line\":337,\"column\":6,\"offset\":7810}}}]},\"children\":\"参考\"}]}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("43:[\"$\",\"ul\",\"ul-2\",{\"children\":[\"\\n\",[\"$\",\"li\",\"li-0\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"https://time.geekbang.org/column/article/846257\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"https://time.geekbang.org/column/article/846257\"},\"children\":[{\"type\":\"text\",\"value\":\"极客时间《网络架构实战课》\",\"position\":{\"start\":{\"line\":339,\"column\":4,\"offset\":7815},\"end\":{\"line\":339,\"column\":17,\"offset\":7828}}}],\"position\":{\"start\":{\"line\":339,\"column\":3,\"offset\":7814},\"end\":{\"line\":339,\"column\":67,\"offset\":7878}}},\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":\"极客时间《网络架构实战课》\"}]}],\"\\n\"]}],\"\\n\",[\"$\",\"li\",\"li-1\",{\"children\":[\"\\n\",[\"$\",\"p\",\"p-0\",{\"children\":[\"$\",\"a\",\"a-0\",{\"href\":\"https://www.geeksforgeeks.org/difference-between-osi-model-and-tcp-ip-model/\",\"node\":{\"type\":\"element\",\"tagName\":\"a\",\"properties\":{\"href\":\"https://www.geeksforgeeks.org/difference-between-osi-model-and-tcp-ip-model/\"},\"children\":[{\"type\":\"text\",\"value\":\"Difference Between OSI Model and TCP/IP Model\",\"position\":{\"start\":{\"line\":341,\"column\":4,\"offset\":7883},\"end\":{\"line\":341,\"column\":49,\"offset\":7928}}}],\"position\":{\"start\":{\"line\":341,\"column\":3,\"offset\":7882},\"end\":{\"line\":341,\"column\":128,\"offset\":8007}}},\"target\":\"_blank\",\"rel\":\"noopener noreferrer\",\"children\":\"Difference Between OSI Model and TCP/IP Model\"}]}],\"\\n\"]}],\"\\n\"]}]\n44:[\"$\",\"div\",null,{\"className\":\"article-tags\",\"children\":[[\"$\",\"span\",\"计算机网络\",{\"className\":\"p-category\",\"children\":[\"#\",\"计算机网络\"]}],[\"$\",\"span\",\"计算机基础\",{\"className\":\"p-category\",\"children\":[\"#\",\"计算机基础\"]}]]}]\n45:[\"$\",\"$L48\",null,{\"target\":\"https://hedon.top/blog/computer-net/net-data-journey\",\"endpoint\":\"$undefined\"}]\n")</script><script>self.__VINEXT_RSC_CHUNKS__=self.__VINEXT_RSC_CHUNKS__||[];self.__VINEXT_RSC_CHUNKS__.push("46:[\"$\",\"section\",null,{\"className\":\"comments\",\"aria-labelledby\":\"comments-heading-computer-net/net-data-journey\",\"children\":[[\"$\",\"div\",null,{\"className\":\"comments-heading\",\"children\":[[\"$\",\"svg\",null,{\"ref\":\"$undefined\",\"xmlns\":\"http://www.w3.org/2000/svg\",\"width\":23,\"height\":23,\"fill\":\"currentColor\",\"viewBox\":\"0 0 256 256\",\"transform\":\"$undefined\",\"children\":[false,\"$undefined\",[\"$\",\"path\",null,{\"d\":\"M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z\"}]]}],[\"$\",\"div\",null,{\"children\":[[\"$\",\"h2\",null,{\"id\":\"comments-heading-computer-net/net-data-journey\",\"children\":\"评论\"}],[\"$\",\"p\",null,{\"children\":\"评论由 GitHub Discussions 保存和管理。\"}]]}]]}],[\"$\",\"$L49\",null,{\"slug\":\"computer-net/net-data-journey\",\"config\":{\"repo\":\"hedon954/blog-comments\",\"repoId\":\"R_kgDOTjDfbQ\",\"category\":\"General\",\"categoryId\":\"DIC_kwDOTjDfbc4DB7pG\"}}]]}]\n47:[\"$\",\"$L4a\",null,{\"headings\":[{\"depth\":2,\"text\":\"实战\",\"id\":\"实战\"},{\"depth\":2,\"text\":\"网络分层\",\"id\":\"网络分层\"},{\"depth\":2,\"text\":\"网络之旅\",\"id\":\"网络之旅\"},{\"depth\":3,\"text\":\"DNS 解析\",\"id\":\"dns-解析\"},{\"depth\":3,\"text\":\"穿越客户端局域网\",\"id\":\"穿越客户端局域网\"},{\"depth\":3,\"text\":\"穿越公网\",\"id\":\"穿越公网\"},{\"depth\":3,\"text\":\"穿越服务端局域网\",\"id\":\"穿越服务端局域网\"},{\"depth\":3,\"text\":\"总结\",\"id\":\"总结\"},{\"depth\":2,\"text\":\"参考\",\"id\":\"参考\"}]}]\n")</script><script>self.__VINEXT_RSC_DONE__=true</script>
