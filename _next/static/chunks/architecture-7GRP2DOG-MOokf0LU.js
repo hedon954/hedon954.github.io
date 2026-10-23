@@ -1,0 +1,1 @@
+import"./chunk-FOHPRMQF-ExolMPxQ.js";import{M as e}from"./mermaid-parser.core-DOxJAM4b.js";export{e as createArchitectureServices};
