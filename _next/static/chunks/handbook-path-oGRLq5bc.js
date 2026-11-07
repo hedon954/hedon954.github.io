@@ -1,0 +1,1 @@
+function e(e,t){let n=/^(.*?\/garden)(\/en)?(\/.*)?$/u.exec(e);if(!n)return null;let r=n[3]??`/`;return t===`en`?`${n[1]}/en${r}`:`${n[1]}${r}`}export{e as t};
