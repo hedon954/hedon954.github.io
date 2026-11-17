@@ -1,0 +1,29 @@
+{
+  "urls": [
+    "https://avro.apache.org/",
+    "https://blog.fka.dev/blog/2025-06-06-why-mcp-deprecated-sse-and-go-with-streamable-http/",
+    "https://c4model.com/",
+    "https://claude.com/blog/the-anatomy-of-effective-commerce-agents",
+    "https://github.com/alicebob/miniredis",
+    "https://github.com/hedon-go-road/ddd-archetype-go",
+    "https://github.com/hedon-rust-road/httpie",
+    "https://github.com/hedon954/devkit-go/blob/main/designmode/responsibility/builder.go",
+    "https://github.com/hedon954/garden",
+    "https://github.com/hedon954/go-mysql-mocker",
+    "https://github.com/hedon954/goapm",
+    "https://github.com/hedon954/goapm-example",
+    "https://github.com/hedon954/soma",
+    "https://hedon.top/2025/03/06/go/go-lib-synctest/",
+    "https://hedon.top/2025/04/09/note/note-unit-testing-excerpt/",
+    "https://huggingface.co/blog/not-lain/kv-caching",
+    "https://magazine.sebastianraschka.com/p/coding-the-kv-cache-in-llms",
+    "https://markmap.js.org/",
+    "https://msgpack.org/",
+    "https://openai.com/index/gpt-6-for-everyone/",
+    "https://protobuf.dev/",
+    "https://thrift.apache.org/docs/",
+    "https://www.adamsmithworks.org/documents/division-of-labor-and-the-wealth-of-nations",
+    "https://www.json.org/json-en.html",
+    "https://x.com/addyosmani/status/2117512471930167377?a=eBo0l-HxZgQo_ePM3pI&s=20"
+  ]
+}
